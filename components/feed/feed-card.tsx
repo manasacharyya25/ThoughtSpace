@@ -1,9 +1,8 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { formatRelativeTime } from "@/lib/time";
 import { cn } from "@/lib/utils";
 import type { Post } from "@/types/post";
 import { CategoryBadge } from "./category-badge";
+import { RespondButton } from "./respond-button";
 
 interface FeedCardProps {
   post: Post;
@@ -31,21 +30,7 @@ export function FeedCard({ post, index = 0 }: FeedCardProps) {
       </p>
 
       <div className="mt-6 flex items-center justify-end border-t border-border/40 pt-4">
-        <Link href="/inbox">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-muted-foreground transition-all duration-200 hover:text-foreground group-hover:translate-x-0.5"
-          >
-            Respond
-            <span
-              aria-hidden="true"
-              className="ml-1 inline-block transition-transform duration-200 group-hover:translate-x-0.5"
-            >
-              →
-            </span>
-          </Button>
-        </Link>
+        <RespondButton post={post} />
       </div>
     </article>
   );

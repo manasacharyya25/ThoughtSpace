@@ -186,4 +186,62 @@
   .modal-content-animate {
     animation: modal-content-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
+
+  @keyframes response-success-in {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes response-check-pop {
+    0% {
+      transform: scale(0);
+      opacity: 0;
+    }
+    60% {
+      transform: scale(1.1);
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes response-check-draw {
+    from {
+      stroke-dashoffset: 24;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes response-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .response-success-animate {
+    animation: response-success-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .response-check-animate {
+    animation: response-check-pop 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .response-check-path {
+    stroke-dasharray: 24;
+    stroke-dashoffset: 24;
+    animation: response-check-draw 0.4s ease-out 0.3s forwards;
+  }
+
+  .response-spinner {
+    animation: response-spin 0.7s linear infinite;
+  }
 }

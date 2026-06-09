@@ -49,3 +49,4 @@ export interface ApiResponse<T> {
 }
 
 export type { Post, PostCategory } from "./post";
+export type { PrivateResponse } from "./response";

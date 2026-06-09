@@ -268,4 +268,52 @@
   .chat-layout {
     box-shadow: 0 4px 32px rgba(0, 0, 0, 0.25);
   }
+
+  @keyframes onboarding-step-in-forward {
+    from {
+      opacity: 0;
+      transform: translateX(24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes onboarding-step-in-back {
+    from {
+      opacity: 0;
+      transform: translateX(-24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes onboarding-complete-in {
+    from {
+      opacity: 0;
+      transform: scale(0.96);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .onboarding-step-forward {
+    animation: onboarding-step-in-forward 0.35s cubic-bezier(0.16, 1, 0.3, 1)
+      forwards;
+  }
+
+  .onboarding-step-back {
+    animation: onboarding-step-in-back 0.35s cubic-bezier(0.16, 1, 0.3, 1)
+      forwards;
+  }
+
+  .onboarding-complete-animate {
+    animation: onboarding-complete-in 0.5s cubic-bezier(0.16, 1, 0.3, 1)
+      forwards;
+  }
 }

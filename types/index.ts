@@ -55,3 +55,4 @@ export type {
   InboxMessage,
   PendingResponse,
 } from "./inbox";
+export type { OnboardingProfile, OnboardingStepId } from "./onboarding-profile";

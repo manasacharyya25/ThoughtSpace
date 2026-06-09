@@ -244,4 +244,28 @@
   .response-spinner {
     animation: response-spin 0.7s linear infinite;
   }
+
+  .inbox-card {
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    background: rgba(17, 17, 17, 0.35);
+    padding: 1.25rem;
+    transition:
+      border-color 0.3s ease,
+      background 0.3s ease;
+  }
+
+  .inbox-card:hover {
+    border-color: rgba(255, 255, 255, 0.07);
+    background: rgba(17, 17, 17, 0.5);
+  }
+
+  .inbox-card-expanded {
+    border-color: rgba(255, 255, 255, 0.08);
+    background: rgba(17, 17, 17, 0.55);
+  }
+
+  .chat-layout {
+    box-shadow: 0 4px 32px rgba(0, 0, 0, 0.25);
+  }
 }

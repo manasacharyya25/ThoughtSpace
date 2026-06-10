@@ -13,11 +13,19 @@ import type {
 import { OnboardingStepContent } from "./onboarding-steps";
 import { ProgressIndicator } from "./progress-indicator";
 
-const STEPS: OnboardingStepId[] = ["username", "age", "country", "bio"];
+const STEPS: OnboardingStepId[] = [
+  "username",
+  "age",
+  "gender",
+  "country",
+  "bio",
+];
 
 const initialProfile: OnboardingProfile = {
   username: "",
   ageRange: "",
+  gender: "",
+  genderCustom: "",
   country: "",
   bio: "",
 };

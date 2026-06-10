@@ -6,6 +6,22 @@ export const ageRanges = [
   "55+",
 ] as const;
 
+export const GENDER_SELF_DESCRIBE = "Prefer to self-describe";
+export const GENDER_PREFER_NOT_TO_SAY = "Prefer not to say";
+
+export const genderOptions = [
+  "Woman",
+  "Man",
+  "Non-binary",
+  "Transgender",
+  "Genderqueer / Genderfluid",
+  "Agender",
+  "Two-Spirit",
+  "Questioning",
+  GENDER_SELF_DESCRIBE,
+  GENDER_PREFER_NOT_TO_SAY,
+] as const;
+
 export const countries = [
   "United States",
   "United Kingdom",
@@ -39,6 +55,12 @@ export const onboardingStepMeta = [
     id: "age" as const,
     title: "Your age range",
     description: "Helps us connect you with people in a similar life stage.",
+  },
+  {
+    id: "gender" as const,
+    title: "How do you identify?",
+    description:
+      "Choose what feels right for you. All identities are welcome here.",
   },
   {
     id: "country" as const,

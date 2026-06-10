@@ -2,7 +2,12 @@
 
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ageRanges, countries } from "@/data/onboarding-options";
+import {
+  ageRanges,
+  countries,
+  GENDER_SELF_DESCRIBE,
+  genderOptions,
+} from "@/data/onboarding-options";
 import { BIO_MAX_LENGTH } from "@/lib/onboarding-validation";
 import { cn } from "@/lib/utils";
 import type { OnboardingProfile, OnboardingStepId } from "@/types/onboarding-profile";
@@ -45,6 +50,34 @@ export function OnboardingStepContent({
             value={profile.ageRange}
             onChange={(ageRange) => onChange({ ageRange })}
           />
+          {error && <p className="text-xs text-red-400">{error}</p>}
+        </div>
+      );
+
+    case "gender":
+      return (
+        <div className="space-y-4">
+          <OptionGrid
+            options={genderOptions}
+            value={profile.gender}
+            onChange={(gender) =>
+              onChange({
+                gender,
+                genderCustom:
+                  gender === GENDER_SELF_DESCRIBE ? profile.genderCustom : "",
+              })
+            }
+            columns={2}
+          />
+          {profile.gender === GENDER_SELF_DESCRIBE && (
+            <Input
+              label="Your identity"
+              placeholder="e.g. demigirl, bigender, queer..."
+              value={profile.genderCustom}
+              onChange={(e) => onChange({ genderCustom: e.target.value })}
+              autoFocus
+            />
+          )}
           {error && <p className="text-xs text-red-400">{error}</p>}
         </div>
       );

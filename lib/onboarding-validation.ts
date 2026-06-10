@@ -1,3 +1,4 @@
+import { GENDER_SELF_DESCRIBE } from "@/data/onboarding-options";
 import type { OnboardingProfile, OnboardingStepId } from "@/types/onboarding-profile";
 
 const USERNAME_REGEX = /^[a-zA-Z0-9_]{3,20}$/;
@@ -18,6 +19,16 @@ export function validateOnboardingStep(
     case "age":
       if (!profile.ageRange) return "Select an age range.";
       return undefined;
+    case "gender": {
+      if (!profile.gender) return "Select an option or choose how to identify.";
+      if (profile.gender === GENDER_SELF_DESCRIBE) {
+        const custom = profile.genderCustom.trim();
+        if (!custom) return "Tell us how you identify.";
+        if (custom.length < 2) return "Use at least 2 characters.";
+        if (custom.length > 40) return "Keep it under 40 characters.";
+      }
+      return undefined;
+    }
     case "country":
       if (!profile.country) return "Select a country.";
       return undefined;

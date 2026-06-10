@@ -19,7 +19,7 @@ export function ChatLayout() {
 
   return (
     <div className="mx-auto w-full max-w-5xl">
-      <div className="chat-layout flex h-[calc(100svh-7rem)] overflow-hidden rounded-2xl border border-border/50 bg-surface/20 md:h-[calc(100svh-8rem)]">
+      <div className="chat-layout soft-surface flex h-[calc(100svh-7rem)] overflow-hidden rounded-2xl bg-surface/30 md:h-[calc(100svh-8rem)]">
         <div
           className={cn(
             "w-full shrink-0 md:block md:w-80 lg:w-96",

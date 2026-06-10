@@ -26,10 +26,10 @@ export function OptionGrid({
           type="button"
           onClick={() => onChange(option)}
           className={cn(
-            "rounded-xl border px-3 py-3 text-left text-sm transition-all duration-200",
+            "soft-interactive rounded-xl border px-3 py-3 text-left text-sm",
             value === option
-              ? "border-foreground/30 bg-muted/60 text-foreground"
-              : "border-border/40 bg-muted/20 text-muted-foreground hover:border-border hover:bg-muted/40 hover:text-foreground"
+              ? "border-white/10 bg-muted/50 text-heading"
+              : "border-border bg-muted/20 text-muted-foreground hover:border-white/10 hover:bg-muted/40 hover:text-foreground"
           )}
         >
           {option}

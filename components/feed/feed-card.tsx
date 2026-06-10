@@ -13,7 +13,7 @@ interface FeedCardProps {
 export function FeedCard({ post, index = 0 }: FeedCardProps) {
   return (
     <article
-      className={cn("feed-card fade-in-up group")}
+      className={cn("feed-card fade-in-up")}
       style={staggerStyle(index)}
     >
       <div className="flex items-start justify-between gap-4">
@@ -26,7 +26,7 @@ export function FeedCard({ post, index = 0 }: FeedCardProps) {
         </time>
       </div>
 
-      <p className="mt-4 text-[15px] leading-[1.7] text-foreground/90 transition-colors group-hover:text-foreground">
+      <p className="mt-4 text-[15px] leading-[1.7] text-foreground transition-colors group-hover:text-foreground">
         {post.content}
       </p>
 

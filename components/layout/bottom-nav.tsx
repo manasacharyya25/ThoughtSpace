@@ -25,7 +25,7 @@ export function BottomNav() {
       className="fixed inset-x-0 bottom-0 z-50 flex justify-center px-4 pb-5 pt-2"
       aria-label="Main navigation"
     >
-      <div className="flex items-center gap-1 rounded-full border border-white/[0.08] bg-zinc-900/90 px-2 py-2 shadow-2xl shadow-black/50 backdrop-blur-xl">
+      <div className="flex items-center gap-1 rounded-full border border-white/[0.04] bg-surface/90 px-2 py-2 shadow-2xl shadow-black/40 backdrop-blur-xl">
         {navItems.map((item) => {
           const isActive =
             pathname === item.href ||
@@ -37,10 +37,10 @@ export function BottomNav() {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex min-w-[72px] flex-col items-center gap-1 rounded-2xl px-3 py-2 transition-all duration-200 sm:min-w-[80px] sm:px-4",
+                "flex min-w-[72px] flex-col items-center gap-1 rounded-2xl px-3 py-2 transition-[background-color,border-color,color] duration-300 ease sm:min-w-[80px] sm:px-4",
                 isActive
-                  ? "bg-white/10 text-white"
-                  : "text-white/60 hover:bg-white/[0.06] hover:text-white/90"
+                  ? "nav-item-active text-heading"
+                  : "text-muted-foreground hover:bg-white/[0.04] hover:text-foreground"
               )}
             >
               <Icon className="h-5 w-5" />

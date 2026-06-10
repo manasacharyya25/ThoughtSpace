@@ -17,17 +17,9 @@ export function RespondButton({ post }: RespondButtonProps) {
       variant="ghost"
       size="sm"
       onClick={() => openResponseModal(post)}
-      className="text-muted-foreground transition-all duration-200 hover:text-foreground group-hover:translate-x-0.5"
+      className="text-muted-foreground hover:text-foreground"
     >
-      {responded ? "Responded" : "Respond"}
-      {!responded && (
-        <span
-          aria-hidden="true"
-          className="ml-1 inline-block transition-transform duration-200 group-hover:translate-x-0.5"
-        >
-          →
-        </span>
-      )}
+      {responded ? "Responded" : "Respond →"}
     </Button>
   );
 }

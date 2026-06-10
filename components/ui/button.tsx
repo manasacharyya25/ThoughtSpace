@@ -6,12 +6,16 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: "default" | "sm" | "lg";
 }
 
+const baseStyles =
+  "inline-flex items-center justify-center gap-2 rounded-md font-medium transition-[background-color,border-color,color] duration-300 ease focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/10 disabled:pointer-events-none disabled:opacity-50";
+
 const variants = {
   default:
-    "bg-accent text-accent-foreground hover:opacity-90 border border-transparent",
+    "bg-accent text-accent-foreground border border-transparent hover:bg-accent/90",
   outline:
-    "border border-border bg-transparent hover:bg-muted text-foreground",
-  ghost: "hover:bg-muted text-foreground border border-transparent",
+    "border border-border bg-transparent text-foreground hover:border-white/10 hover:bg-muted/40",
+  ghost:
+    "border border-transparent text-foreground hover:bg-muted/40",
 };
 
 const sizes = {
@@ -25,12 +29,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         ref={ref}
-        className={cn(
-          "inline-flex items-center justify-center gap-2 rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-border disabled:pointer-events-none disabled:opacity-50",
-          variants[variant],
-          sizes[size],
-          className
-        )}
+        className={cn(baseStyles, variants[variant], sizes[size], className)}
         {...props}
       />
     );

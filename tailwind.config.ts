@@ -10,6 +10,7 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        heading: "var(--heading)",
         muted: {
           DEFAULT: "var(--muted)",
           foreground: "var(--muted-foreground)",

@@ -37,7 +37,7 @@ export function ChatInput({
           }
         }}
       />
-      <Button onClick={handleSend} size="sm" className="shrink-0">
+      <Button onClick={handleSend} variant="outline" size="sm" className="shrink-0">
         Send
       </Button>
     </div>

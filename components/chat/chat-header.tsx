@@ -9,7 +9,7 @@ interface ChatHeaderProps {
 
 export function ChatHeader({ conversation, onBack }: ChatHeaderProps) {
   return (
-    <header className="flex items-center gap-3 border-b border-border/40 px-4 py-3 sm:px-5">
+    <header className="flex items-center gap-3 border-b border-border px-4 py-3 sm:px-5">
       {onBack && (
         <button
           type="button"

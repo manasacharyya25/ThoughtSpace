@@ -18,7 +18,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
       <div
         ref={ref}
         className={cn(
-          "rounded-lg border border-border bg-surface",
+          "soft-surface rounded-lg bg-surface",
           paddingStyles[padding],
           className
         )}
@@ -48,7 +48,7 @@ export const CardTitle = forwardRef<
 >(({ className, ...props }, ref) => (
   <h3
     ref={ref}
-    className={cn("text-sm font-medium leading-none", className)}
+    className={cn("text-sm font-medium leading-none text-heading", className)}
     {...props}
   />
 ));

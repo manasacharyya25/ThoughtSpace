@@ -71,9 +71,14 @@ export function CreatePostScreen() {
           title="Share a thought"
           description="No photos — just what's on your mind."
           action={
-            <Button size="sm" onClick={handlePost} disabled={isOverLimit}>
-              Post
-            </Button>
+          <Button
+            size="sm"
+            variant="default"
+            onClick={handlePost}
+            disabled={isOverLimit}
+          >
+            Post
+          </Button>
           }
         />
       </FadeIn>
@@ -102,7 +107,7 @@ export function CreatePostScreen() {
           <p className="text-xs text-red-400">{errors.category}</p>
         )}
 
-        <FadeIn index={3} className="border-t border-border/40 pt-6">
+        <FadeIn index={3} className="border-t border-border pt-6">
           <textarea
             value={content}
             onChange={(e) => {
@@ -124,7 +129,7 @@ export function CreatePostScreen() {
           )}
         </FadeIn>
 
-        <FadeIn index={4} className="flex items-center justify-between border-t border-border/40 pt-4">
+        <FadeIn index={4} className="flex items-center justify-between border-t border-border pt-4">
           <span className="text-[11px] text-muted-foreground">
             Min {POST_MIN_LENGTH} characters
           </span>

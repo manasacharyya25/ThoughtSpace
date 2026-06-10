@@ -15,9 +15,11 @@ export function ConversationSidebar() {
   } = useInbox();
 
   return (
-    <aside className="flex h-full flex-col border-r border-border/40 bg-surface/20">
-      <div className="border-b border-border/40 px-4 py-4">
-        <h2 className="text-lg font-semibold tracking-tight">Inbox</h2>
+    <aside className="flex h-full flex-col border-r border-border bg-surface/20">
+      <div className="border-b border-border px-4 py-4">
+        <h2 className="text-lg font-semibold tracking-tight text-heading">
+          Inbox
+        </h2>
         <p className="mt-0.5 text-[12px] text-muted-foreground/60">
           Private, one-to-one
         </p>
@@ -25,7 +27,7 @@ export function ConversationSidebar() {
 
       <div className="flex-1 overflow-y-auto">
         {pending.length > 0 && (
-          <div className="border-b border-border/30 p-3">
+          <div className="border-b border-border p-3">
             <p className="mb-2 px-1 text-[10px] font-medium uppercase tracking-widest text-muted-foreground/50">
               Pending
             </p>
@@ -33,7 +35,7 @@ export function ConversationSidebar() {
               {pending.map((item, index) => (
                 <div
                   key={item.id}
-                  className="fade-in-up rounded-xl border border-border/30 bg-muted/20 p-3"
+                  className="fade-in-up rounded-xl border border-border bg-muted/30 p-3"
                   style={staggerStyle(index)}
                 >
                   <div className="flex items-center gap-2">
@@ -50,7 +52,7 @@ export function ConversationSidebar() {
                   <button
                     type="button"
                     onClick={() => acceptPending(item.id)}
-                    className="mt-2.5 w-full rounded-lg bg-foreground py-1.5 text-[11px] font-medium text-background transition-opacity hover:opacity-90"
+                    className="soft-interactive mt-2.5 w-full rounded-lg border border-border py-1.5 text-[11px] font-medium text-foreground hover:border-white/10 hover:bg-muted/40"
                   >
                     Accept
                   </button>
@@ -80,10 +82,10 @@ export function ConversationSidebar() {
                     type="button"
                     onClick={() => setActiveId(conv.id)}
                     className={cn(
-                      "fade-in-up flex w-full items-start gap-3 rounded-xl px-3 py-3 text-left transition-colors",
+                      "fade-in-up soft-interactive flex w-full items-start gap-3 rounded-xl border border-transparent px-3 py-3 text-left",
                       isActive
-                        ? "bg-muted/50"
-                        : "hover:bg-muted/30"
+                        ? "nav-item-active border-border"
+                        : "hover:border-border hover:bg-muted/30"
                     )}
                     style={staggerStyle(index)}
                   >

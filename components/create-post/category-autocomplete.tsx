@@ -98,7 +98,7 @@ export function CategoryAutocomplete({
         placeholder="Type a category..."
         autoComplete="off"
         className={cn(
-          "w-full rounded-md border bg-muted/30 px-3 py-1.5 text-sm capitalize transition-colors placeholder:normal-case placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-border",
+          "w-full rounded-md border bg-muted/30 px-3 py-1.5 text-sm capitalize transition-[border-color,background-color] duration-300 ease placeholder:normal-case placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-white/10",
           error
             ? "border-red-500/50"
             : value

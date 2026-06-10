@@ -3,14 +3,15 @@
 @tailwind utilities;
 
 :root {
-  --background: #0a0a0a;
-  --foreground: #ededed;
-  --muted: #141414;
-  --muted-foreground: #a1a1a1;
-  --border: #1f1f1f;
-  --surface: #111111;
+  --background: #0c0c0e;
+  --foreground: #d4d4d4;
+  --heading: #ededed;
+  --muted: #14141a;
+  --muted-foreground: #94949e;
+  --border: rgba(255, 255, 255, 0.04);
+  --surface: #12121a;
   --accent: #fafafa;
-  --accent-foreground: #0a0a0a;
+  --accent-foreground: #0c0c0e;
   --radius: 0.625rem;
 }
 
@@ -26,6 +27,15 @@
   body {
     @apply bg-background text-foreground font-sans;
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: var(--heading);
   }
 
   ::selection {
@@ -128,16 +138,58 @@
     opacity: 0;
   }
 
+  .app-shell-ambient {
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .app-shell-ambient-glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+  }
+
+  .app-shell-ambient-glow-violet {
+    top: 5%;
+    left: 15%;
+    width: 520px;
+    height: 520px;
+    background: radial-gradient(
+      circle,
+      rgba(139, 92, 246, 0.04) 0%,
+      transparent 70%
+    );
+  }
+
+  .app-shell-ambient-glow-rose {
+    bottom: 15%;
+    right: 10%;
+    width: 440px;
+    height: 440px;
+    background: radial-gradient(
+      circle,
+      rgba(236, 72, 153, 0.03) 0%,
+      transparent 70%
+    );
+  }
+
+  .soft-interactive {
+    transition:
+      background-color 300ms ease,
+      border-color 300ms ease;
+  }
+
   .feed-card {
     border-radius: 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    background: rgba(17, 17, 17, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    background: rgba(18, 18, 26, 0.55);
     padding: 1.25rem;
     transition:
-      border-color 0.25s ease,
-      transform 0.25s ease,
-      box-shadow 0.25s ease,
-      background 0.25s ease;
+      background-color 300ms ease,
+      border-color 300ms ease;
   }
 
   @media (min-width: 640px) {
@@ -147,12 +199,26 @@
   }
 
   .feed-card:hover {
-    border-color: rgba(255, 255, 255, 0.1);
-    background: rgba(17, 17, 17, 0.9);
-    transform: translateY(-2px);
-    box-shadow:
-      0 4px 24px rgba(0, 0, 0, 0.4),
-      0 0 0 1px rgba(139, 92, 246, 0.05);
+    border-color: rgba(255, 255, 255, 0.07);
+    background: rgba(18, 18, 26, 0.72);
+  }
+
+  .soft-surface {
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    transition:
+      background-color 300ms ease,
+      border-color 300ms ease;
+  }
+
+  .soft-surface:hover {
+    border-color: rgba(255, 255, 255, 0.07);
+    background-color: rgba(18, 18, 26, 0.65);
+  }
+
+  .nav-item-active {
+    background-color: rgba(255, 255, 255, 0.06);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+      inset 0 1px 12px rgba(255, 255, 255, 0.03);
   }
 
   @keyframes modal-backdrop-in {
@@ -248,25 +314,26 @@
   .inbox-card {
     border-radius: 1rem;
     border: 1px solid rgba(255, 255, 255, 0.04);
-    background: rgba(17, 17, 17, 0.35);
+    background: rgba(18, 18, 26, 0.4);
     padding: 1.25rem;
     transition:
-      border-color 0.3s ease,
-      background 0.3s ease;
+      background-color 300ms ease,
+      border-color 300ms ease;
   }
 
   .inbox-card:hover {
-    border-color: rgba(255, 255, 255, 0.07);
-    background: rgba(17, 17, 17, 0.5);
+    border-color: rgba(255, 255, 255, 0.06);
+    background: rgba(18, 18, 26, 0.55);
   }
 
   .inbox-card-expanded {
-    border-color: rgba(255, 255, 255, 0.08);
-    background: rgba(17, 17, 17, 0.55);
+    border-color: rgba(255, 255, 255, 0.06);
+    background: rgba(18, 18, 26, 0.6);
   }
 
   .chat-layout {
-    box-shadow: 0 4px 32px rgba(0, 0, 0, 0.25);
+    border-color: rgba(255, 255, 255, 0.04);
+    box-shadow: 0 4px 32px rgba(0, 0, 0, 0.2);
   }
 
   @keyframes onboarding-step-in-forward {

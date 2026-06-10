@@ -17,6 +17,10 @@ const categoryStyles: Record<string, string> = {
 const defaultStyle =
   "border-border/60 bg-muted/40 text-muted-foreground";
 
+export function getCategoryBadgeClass(category: string): string {
+  return categoryStyles[category] ?? defaultStyle;
+}
+
 interface CategoryBadgeProps {
   category: PostCategory;
 }
@@ -26,7 +30,7 @@ export function CategoryBadge({ category }: CategoryBadgeProps) {
     <span
       className={cn(
         "inline-flex rounded-full border px-2.5 py-0.5 text-[11px] font-medium capitalize tracking-wide",
-        categoryStyles[category] ?? defaultStyle
+        getCategoryBadgeClass(category)
       )}
     >
       {category}

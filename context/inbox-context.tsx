@@ -19,10 +19,14 @@ interface InboxContextValue {
   pending: PendingResponse[];
   conversations: ActiveConversation[];
   activeId: string | null;
-  setActiveId: (id: string | null) => void;
+  openConversation: (id: string) => void;
+  closeConversation: () => void;
   acceptPending: (pendingId: string) => void;
   sendMessage: (conversationId: string, content: string) => void;
   activeConversation: ActiveConversation | null;
+  isConversationUnread: (id: string) => boolean;
+  hasUnread: boolean;
+  isChatOpen: boolean;
 }
 
 const InboxContext = createContext<InboxContextValue | null>(null);
@@ -32,30 +36,59 @@ export function InboxProvider({ children }: { children: ReactNode }) {
   const [conversations, setConversations] =
     useState<ActiveConversation[]>(activeConversations);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [readAt, setReadAt] = useState<Record<string, string>>({});
 
-  const acceptPending = useCallback((pendingId: string) => {
-    const item = pending.find((p) => p.id === pendingId);
-    if (!item) return;
+  const markRead = useCallback(
+    (conversationId: string, at?: string) => {
+      const conv = conversations.find((c) => c.id === conversationId);
+      const timestamp = at ?? conv?.lastMessageAt ?? new Date().toISOString();
+      setReadAt((prev) => ({ ...prev, [conversationId]: timestamp }));
+    },
+    [conversations]
+  );
 
-    const newConversation: ActiveConversation = {
-      id: `conv-${item.id}`,
-      partnerInitial: item.fromInitial,
-      startedFrom: item.thoughtExcerpt,
-      lastMessageAt: item.receivedAt,
-      messages: [
-        {
-          id: `msg-${item.id}`,
-          content: item.fullResponse,
-          isFromMe: false,
-          createdAt: item.receivedAt,
-        },
-      ],
-    };
+  const openConversation = useCallback(
+    (id: string) => {
+      setActiveId(id);
+      markRead(id);
+    },
+    [markRead]
+  );
 
-    setPending((prev) => prev.filter((p) => p.id !== pendingId));
-    setConversations((prev) => [newConversation, ...prev]);
-    setActiveId(newConversation.id);
-  }, [pending]);
+  const closeConversation = useCallback(() => {
+    setActiveId(null);
+  }, []);
+
+  const acceptPending = useCallback(
+    (pendingId: string) => {
+      const item = pending.find((p) => p.id === pendingId);
+      if (!item) return;
+
+      const newConversation: ActiveConversation = {
+        id: `conv-${item.id}`,
+        partnerInitial: item.fromInitial,
+        startedFrom: item.thoughtExcerpt,
+        lastMessageAt: item.receivedAt,
+        messages: [
+          {
+            id: `msg-${item.id}`,
+            content: item.fullResponse,
+            isFromMe: false,
+            createdAt: item.receivedAt,
+          },
+        ],
+      };
+
+      setPending((prev) => prev.filter((p) => p.id !== pendingId));
+      setConversations((prev) => [newConversation, ...prev]);
+      setActiveId(newConversation.id);
+      setReadAt((prev) => ({
+        ...prev,
+        [newConversation.id]: newConversation.lastMessageAt,
+      }));
+    },
+    [pending]
+  );
 
   const sendMessage = useCallback(
     (conversationId: string, content: string) => {
@@ -80,8 +113,33 @@ export function InboxProvider({ children }: { children: ReactNode }) {
             : conv
         )
       );
+
+      if (activeId === conversationId) {
+        setReadAt((prev) => ({
+          ...prev,
+          [conversationId]: newMessage.createdAt,
+        }));
+      }
     },
-    []
+    [activeId]
+  );
+
+  const isConversationUnread = useCallback(
+    (id: string) => {
+      const conv = conversations.find((c) => c.id === id);
+      if (!conv) return false;
+      const lastRead = readAt[id];
+      if (!lastRead) return true;
+      return conv.lastMessageAt > lastRead;
+    },
+    [conversations, readAt]
+  );
+
+  const hasUnread = useMemo(
+    () =>
+      pending.length > 0 ||
+      conversations.some((c) => isConversationUnread(c.id)),
+    [pending.length, conversations, isConversationUnread]
   );
 
   const activeConversation = useMemo(
@@ -94,18 +152,26 @@ export function InboxProvider({ children }: { children: ReactNode }) {
       pending,
       conversations,
       activeId,
-      setActiveId,
+      openConversation,
+      closeConversation,
       acceptPending,
       sendMessage,
       activeConversation,
+      isConversationUnread,
+      hasUnread,
+      isChatOpen: activeId !== null,
     }),
     [
       pending,
       conversations,
       activeId,
+      openConversation,
+      closeConversation,
       acceptPending,
       sendMessage,
       activeConversation,
+      isConversationUnread,
+      hasUnread,
     ]
   );
 

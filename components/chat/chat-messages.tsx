@@ -19,8 +19,8 @@ export function ChatMessages({ conversation }: ChatMessagesProps) {
     <div className="flex-1 overflow-y-auto px-4 py-5 sm:px-5">
       <div className="mx-auto max-w-2xl space-y-4">
         <div className="mb-6 text-center">
-          <span className="inline-block rounded-full border border-border/30 bg-muted/20 px-3 py-1 text-[10px] text-muted-foreground/60">
-            Conversation started from a shared thought
+          <span className="inline-block max-w-sm rounded-full border border-border bg-muted/20 px-3 py-1.5 text-[10px] leading-relaxed text-muted-foreground/60">
+            Started from: &ldquo;{conversation.startedFrom}&rdquo;
           </span>
         </div>
 

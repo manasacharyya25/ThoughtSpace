@@ -1,5 +1,6 @@
 "use client";
 
+import { useInbox } from "@/context/inbox-context";
 import { BottomNav } from "./bottom-nav";
 import { Container } from "./container";
 
@@ -8,6 +9,20 @@ interface AppShellProps {
 }
 
 export function AppShell({ children }: AppShellProps) {
+  const { isChatOpen } = useInbox();
+
+  if (isChatOpen) {
+    return (
+      <div className="relative flex min-h-screen flex-col">
+        <div className="app-shell-ambient" aria-hidden="true">
+          <div className="app-shell-ambient-glow app-shell-ambient-glow-violet" />
+          <div className="app-shell-ambient-glow app-shell-ambient-glow-rose" />
+        </div>
+        <main className="relative z-10 flex-1">{children}</main>
+      </div>
+    );
+  }
+
   return (
     <div className="relative flex min-h-screen flex-col">
       <div className="app-shell-ambient" aria-hidden="true">

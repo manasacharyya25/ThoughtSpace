@@ -1,6 +1,9 @@
 export function Explanation() {
   return (
-    <section className="relative border-y border-border/50 px-4 py-24 md:py-32">
+    <section
+      id="explanation"
+      className="landing-section relative flex flex-col justify-center border-y border-border/50 px-4 py-24 md:py-32"
+    >
       <div className="landing-glow landing-glow-center" aria-hidden="true" />
 
       <div className="relative z-10 mx-auto max-w-3xl text-center">

@@ -2,7 +2,10 @@ import { sampleConversations } from "@/data/landing";
 
 export function SampleConversations() {
   return (
-    <section className="relative overflow-hidden px-4 py-24 md:py-32">
+    <section
+      id="sample-conversations"
+      className="landing-section relative flex flex-col justify-center overflow-hidden px-4 py-24 md:py-32"
+    >
       <div className="landing-glow landing-glow-bottom" aria-hidden="true" />
 
       <div className="relative z-10 mx-auto max-w-6xl">
@@ -18,7 +21,7 @@ export function SampleConversations() {
           </p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
           {sampleConversations.map((conversation) => (
             <article
               key={conversation.id}

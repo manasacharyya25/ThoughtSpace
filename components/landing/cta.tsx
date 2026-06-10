@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 
 export function CTA() {
   return (
-    <section className="px-4 py-24 md:py-32">
+    <section className="landing-section flex flex-col justify-center px-4 py-24 md:py-32">
       <div className="relative mx-auto max-w-3xl overflow-hidden rounded-3xl border border-border/60 px-6 py-16 text-center sm:px-12 md:py-20">
         <div className="landing-glow landing-glow-cta" aria-hidden="true" />
 

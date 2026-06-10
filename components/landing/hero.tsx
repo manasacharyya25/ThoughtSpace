@@ -1,9 +1,12 @@
+"use client";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { scrollToSection } from "@/lib/scroll-to-section";
 
 export function Hero() {
   return (
-    <section className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-4 pt-14">
+    <section className="landing-section relative flex flex-col items-center justify-center overflow-hidden px-4 pt-14">
       <div className="landing-glow landing-glow-hero" aria-hidden="true" />
 
       <div className="relative z-10 mx-auto max-w-4xl text-center">
@@ -23,29 +26,42 @@ export function Hero() {
           look like. Thoughts first. Connection follows.
         </p>
 
-        <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row md:mt-12">
+        <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row md:mt-12 lg:hidden">
           <Link href="/onboarding">
             <Button size="lg" className="min-w-[180px]">
               Begin your story
             </Button>
           </Link>
-          <a href="#how-it-works">
-            <Button variant="ghost" size="lg">
-              See how it works
-            </Button>
-          </a>
+          <Button
+            variant="ghost"
+            size="lg"
+            type="button"
+            onClick={() => scrollToSection("how-it-works")}
+          >
+            See how it works
+          </Button>
         </div>
       </div>
 
-      <div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-muted-foreground/40"
-        aria-hidden="true"
+      <button
+        type="button"
+        onClick={() => scrollToSection("explanation")}
+        className="fixed bottom-6 right-6 z-40 flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-background/60 text-muted-foreground/50 backdrop-blur-sm transition-colors hover:border-border hover:text-muted-foreground"
+        aria-label="Scroll to next section"
       >
-        <div className="flex flex-col items-center gap-2">
-          <span className="text-[10px] tracking-widest uppercase">Scroll</span>
-          <div className="h-8 w-px bg-gradient-to-b from-muted-foreground/40 to-transparent" />
-        </div>
-      </div>
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="h-5 w-5"
+          aria-hidden="true"
+        >
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+      </button>
     </section>
   );
 }

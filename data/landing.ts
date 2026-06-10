@@ -47,19 +47,5 @@ export const sampleConversations = [
         text: "My grandmother leaving notes in library books for strangers to find.",
       },
     ],
-  },
-  {
-    id: "conv-3",
-    prompt: "What would you tell your younger self in exactly seven words?",
-    replies: [
-      {
-        initial: "J",
-        text: "Feel everything. It all becomes your story.",
-      },
-      {
-        initial: "S",
-        text: "The quiet ones are thinking deeply too.",
-      },
-    ],
-  },
+  }
 ];

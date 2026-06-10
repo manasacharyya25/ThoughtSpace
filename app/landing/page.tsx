@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 export default function LandingPage() {
   return (
-    <div className="relative min-h-screen bg-background">
+    <div className="landing-scroll relative bg-background">
       <LandingNav />
       <main>
         <Hero />

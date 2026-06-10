@@ -122,6 +122,27 @@
     );
   }
 
+  .landing-scroll {
+    height: 100svh;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: auto;
+    overscroll-behavior-y: contain;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .landing-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .landing-section {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    scroll-margin-top: 3.5rem;
+    min-height: 100svh;
+  }
+
   @keyframes fade-in-up {
     from {
       opacity: 0;

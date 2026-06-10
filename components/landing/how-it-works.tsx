@@ -2,7 +2,10 @@ import { howItWorksSteps } from "@/data/landing";
 
 export function HowItWorks() {
   return (
-    <section id="how-it-works" className="px-4 py-24 md:py-32">
+    <section
+      id="how-it-works"
+      className="landing-section flex flex-col justify-center px-4 py-24 md:py-32"
+    >
       <div className="mx-auto max-w-6xl">
         <div className="mb-16 text-center md:mb-20">
           <p className="mb-3 text-sm font-medium tracking-widest text-muted-foreground uppercase">

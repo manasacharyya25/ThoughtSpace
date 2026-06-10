@@ -12,10 +12,10 @@ export function CTA() {
             Ready to be known for your mind?
           </h2>
           <p className="mx-auto mt-4 max-w-md text-balance text-sm text-muted-foreground md:mt-6 md:text-base">
-            Join a space where thoughts lead and connection follows. Your first
-            conversation is one honest question away.
+          Join a space kept intentionally small and protected to preserve conversation quality and reduce spam.
+          Explore the community with a 30-day free trial.
           </p>
-          <Link href="/onboarding" className="mt-8 inline-block md:mt-10">
+          <Link href="/login" className="mt-8 inline-block md:mt-10">
             <Button size="lg" className="min-w-[200px] text-sm">
               Start a conversation
             </Button>

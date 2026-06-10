@@ -22,12 +22,12 @@ export function Hero() {
         </h1>
 
         <p className="mx-auto mt-8 max-w-xl text-balance text-base leading-relaxed text-muted-foreground sm:text-lg md:mt-10 md:text-xl">
-          Meet people through what they think, feel, and wonder — not what they
-          look like. Thoughts first. Connection follows.
+          Meet people through what they think, feel, wonder and experience — not photos,
+          profiles or expectations.
         </p>
 
         <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row md:mt-12 lg:hidden">
-          <Link href="/onboarding">
+          <Link href="/login">
             <Button size="lg" className="min-w-[180px]">
               Begin your story
             </Button>

@@ -12,7 +12,7 @@ export function LandingNav() {
         >
           {env.NEXT_PUBLIC_APP_NAME}
         </Link>
-        <Link href="/onboarding">
+        <Link href="/login">
           <Button size="sm">Get started</Button>
         </Link>
       </div>

@@ -1,4 +1,5 @@
 import { formatRelativeTime } from "@/lib/time";
+import { staggerStyle } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 import type { Post } from "@/types/post";
 import { CategoryBadge } from "./category-badge";
@@ -12,8 +13,8 @@ interface FeedCardProps {
 export function FeedCard({ post, index = 0 }: FeedCardProps) {
   return (
     <article
-      className={cn("feed-card feed-card-animate group")}
-      style={{ animationDelay: `${index * 60}ms` }}
+      className={cn("feed-card fade-in-up group")}
+      style={staggerStyle(index)}
     >
       <div className="flex items-start justify-between gap-4">
         <CategoryBadge category={post.category} />

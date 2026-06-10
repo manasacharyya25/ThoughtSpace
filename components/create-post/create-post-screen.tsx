@@ -10,6 +10,7 @@ import {
   POST_MIN_LENGTH,
   validatePostForm,
 } from "@/lib/post-validation";
+import { FadeIn } from "@/components/ui/fade-in";
 import { cn } from "@/lib/utils";
 import { CategoryAutocomplete } from "./category-autocomplete";
 
@@ -43,38 +44,42 @@ export function CreatePostScreen() {
 
   return (
     <div className="mx-auto w-full max-w-2xl">
-      <button
-        type="button"
-        onClick={handleDiscard}
-        className="mb-6 flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
-      >
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="h-4 w-4"
-          aria-hidden="true"
+      <FadeIn index={0}>
+        <button
+          type="button"
+          onClick={handleDiscard}
+          className="mb-6 flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
         >
-          <path d="M15 18l-6-6 6-6" />
-        </svg>
-        Discard
-      </button>
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="h-4 w-4"
+            aria-hidden="true"
+          >
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+          Discard
+        </button>
+      </FadeIn>
 
-      <PageHeader
-        title="Share a thought"
-        description="No photos — just what's on your mind."
-        action={
-          <Button size="sm" onClick={handlePost} disabled={isOverLimit}>
-            Post
-          </Button>
-        }
-      />
+      <FadeIn index={1}>
+        <PageHeader
+          title="Share a thought"
+          description="No photos — just what's on your mind."
+          action={
+            <Button size="sm" onClick={handlePost} disabled={isOverLimit}>
+              Post
+            </Button>
+          }
+        />
+      </FadeIn>
 
       <div className="space-y-6">
-        <div className="flex flex-wrap items-start gap-3">
+        <FadeIn index={2} className="flex flex-wrap items-start gap-3">
           <span className="mt-2 text-sm text-muted-foreground">Category</span>
           <CategoryAutocomplete
             value={category}
@@ -92,12 +97,12 @@ export function CreatePostScreen() {
               }
             }}
           />
-        </div>
+        </FadeIn>
         {submitted && errors.category && (
           <p className="text-xs text-red-400">{errors.category}</p>
         )}
 
-        <div className="border-t border-border/40 pt-6">
+        <FadeIn index={3} className="border-t border-border/40 pt-6">
           <textarea
             value={content}
             onChange={(e) => {
@@ -117,9 +122,9 @@ export function CreatePostScreen() {
           {submitted && errors.content && (
             <p className="mt-2 text-xs text-red-400">{errors.content}</p>
           )}
-        </div>
+        </FadeIn>
 
-        <div className="flex items-center justify-between border-t border-border/40 pt-4">
+        <FadeIn index={4} className="flex items-center justify-between border-t border-border/40 pt-4">
           <span className="text-[11px] text-muted-foreground">
             Min {POST_MIN_LENGTH} characters
           </span>
@@ -135,7 +140,7 @@ export function CreatePostScreen() {
           >
             {charCount}/{POST_MAX_LENGTH}
           </span>
-        </div>
+        </FadeIn>
       </div>
     </div>
   );

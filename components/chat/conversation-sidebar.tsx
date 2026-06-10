@@ -1,6 +1,7 @@
 "use client";
 
 import { useInbox } from "@/context/inbox-context";
+import { staggerStyle } from "@/lib/motion";
 import { formatRelativeTime } from "@/lib/time";
 import { cn } from "@/lib/utils";
 
@@ -29,10 +30,11 @@ export function ConversationSidebar() {
               Pending
             </p>
             <div className="space-y-2">
-              {pending.map((item) => (
+              {pending.map((item, index) => (
                 <div
                   key={item.id}
-                  className="rounded-xl border border-border/30 bg-muted/20 p-3"
+                  className="fade-in-up rounded-xl border border-border/30 bg-muted/20 p-3"
+                  style={staggerStyle(index)}
                 >
                   <div className="flex items-center gap-2">
                     <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border/40 bg-surface text-[10px] font-medium text-muted-foreground">
@@ -68,7 +70,7 @@ export function ConversationSidebar() {
             </p>
           ) : (
             <div className="space-y-1">
-              {conversations.map((conv) => {
+              {conversations.map((conv, index) => {
                 const lastMsg = conv.messages[conv.messages.length - 1];
                 const isActive = activeId === conv.id;
 
@@ -78,11 +80,12 @@ export function ConversationSidebar() {
                     type="button"
                     onClick={() => setActiveId(conv.id)}
                     className={cn(
-                      "flex w-full items-start gap-3 rounded-xl px-3 py-3 text-left transition-colors",
+                      "fade-in-up flex w-full items-start gap-3 rounded-xl px-3 py-3 text-left transition-colors",
                       isActive
                         ? "bg-muted/50"
                         : "hover:bg-muted/30"
                     )}
+                    style={staggerStyle(index)}
                   >
                     <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border/40 bg-muted/20 text-xs font-medium text-muted-foreground">
                       {conv.partnerInitial}

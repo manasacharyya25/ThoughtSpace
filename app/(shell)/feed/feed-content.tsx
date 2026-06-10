@@ -2,6 +2,7 @@
 
 import { FeedList } from "@/components/feed";
 import { PageHeader } from "@/components/layout/page-header";
+import { FadeIn } from "@/components/ui/fade-in";
 import { usePosts } from "@/context/posts-context";
 
 export function FeedContent() {
@@ -9,10 +10,12 @@ export function FeedContent() {
 
   return (
     <div className="mx-auto w-full max-w-2xl">
-      <PageHeader
-        title="Feed"
-        description="Thoughts worth responding to — no faces, no metrics, just minds."
-      />
+      <FadeIn index={0}>
+        <PageHeader
+          title="Feed"
+          description="Thoughts worth responding to — no faces, no metrics, just minds."
+        />
+      </FadeIn>
       <FeedList posts={posts} />
     </div>
   );

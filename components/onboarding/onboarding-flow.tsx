@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { onboardingStepMeta } from "@/data/onboarding-options";
 import { validateOnboardingStep } from "@/lib/onboarding-validation";
-import { cn } from "@/lib/utils";
+import { FadeIn } from "@/components/ui/fade-in";
 import type {
   OnboardingProfile,
   OnboardingStepId,
@@ -25,7 +25,6 @@ const initialProfile: OnboardingProfile = {
 export function OnboardingFlow() {
   const router = useRouter();
   const [stepIndex, setStepIndex] = useState(0);
-  const [direction, setDirection] = useState<"forward" | "back">("forward");
   const [profile, setProfile] = useState<OnboardingProfile>(initialProfile);
   const [error, setError] = useState<string>();
   const [isComplete, setIsComplete] = useState(false);
@@ -46,7 +45,6 @@ export function OnboardingFlow() {
     }
 
     if (stepIndex < STEPS.length - 1) {
-      setDirection("forward");
       setStepIndex((i) => i + 1);
       setError(undefined);
     } else {
@@ -57,7 +55,6 @@ export function OnboardingFlow() {
 
   const goBack = () => {
     if (stepIndex > 0) {
-      setDirection("back");
       setStepIndex((i) => i - 1);
       setError(undefined);
     }
@@ -90,37 +87,33 @@ export function OnboardingFlow() {
 
   return (
     <div className="mx-auto w-full max-w-md px-4 py-8 sm:py-12">
-      <ProgressIndicator currentStep={stepIndex} totalSteps={STEPS.length} />
+      <FadeIn index={0}>
+        <ProgressIndicator currentStep={stepIndex} totalSteps={STEPS.length} />
+      </FadeIn>
 
-      <div
-        key={currentStep}
-        className={cn(
-          "mt-10",
-          direction === "forward"
-            ? "onboarding-step-forward"
-            : "onboarding-step-back"
-        )}
-      >
-        <div className="space-y-2">
-          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-            {meta.title}
-          </h1>
-          <p className="text-sm leading-relaxed text-muted-foreground">
-            {meta.description}
-          </p>
-        </div>
+      <div key={currentStep} className="mt-10">
+        <FadeIn index={1}>
+          <div className="space-y-2">
+            <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+              {meta.title}
+            </h1>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              {meta.description}
+            </p>
+          </div>
+        </FadeIn>
 
-        <div className="mt-8">
+        <FadeIn index={2} className="mt-8">
           <OnboardingStepContent
             step={currentStep}
             profile={profile}
             onChange={updateProfile}
             error={error}
           />
-        </div>
+        </FadeIn>
       </div>
 
-      <div className="mt-10 flex gap-3">
+      <FadeIn index={3} className="mt-10 flex gap-3">
         {stepIndex > 0 && (
           <Button
             type="button"
@@ -138,7 +131,7 @@ export function OnboardingFlow() {
         >
           {stepIndex === STEPS.length - 1 ? "Finish" : "Continue"}
         </Button>
-      </div>
+      </FadeIn>
     </div>
   );
 }

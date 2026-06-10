@@ -1,8 +1,10 @@
 "use client";
 
+import { Fragment } from "react";
 import { useInbox } from "@/context/inbox-context";
 import { PageHeader } from "@/components/layout/page-header";
 import { FadeIn } from "@/components/ui/fade-in";
+import { VioletSeparator } from "@/components/ui/violet-separator";
 import { staggerStyle } from "@/lib/motion";
 import { formatRelativeTime } from "@/lib/time";
 import { cn } from "@/lib/utils";
@@ -19,10 +21,13 @@ function UnreadDot({ className }: { className?: string }) {
   );
 }
 
+const inboxRowClass =
+  "soft-interactive group flex items-start gap-3 px-4 py-4 transition-[background-color] duration-300 ease hover:bg-muted/25";
+
 function Avatar({ initial, showDot }: { initial: string; showDot?: boolean }) {
   return (
     <div className="relative shrink-0">
-      <div className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-muted/30 text-xs font-medium text-muted-foreground">
+      <div className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-muted/30 text-xs font-medium text-muted-foreground transition-[border-color,background-color] duration-300 ease group-hover:border-white/10 group-hover:bg-muted/40">
         {initial}
       </div>
       {showDot && <UnreadDot />}
@@ -62,63 +67,69 @@ export function InboxList() {
           </p>
         </FadeIn>
       ) : (
-        <div className="divide-y divide-border rounded-2xl border border-border bg-surface/30">
+        <div className="overflow-hidden rounded-2xl border border-border bg-surface/30">
           {pending.map((item, index) => (
-            <div
-              key={item.id}
-              className="fade-in-up flex items-start gap-3 px-4 py-4"
-              style={staggerStyle(index)}
-            >
-              <Avatar initial={item.fromInitial} showDot />
-              <div className="min-w-0 flex-1 space-y-1">
-                <p className="line-clamp-2 text-[14px] leading-relaxed text-foreground/80">
-                  {item.responsePreview}
-                </p>
-                <p className="text-[11px] text-muted-foreground/50">
-                  {formatRelativeTime(item.receivedAt)}
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => acceptPending(item.id)}
-                className="soft-interactive mt-0.5 shrink-0 rounded-md border border-border px-2.5 py-1.5 text-[11px] font-medium text-foreground hover:border-white/10 hover:bg-muted/40"
+            <Fragment key={item.id}>
+              {index > 0 && <VioletSeparator />}
+              <div
+                className={cn("fade-in-up", inboxRowClass)}
+                style={staggerStyle(index)}
               >
-                Accept
-              </button>
-            </div>
+                <Avatar initial={item.fromInitial} showDot />
+                <div className="min-w-0 flex-1 space-y-1">
+                  <p className="line-clamp-2 text-[14px] leading-relaxed text-foreground/80 transition-colors duration-300 group-hover:text-foreground">
+                    {item.responsePreview}
+                  </p>
+                  <p className="text-[11px] text-muted-foreground/50 transition-colors duration-300 group-hover:text-muted-foreground/70">
+                    {formatRelativeTime(item.receivedAt)}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => acceptPending(item.id)}
+                  className="soft-interactive mt-0.5 shrink-0 rounded-md border border-border px-2.5 py-1.5 text-[11px] font-medium text-foreground hover:border-white/10 hover:bg-muted/40"
+                >
+                  Accept
+                </button>
+              </div>
+            </Fragment>
           ))}
 
           {conversations.map((conv, index) => {
             const lastMsg = conv.messages[conv.messages.length - 1];
             const rowIndex = pending.length + index;
             const unread = isConversationUnread(conv.id);
+            const showSeparator = pending.length > 0 || index > 0;
 
             return (
-              <button
-                key={conv.id}
-                type="button"
-                onClick={() => openConversation(conv.id)}
-                className={cn(
-                  "fade-in-up soft-interactive flex w-full items-start gap-3 px-4 py-4 text-left hover:bg-muted/20",
-                  unread && "bg-muted/10"
-                )}
-                style={staggerStyle(rowIndex)}
-              >
-                <Avatar initial={conv.partnerInitial} showDot={unread} />
-                <div className="min-w-0 flex-1 space-y-1">
-                  <p
-                    className={cn(
-                      "line-clamp-2 text-[14px] leading-relaxed",
-                      unread ? "text-foreground" : "text-foreground/75"
-                    )}
-                  >
-                    {lastMsg?.content}
-                  </p>
-                  <p className="text-[11px] text-muted-foreground/50">
-                    {formatRelativeTime(conv.lastMessageAt)}
-                  </p>
-                </div>
-              </button>
+              <Fragment key={conv.id}>
+                {showSeparator && <VioletSeparator />}
+                <button
+                  type="button"
+                  onClick={() => openConversation(conv.id)}
+                  className={cn(
+                    "fade-in-up w-full text-left",
+                    inboxRowClass,
+                    unread && "bg-muted/10 hover:bg-muted/30"
+                  )}
+                  style={staggerStyle(rowIndex)}
+                >
+                  <Avatar initial={conv.partnerInitial} showDot={unread} />
+                  <div className="min-w-0 flex-1 space-y-1">
+                    <p
+                      className={cn(
+                        "line-clamp-2 text-[14px] leading-relaxed transition-colors duration-300 group-hover:text-foreground",
+                        unread ? "text-foreground" : "text-foreground/75"
+                      )}
+                    >
+                      {lastMsg?.content}
+                    </p>
+                    <p className="text-[11px] text-muted-foreground/50 transition-colors duration-300 group-hover:text-muted-foreground/70">
+                      {formatRelativeTime(conv.lastMessageAt)}
+                    </p>
+                  </div>
+                </button>
+              </Fragment>
             );
           })}
         </div>

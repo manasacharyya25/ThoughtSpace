@@ -61,7 +61,7 @@ const conversationSelect = `
   messages ( id, conversation_id, sender_id, content, created_at )
 `;
 
-async function getConversationById(
+export async function getConversationById(
   supabase: SupabaseClient,
   conversationId: string,
   userId: string

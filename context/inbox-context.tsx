@@ -16,6 +16,8 @@ import {
   sendMessage as sendMessageToDb,
 } from "@/lib/supabase/conversations";
 import { acceptResponse, listPendingForAuthor } from "@/lib/supabase/responses";
+import { useRealtimeInbox } from "@/hooks/use-realtime-inbox";
+import { useUser } from "@/hooks/use-user";
 import type {
   ActiveConversation,
   PendingResponse,
@@ -44,6 +46,7 @@ interface InboxContextValue {
 const InboxContext = createContext<InboxContextValue | null>(null);
 
 export function InboxProvider({ children }: { children: ReactNode }) {
+  const { user } = useUser();
   const [pending, setPending] = useState<PendingResponse[]>([]);
   const [pendingLoading, setPendingLoading] = useState(true);
   const [pendingError, setPendingError] = useState<string | null>(null);
@@ -156,6 +159,16 @@ export function InboxProvider({ children }: { children: ReactNode }) {
       cancelled = true;
     };
   }, []);
+
+  useRealtimeInbox({
+    userId: user?.id,
+    activeId,
+    setConversations,
+    setPending,
+    setReadAt,
+    refreshPending,
+    refreshConversations,
+  });
 
   const markRead = useCallback(
     (conversationId: string, at?: string) => {

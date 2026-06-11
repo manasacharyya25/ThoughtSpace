@@ -24,10 +24,9 @@ export function BottomNav() {
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-50 flex justify-center px-4 pb-5 pt-2"
+      className="fixed bottom-5 left-1/2 z-50 flex -translate-x-1/2 items-center gap-1 rounded-full border border-white/[0.04] bg-surface/90 px-2 py-2 shadow-2xl shadow-black/40 backdrop-blur-xl"
       aria-label="Main navigation"
     >
-      <div className="flex items-center gap-1 rounded-full border border-white/[0.04] bg-surface/90 px-2 py-2 shadow-2xl shadow-black/40 backdrop-blur-xl">
         {navItems.map((item) => {
           const isActive =
             pathname === item.href ||
@@ -62,7 +61,6 @@ export function BottomNav() {
             </Link>
           );
         })}
-      </div>
     </nav>
   );
 }

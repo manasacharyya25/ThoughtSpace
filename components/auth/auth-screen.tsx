@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/client";
 import { FadeIn } from "@/components/ui/fade-in";
 import { Input } from "@/components/ui/input";
 import { env } from "@/lib/env";
@@ -28,32 +30,54 @@ function isValidPhone(value: string): boolean {
 }
 
 export function AuthScreen() {
+  const searchParams = useSearchParams();
   const [mode, setMode] = useState<AuthMode>("login");
   const [phoneStep, setPhoneStep] = useState<PhoneStep>("number");
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
+  const [authError, setAuthError] = useState<string>();
   const [error, setError] = useState<string>();
   const [isLoading, setIsLoading] = useState(false);
 
   const copy = authCopy[mode];
 
+  useEffect(() => {
+    if (searchParams.get("error") === "auth") {
+      setAuthError("Sign in failed. Please try again.");
+    }
+  }, [searchParams]);
+
   const resetPhoneFlow = () => {
     setPhoneStep("number");
     setOtp("");
     setError(undefined);
+    setAuthError(undefined);
   };
 
   const handleModeChange = (nextMode: AuthMode) => {
     setMode(nextMode);
     resetPhoneFlow();
     setError(undefined);
+    setAuthError(undefined);
   };
 
   const handleGoogle = async () => {
     setIsLoading(true);
-    setError(undefined);
-    // TODO: supabase.auth.signInWithOAuth({ provider: "google", ... })
-    setIsLoading(false);
+    setAuthError(undefined);
+
+    const supabase = createClient();
+    const next = mode === "register" ? "/onboarding" : "/feed";
+    const redirectTo = `${window.location.origin}/auth/callback?next=${next}`;
+
+    const { error: authError } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo },
+    });
+
+    if (authError) {
+      setAuthError(authError.message);
+      setIsLoading(false);
+    }
   };
 
   const handleSendCode = () => {
@@ -96,17 +120,22 @@ export function AuthScreen() {
           </div>
 
           <div className="mt-8 space-y-4">
-            <Button
-              type="button"
-              variant="outline"
-              size="lg"
-              className="w-full"
-              onClick={handleGoogle}
-              disabled={isLoading}
-            >
-              <GoogleIcon className="h-4 w-4" />
-              Continue with Google
-            </Button>
+            <div className="space-y-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="lg"
+                className="w-full"
+                onClick={handleGoogle}
+                disabled={isLoading}
+              >
+                <GoogleIcon className="h-4 w-4" />
+                {isLoading ? "Redirecting…" : "Continue with Google"}
+              </Button>
+              {authError && (
+                <p className="text-center text-xs text-red-400">{authError}</p>
+              )}
+            </div>
 
             <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
               <div className="h-px flex-1 bg-border" />

@@ -26,6 +26,8 @@ export function CreatePostScreen() {
   );
   const [submitted, setSubmitted] = useState(false);
   const [showPosted, setShowPosted] = useState(false);
+  const [isPosting, setIsPosting] = useState(false);
+  const [postError, setPostError] = useState<string>();
 
   const charCount = content.length;
   const isNearLimit = charCount > POST_MAX_LENGTH * 0.9;
@@ -45,14 +47,24 @@ export function CreatePostScreen() {
     }
   };
 
-  const handlePost = () => {
+  const handlePost = async () => {
     setSubmitted(true);
+    setPostError(undefined);
     const validationErrors = validatePostForm(content, category);
     setErrors(validationErrors);
     if (Object.keys(validationErrors).length > 0) return;
 
-    addPost(content, category);
-    setShowPosted(true);
+    setIsPosting(true);
+    try {
+      await addPost(content, category);
+      setShowPosted(true);
+    } catch (err) {
+      setPostError(
+        err instanceof Error ? err.message : "Could not post. Try again."
+      );
+    } finally {
+      setIsPosting(false);
+    }
   };
 
   useEffect(() => {
@@ -127,12 +139,15 @@ export function CreatePostScreen() {
               variant="ghost"
               size="sm"
               onClick={handlePost}
-              disabled={isOverLimit || showPosted}
+              disabled={isOverLimit || showPosted || isPosting}
               className="text-muted-foreground hover:text-foreground"
             >
-              Post →
+              {isPosting ? "Posting…" : "Post →"}
             </Button>
           </div>
+          {postError && (
+            <p className="mt-2 text-xs text-red-400">{postError}</p>
+          )}
         </article>
       </FadeIn>
 

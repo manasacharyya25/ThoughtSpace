@@ -4,43 +4,108 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
 } from "react";
-import { posts as initialPosts } from "@/data/posts";
-import { getUniqueCategories, normalizeCategory } from "@/lib/category";
+import { getUniqueCategories } from "@/lib/category";
+import { createClient } from "@/lib/supabase/client";
+import { createPost, listPosts } from "@/lib/supabase/posts";
 import type { Post, PostCategory } from "@/types/post";
 
 interface PostsContextValue {
   posts: Post[];
   categories: string[];
-  addPost: (content: string, category: PostCategory) => void;
+  loading: boolean;
+  error: string | null;
+  addPost: (content: string, category: PostCategory) => Promise<void>;
+  refreshPosts: () => Promise<void>;
 }
 
 const PostsContext = createContext<PostsContextValue | null>(null);
 
 export function PostsProvider({ children }: { children: ReactNode }) {
-  const [posts, setPosts] = useState<Post[]>(initialPosts);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const refreshPosts = useCallback(async () => {
+    const supabase = createClient();
+    const { data, error: fetchError } = await listPosts(supabase);
+
+    if (fetchError) {
+      setError(fetchError.message);
+      return;
+    }
+
+    setPosts(data);
+    setError(null);
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const load = async () => {
+      setLoading(true);
+      const supabase = createClient();
+      const { data, error: fetchError } = await listPosts(supabase);
+
+      if (cancelled) return;
+
+      if (fetchError) {
+        setError(fetchError.message);
+        setPosts([]);
+      } else {
+        setPosts(data);
+        setError(null);
+      }
+      setLoading(false);
+    };
+
+    load();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const categories = useMemo(
     () => getUniqueCategories(posts.map((p) => p.category)),
     [posts]
   );
 
-  const addPost = useCallback((content: string, category: PostCategory) => {
-    const newPost: Post = {
-      id: `post-${Date.now()}`,
-      content: content.trim(),
-      category: normalizeCategory(category),
-      timestamp: new Date().toISOString(),
-    };
-    setPosts((prev) => [newPost, ...prev]);
-  }, []);
+  const addPost = useCallback(
+    async (content: string, category: PostCategory) => {
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        throw new Error("You must be signed in to post.");
+      }
+
+      const { data, error: insertError } = await createPost(
+        supabase,
+        user.id,
+        content,
+        category
+      );
+
+      if (insertError || !data) {
+        throw insertError ?? new Error("Could not create post.");
+      }
+
+      setPosts((prev) => [data, ...prev]);
+      setError(null);
+    },
+    []
+  );
 
   const value = useMemo(
-    () => ({ posts, categories, addPost }),
-    [posts, categories, addPost]
+    () => ({ posts, categories, loading, error, addPost, refreshPosts }),
+    [posts, categories, loading, error, addPost, refreshPosts]
   );
 
   return (

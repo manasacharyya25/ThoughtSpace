@@ -5,6 +5,11 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { onboardingStepMeta } from "@/data/onboarding-options";
 import { validateOnboardingStep } from "@/lib/onboarding-validation";
+import { createClient } from "@/lib/supabase/client";
+import {
+  createProfileFromOnboarding,
+  isUsernameTakenError,
+} from "@/lib/supabase/profiles";
 import { FadeIn } from "@/components/ui/fade-in";
 import type {
   OnboardingProfile,
@@ -36,6 +41,7 @@ export function OnboardingFlow() {
   const [profile, setProfile] = useState<OnboardingProfile>(initialProfile);
   const [error, setError] = useState<string>();
   const [isComplete, setIsComplete] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const currentStep = STEPS[stepIndex];
   const meta = onboardingStepMeta[stepIndex];
@@ -45,7 +51,43 @@ export function OnboardingFlow() {
     if (error) setError(undefined);
   };
 
-  const goNext = () => {
+  const finishOnboarding = async () => {
+    setIsSaving(true);
+    setError(undefined);
+
+    const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      router.push("/login?next=/onboarding");
+      return;
+    }
+
+    const { error: saveError } = await createProfileFromOnboarding(
+      supabase,
+      user.id,
+      profile
+    );
+
+    if (saveError) {
+      setIsSaving(false);
+      if (isUsernameTakenError(saveError)) {
+        setStepIndex(0);
+        setError("That username is already taken. Choose another.");
+        return;
+      }
+      setError(saveError.message || "Could not save your profile. Try again.");
+      return;
+    }
+
+    setIsComplete(true);
+    setIsSaving(false);
+    setTimeout(() => router.push("/feed"), 2200);
+  };
+
+  const goNext = async () => {
     const validationError = validateOnboardingStep(currentStep, profile);
     if (validationError) {
       setError(validationError);
@@ -55,10 +97,10 @@ export function OnboardingFlow() {
     if (stepIndex < STEPS.length - 1) {
       setStepIndex((i) => i + 1);
       setError(undefined);
-    } else {
-      setIsComplete(true);
-      setTimeout(() => router.push("/feed"), 2200);
+      return;
     }
+
+    await finishOnboarding();
   };
 
   const goBack = () => {
@@ -128,6 +170,7 @@ export function OnboardingFlow() {
             variant="outline"
             className="flex-1"
             onClick={goBack}
+            disabled={isSaving}
           >
             Back
           </Button>
@@ -136,8 +179,13 @@ export function OnboardingFlow() {
           type="button"
           className="flex-1"
           onClick={goNext}
+          disabled={isSaving}
         >
-          {stepIndex === STEPS.length - 1 ? "Finish" : "Continue"}
+          {isSaving
+            ? "Saving…"
+            : stepIndex === STEPS.length - 1
+              ? "Finish"
+              : "Continue"}
         </Button>
       </FadeIn>
     </div>

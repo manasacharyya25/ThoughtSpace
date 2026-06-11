@@ -48,7 +48,7 @@ export interface ApiResponse<T> {
   error?: string;
 }
 
-export type { Post, PostCategory } from "./post";
+export type { Post, PostCategory, PostRow } from "./post";
 export type { PrivateResponse } from "./response";
 export type {
   ActiveConversation,
@@ -56,3 +56,4 @@ export type {
   PendingResponse,
 } from "./inbox";
 export type { OnboardingProfile, OnboardingStepId } from "./onboarding-profile";
+export type { Profile, ProfileRow } from "./profile";

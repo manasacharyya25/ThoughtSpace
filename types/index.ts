@@ -49,11 +49,16 @@ export interface ApiResponse<T> {
 }
 
 export type { Post, PostCategory, PostRow } from "./post";
-export type { PrivateResponse } from "./response";
+export type {
+  PrivateResponse,
+  ResponseRow,
+  ResponseStatus,
+} from "./response";
 export type {
   ActiveConversation,
   InboxMessage,
   PendingResponse,
 } from "./inbox";
+export type { ConversationRow, MessageRow } from "./conversation";
 export type { OnboardingProfile, OnboardingStepId } from "./onboarding-profile";
 export type { Profile, ProfileRow } from "./profile";

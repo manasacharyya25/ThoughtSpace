@@ -11,4 +11,3 @@ export {
   onboardingStepMeta,
 } from "./onboarding-options";
 export { howItWorksSteps, sampleConversations } from "./landing";
-export { activeConversations, pendingResponses } from "./inbox";

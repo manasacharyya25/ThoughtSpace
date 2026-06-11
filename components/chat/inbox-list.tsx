@@ -38,13 +38,20 @@ function Avatar({ initial, showDot }: { initial: string; showDot?: boolean }) {
 export function InboxList() {
   const {
     pending,
+    pendingLoading,
+    pendingError,
     conversations,
+    conversationsLoading,
+    conversationsError,
     openConversation,
     acceptPending,
     isConversationUnread,
   } = useInbox();
 
-  const isEmpty = pending.length === 0 && conversations.length === 0;
+  const isLoading = pendingLoading || conversationsLoading;
+  const loadError = pendingError ?? conversationsError;
+  const isEmpty =
+    !isLoading && pending.length === 0 && conversations.length === 0;
 
   return (
     <div className="mx-auto w-full max-w-2xl">
@@ -59,7 +66,11 @@ export function InboxList() {
         />
       </FadeIn>
 
-      {isEmpty ? (
+      {isLoading ? (
+        <p className="text-sm text-muted-foreground">Loading inbox…</p>
+      ) : loadError ? (
+        <p className="text-sm text-red-400">{loadError}</p>
+      ) : isEmpty ? (
         <FadeIn index={1}>
           <p className="py-12 text-center text-sm text-muted-foreground/60">
             No messages yet. Respond to a thought on your feed to start a

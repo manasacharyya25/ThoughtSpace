@@ -17,6 +17,10 @@ export function sortFeedForUser(
       return aTreatedAsDone ? 1 : -1;
     }
 
+    if (a.response_count !== b.response_count) {
+      return a.response_count - b.response_count;
+    }
+
     return (
       new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
     );

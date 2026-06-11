@@ -21,6 +21,7 @@ interface PostsContextValue {
   error: string | null;
   addPost: (content: string, category: PostCategory) => Promise<void>;
   refreshPosts: () => Promise<void>;
+  bumpResponseCount: (postId: string) => void;
 }
 
 const PostsContext = createContext<PostsContextValue | null>(null);
@@ -75,6 +76,16 @@ export function PostsProvider({ children }: { children: ReactNode }) {
     [posts]
   );
 
+  const bumpResponseCount = useCallback((postId: string) => {
+    setPosts((prev) =>
+      prev.map((post) =>
+        post.id === postId
+          ? { ...post, response_count: post.response_count + 1 }
+          : post
+      )
+    );
+  }, []);
+
   const addPost = useCallback(
     async (content: string, category: PostCategory) => {
       const supabase = createClient();
@@ -104,8 +115,16 @@ export function PostsProvider({ children }: { children: ReactNode }) {
   );
 
   const value = useMemo(
-    () => ({ posts, categories, loading, error, addPost, refreshPosts }),
-    [posts, categories, loading, error, addPost, refreshPosts]
+    () => ({
+      posts,
+      categories,
+      loading,
+      error,
+      addPost,
+      refreshPosts,
+      bumpResponseCount,
+    }),
+    [posts, categories, loading, error, addPost, refreshPosts, bumpResponseCount]
   );
 
   return (

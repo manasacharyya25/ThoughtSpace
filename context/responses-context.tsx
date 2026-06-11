@@ -4,15 +4,21 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
 } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { createResponse, listMyResponses } from "@/lib/supabase/responses";
+import { mapPrivateResponse } from "@/lib/response-mapper";
 import type { Post } from "@/types/post";
 import type { PrivateResponse } from "@/types/response";
+import { usePosts } from "@/context/posts-context";
 
 interface ResponsesContextValue {
   responses: PrivateResponse[];
+  loading: boolean;
   activePost: Post | null;
   isModalOpen: boolean;
   openResponseModal: (post: Post) => void;
@@ -24,9 +30,46 @@ interface ResponsesContextValue {
 const ResponsesContext = createContext<ResponsesContextValue | null>(null);
 
 export function ResponsesProvider({ children }: { children: ReactNode }) {
+  const { bumpResponseCount } = usePosts();
   const [responses, setResponses] = useState<PrivateResponse[]>([]);
+  const [loading, setLoading] = useState(true);
   const [activePost, setActivePost] = useState<Post | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const load = async () => {
+      setLoading(true);
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        if (!cancelled) {
+          setResponses([]);
+          setLoading(false);
+        }
+        return;
+      }
+
+      const { data, error } = await listMyResponses(supabase, user.id);
+
+      if (cancelled) return;
+
+      if (!error) {
+        setResponses(data);
+      }
+      setLoading(false);
+    };
+
+    load();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const openResponseModal = useCallback((post: Post) => {
     setActivePost(post);
@@ -42,19 +85,31 @@ export function ResponsesProvider({ children }: { children: ReactNode }) {
     async (content: string) => {
       if (!activePost) return;
 
-      await new Promise((resolve) => setTimeout(resolve, 1200));
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
-      const response: PrivateResponse = {
-        id: `response-${Date.now()}`,
-        postId: activePost.id,
-        postContent: activePost.content,
-        content: content.trim(),
-        createdAt: new Date().toISOString(),
-      };
+      if (!user) {
+        throw new Error("You must be signed in to respond.");
+      }
 
+      const { data, error } = await createResponse(
+        supabase,
+        activePost.id,
+        user.id,
+        content
+      );
+
+      if (error || !data) {
+        throw error ?? new Error("Could not send response.");
+      }
+
+      const response = mapPrivateResponse(data, activePost.content);
       setResponses((prev) => [response, ...prev]);
+      bumpResponseCount(activePost.id);
     },
-    [activePost]
+    [activePost, bumpResponseCount]
   );
 
   const hasResponded = useCallback(
@@ -65,6 +120,7 @@ export function ResponsesProvider({ children }: { children: ReactNode }) {
   const value = useMemo(
     () => ({
       responses,
+      loading,
       activePost,
       isModalOpen,
       openResponseModal,
@@ -74,6 +130,7 @@ export function ResponsesProvider({ children }: { children: ReactNode }) {
     }),
     [
       responses,
+      loading,
       activePost,
       isModalOpen,
       openResponseModal,

@@ -8,6 +8,7 @@ export function mapPostRow(row: PostRow): Post {
     content: row.content,
     category: row.category,
     timestamp: row.created_at,
+    response_count: row.response_count ?? 0,
   };
 }
 

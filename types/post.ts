@@ -6,6 +6,7 @@ export interface PostRow {
   content: string;
   category: string;
   created_at: string;
+  response_count: number;
 }
 
 export interface Post {
@@ -14,4 +15,5 @@ export interface Post {
   content: string;
   category: PostCategory;
   timestamp: string;
+  response_count: number;
 }

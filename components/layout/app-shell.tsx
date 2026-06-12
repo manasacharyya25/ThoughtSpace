@@ -1,6 +1,8 @@
 "use client";
 
 import { useInbox } from "@/context/inbox-context";
+import { useBodyScrollLock } from "@/hooks/use-body-scroll-lock";
+import { useVisualViewportHeight } from "@/hooks/use-visual-viewport-height";
 import { BottomNav } from "./bottom-nav";
 import { Container } from "./container";
 import { LogoutButton } from "./logout-button";
@@ -11,10 +13,16 @@ interface AppShellProps {
 
 export function AppShell({ children }: AppShellProps) {
   const { isChatOpen } = useInbox();
+  const viewportHeight = useVisualViewportHeight();
+
+  useBodyScrollLock(isChatOpen);
 
   if (isChatOpen) {
     return (
-      <div className="relative flex h-[100dvh] flex-col overflow-hidden">
+      <div
+        className="fixed inset-x-0 top-0 z-40 flex flex-col overflow-hidden bg-background"
+        style={{ height: viewportHeight ?? "100dvh" }}
+      >
         <div className="app-shell-ambient" aria-hidden="true">
           <div className="app-shell-ambient-glow app-shell-ambient-glow-violet" />
           <div className="app-shell-ambient-glow app-shell-ambient-glow-rose" />

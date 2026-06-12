@@ -1,7 +1,7 @@
 "use client";
 
-import { ChatLayout } from "@/components/chat";
+import { InboxList } from "@/components/chat/inbox-list";
 
 export function InboxPage() {
-  return <ChatLayout />;
+  return <InboxList />;
 }

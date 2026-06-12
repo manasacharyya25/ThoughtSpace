@@ -1,8 +1,9 @@
 "use client";
 
-import { useInbox } from "@/context/inbox-context";
+import { usePathname } from "next/navigation";
 import { useBodyScrollLock } from "@/hooks/use-body-scroll-lock";
 import { useVisualViewportHeight } from "@/hooks/use-visual-viewport-height";
+import { isInboxChatRoute } from "@/lib/inbox-routes";
 import { BottomNav } from "./bottom-nav";
 import { Container } from "./container";
 import { LogoutButton } from "./logout-button";
@@ -12,12 +13,13 @@ interface AppShellProps {
 }
 
 export function AppShell({ children }: AppShellProps) {
-  const { isChatOpen } = useInbox();
+  const pathname = usePathname();
+  const isInboxChat = isInboxChatRoute(pathname);
   const viewportHeight = useVisualViewportHeight();
 
-  useBodyScrollLock(isChatOpen);
+  useBodyScrollLock(isInboxChat);
 
-  if (isChatOpen) {
+  if (isInboxChat) {
     return (
       <div
         className="fixed inset-x-0 top-0 z-40 flex flex-col overflow-hidden bg-background"

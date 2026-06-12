@@ -9,12 +9,17 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import {
   createConversationFromResponse,
   listConversations,
   sendMessage as sendMessageToDb,
 } from "@/lib/supabase/conversations";
+import {
+  getInboxConversationId,
+  inboxConversationPath,
+} from "@/lib/inbox-routes";
 import { acceptResponse, listPendingForAuthor } from "@/lib/supabase/responses";
 import { useRealtimeInbox } from "@/hooks/use-realtime-inbox";
 import { useUser } from "@/hooks/use-user";
@@ -30,15 +35,13 @@ interface InboxContextValue {
   conversations: ActiveConversation[];
   conversationsLoading: boolean;
   conversationsError: string | null;
-  activeId: string | null;
+  activeConversationId: string | null;
   openConversation: (id: string) => void;
-  closeConversation: () => void;
+  markConversationRead: (id: string) => void;
   acceptPending: (pendingId: string) => Promise<void>;
   sendMessage: (conversationId: string, content: string) => Promise<void>;
-  activeConversation: ActiveConversation | null;
   isConversationUnread: (id: string) => boolean;
   hasUnread: boolean;
-  isChatOpen: boolean;
   refreshPending: () => Promise<void>;
   refreshConversations: () => Promise<void>;
 }
@@ -46,6 +49,8 @@ interface InboxContextValue {
 const InboxContext = createContext<InboxContextValue | null>(null);
 
 export function InboxProvider({ children }: { children: ReactNode }) {
+  const router = useRouter();
+  const pathname = usePathname();
   const { user } = useUser();
   const [pending, setPending] = useState<PendingResponse[]>([]);
   const [pendingLoading, setPendingLoading] = useState(true);
@@ -55,22 +60,26 @@ export function InboxProvider({ children }: { children: ReactNode }) {
   const [conversationsError, setConversationsError] = useState<string | null>(
     null
   );
-  const [activeId, setActiveId] = useState<string | null>(null);
   const [readAt, setReadAt] = useState<Record<string, string>>({});
+
+  const activeConversationId = useMemo(
+    () => getInboxConversationId(pathname),
+    [pathname]
+  );
 
   const refreshPending = useCallback(async () => {
     const supabase = createClient();
     const {
-      data: { user },
+      data: { user: authUser },
     } = await supabase.auth.getUser();
 
-    if (!user) {
+    if (!authUser) {
       setPending([]);
       setPendingError(null);
       return;
     }
 
-    const { data, error } = await listPendingForAuthor(supabase, user.id);
+    const { data, error } = await listPendingForAuthor(supabase, authUser.id);
 
     if (error) {
       setPendingError(error.message);
@@ -84,16 +93,16 @@ export function InboxProvider({ children }: { children: ReactNode }) {
   const refreshConversations = useCallback(async () => {
     const supabase = createClient();
     const {
-      data: { user },
+      data: { user: authUser },
     } = await supabase.auth.getUser();
 
-    if (!user) {
+    if (!authUser) {
       setConversations([]);
       setConversationsError(null);
       return;
     }
 
-    const { data, error } = await listConversations(supabase, user.id);
+    const { data, error } = await listConversations(supabase, authUser.id);
 
     if (error) {
       setConversationsError(error.message);
@@ -113,10 +122,10 @@ export function InboxProvider({ children }: { children: ReactNode }) {
 
       const supabase = createClient();
       const {
-        data: { user },
+        data: { user: authUser },
       } = await supabase.auth.getUser();
 
-      if (!user) {
+      if (!authUser) {
         if (!cancelled) {
           setPending([]);
           setConversations([]);
@@ -127,8 +136,8 @@ export function InboxProvider({ children }: { children: ReactNode }) {
       }
 
       const [pendingResult, conversationsResult] = await Promise.all([
-        listPendingForAuthor(supabase, user.id),
-        listConversations(supabase, user.id),
+        listPendingForAuthor(supabase, authUser.id),
+        listConversations(supabase, authUser.id),
       ]);
 
       if (cancelled) return;
@@ -162,7 +171,7 @@ export function InboxProvider({ children }: { children: ReactNode }) {
 
   useRealtimeInbox({
     userId: user?.id,
-    activeId,
+    activeId: activeConversationId,
     setConversations,
     setPending,
     setReadAt,
@@ -170,7 +179,7 @@ export function InboxProvider({ children }: { children: ReactNode }) {
     refreshConversations,
   });
 
-  const markRead = useCallback(
+  const markConversationRead = useCallback(
     (conversationId: string, at?: string) => {
       const conv = conversations.find((c) => c.id === conversationId);
       const timestamp = at ?? conv?.lastMessageAt ?? new Date().toISOString();
@@ -181,24 +190,20 @@ export function InboxProvider({ children }: { children: ReactNode }) {
 
   const openConversation = useCallback(
     (id: string) => {
-      setActiveId(id);
-      markRead(id);
+      markConversationRead(id);
+      router.push(inboxConversationPath(id));
     },
-    [markRead]
+    [markConversationRead, router]
   );
-
-  const closeConversation = useCallback(() => {
-    setActiveId(null);
-  }, []);
 
   const acceptPending = useCallback(
     async (pendingId: string) => {
       const supabase = createClient();
       const {
-        data: { user },
+        data: { user: authUser },
       } = await supabase.auth.getUser();
 
-      if (!user) return;
+      if (!authUser) return;
 
       const { error: acceptError } = await acceptResponse(supabase, pendingId);
 
@@ -208,7 +213,7 @@ export function InboxProvider({ children }: { children: ReactNode }) {
       }
 
       const { data: conversation, error: conversationError } =
-        await createConversationFromResponse(supabase, pendingId, user.id);
+        await createConversationFromResponse(supabase, pendingId, authUser.id);
 
       if (conversationError || !conversation) {
         setPendingError(
@@ -222,15 +227,12 @@ export function InboxProvider({ children }: { children: ReactNode }) {
         conversation,
         ...prev.filter((c) => c.id !== conversation.id),
       ]);
-      setActiveId(conversation.id);
-      setReadAt((prev) => ({
-        ...prev,
-        [conversation.id]: conversation.lastMessageAt,
-      }));
+      markConversationRead(conversation.id);
       setPendingError(null);
       setConversationsError(null);
+      router.push(inboxConversationPath(conversation.id));
     },
-    []
+    [markConversationRead, router]
   );
 
   const sendMessage = useCallback(
@@ -240,15 +242,15 @@ export function InboxProvider({ children }: { children: ReactNode }) {
 
       const supabase = createClient();
       const {
-        data: { user },
+        data: { user: authUser },
       } = await supabase.auth.getUser();
 
-      if (!user) return;
+      if (!authUser) return;
 
       const { data: message, error } = await sendMessageToDb(
         supabase,
         conversationId,
-        user.id,
+        authUser.id,
         trimmed
       );
 
@@ -269,7 +271,7 @@ export function InboxProvider({ children }: { children: ReactNode }) {
         )
       );
 
-      if (activeId === conversationId) {
+      if (activeConversationId === conversationId) {
         setReadAt((prev) => ({
           ...prev,
           [conversationId]: message.createdAt,
@@ -277,7 +279,7 @@ export function InboxProvider({ children }: { children: ReactNode }) {
       }
       setConversationsError(null);
     },
-    [activeId]
+    [activeConversationId]
   );
 
   const isConversationUnread = useCallback(
@@ -298,11 +300,6 @@ export function InboxProvider({ children }: { children: ReactNode }) {
     [pending.length, conversations, isConversationUnread]
   );
 
-  const activeConversation = useMemo(
-    () => conversations.find((c) => c.id === activeId) ?? null,
-    [conversations, activeId]
-  );
-
   const value = useMemo(
     () => ({
       pending,
@@ -311,15 +308,13 @@ export function InboxProvider({ children }: { children: ReactNode }) {
       conversations,
       conversationsLoading,
       conversationsError,
-      activeId,
+      activeConversationId,
       openConversation,
-      closeConversation,
+      markConversationRead,
       acceptPending,
       sendMessage,
-      activeConversation,
       isConversationUnread,
       hasUnread,
-      isChatOpen: activeId !== null,
       refreshPending,
       refreshConversations,
     }),
@@ -330,12 +325,11 @@ export function InboxProvider({ children }: { children: ReactNode }) {
       conversations,
       conversationsLoading,
       conversationsError,
-      activeId,
+      activeConversationId,
       openConversation,
-      closeConversation,
+      markConversationRead,
       acceptPending,
       sendMessage,
-      activeConversation,
       isConversationUnread,
       hasUnread,
       refreshPending,

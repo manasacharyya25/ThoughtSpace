@@ -30,7 +30,7 @@ export function BottomNav() {
         {navItems.map((item) => {
           const isActive =
             pathname === item.href ||
-            (item.href === "/inbox" && pathname === "/chat");
+            (item.href === "/inbox" && pathname.startsWith("/inbox/"));
           const Icon = item.icon;
           const showDot =
             "showUnread" in item && item.showUnread && hasUnread && !isActive;

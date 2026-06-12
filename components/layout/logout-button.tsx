@@ -42,9 +42,9 @@ export function LogoutButton({ className }: LogoutButtonProps) {
       title="Log out"
       className={cn(
         "fixed z-50 hidden h-11 w-11 items-center justify-center rounded-full md:flex",
-        "border border-white/[0.04] bg-surface/90 text-muted-foreground shadow-2xl shadow-black/40 backdrop-blur-xl",
+        "border border-transparent bg-accent text-accent-foreground shadow-2xl shadow-black/40",
         "soft-interactive transition-[background-color,border-color,color] duration-300 ease",
-        "hover:border-white/10 hover:bg-muted/50 hover:text-foreground",
+        "hover:bg-accent/90 hover:text-accent-foreground",
         "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/10",
         "disabled:pointer-events-none disabled:opacity-50",
         className

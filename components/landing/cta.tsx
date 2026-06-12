@@ -58,7 +58,7 @@ export function CTA() {
 
         <div className="relative z-10">
           <h2 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">
-            Ready to be known for your mind?
+            Ready to be share what&apos;s on your mind?
           </h2>
           <p className="mx-auto mt-4 max-w-md text-balance text-sm text-muted-foreground md:mt-6 md:text-base">
             Join a space kept intentionally small and protected to preserve

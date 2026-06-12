@@ -11,6 +11,6 @@ export const env = {
     "NEXT_PUBLIC_APP_URL",
     "http://localhost:3000"
   ),
-  NEXT_PUBLIC_APP_NAME: getEnv("NEXT_PUBLIC_APP_NAME", "Spaces"),
+  NEXT_PUBLIC_APP_NAME: getEnv("NEXT_PUBLIC_APP_NAME", "ThoughtSpace"),
   API_SECRET_KEY: process.env.API_SECRET_KEY,
 } as const;

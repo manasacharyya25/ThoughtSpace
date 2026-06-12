@@ -22,7 +22,7 @@ function UnreadDot({ className }: { className?: string }) {
 }
 
 const inboxRowClass =
-  "soft-interactive group flex items-start gap-3 px-4 py-4 transition-[background-color] duration-300 ease hover:bg-muted/25";
+  "soft-interactive group flex items-start gap-3 px-4 py-4 transition-[background-color] duration-300 ease hover:bg-white/[0.04]";
 
 function Avatar({ initial, showDot }: { initial: string; showDot?: boolean }) {
   return (
@@ -98,7 +98,7 @@ export function InboxList() {
                 <button
                   type="button"
                   onClick={() => acceptPending(item.id)}
-                  className="soft-interactive mt-0.5 shrink-0 rounded-md border border-border px-2.5 py-1.5 text-[11px] font-medium text-foreground hover:border-white/10 hover:bg-muted/40"
+                  className="soft-interactive mt-0.5 shrink-0 rounded-md border border-border px-2.5 py-1.5 text-[11px] font-medium text-foreground hover:border-white/10 hover:bg-white/[0.04]"
                 >
                   Accept
                 </button>
@@ -121,7 +121,7 @@ export function InboxList() {
                   className={cn(
                     "fade-in-up w-full text-left",
                     inboxRowClass,
-                    unread && "bg-muted/10 hover:bg-muted/30"
+                    unread && "bg-muted/10 hover:bg-white/[0.04]"
                   )}
                   style={staggerStyle(rowIndex)}
                 >

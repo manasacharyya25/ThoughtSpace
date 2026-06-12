@@ -22,9 +22,6 @@ export function HowItWorks() {
               key={item.step}
               className="group relative rounded-2xl border border-border/60 bg-surface/50 p-8 transition-colors hover:border-border hover:bg-surface"
             >
-              <span className="font-mono text-xs text-muted-foreground">
-                {item.step}
-              </span>
               <h3 className="mt-4 text-xl font-medium tracking-tight">
                 {item.title}
               </h3>

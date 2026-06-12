@@ -15,7 +15,7 @@ export function ChatWindow({ onBack }: ChatWindowProps) {
   if (!activeConversation) return null;
 
   return (
-    <div className="flex h-full flex-1 flex-col">
+    <div className="flex h-full min-h-0 flex-1 flex-col">
       <ChatHeader conversation={activeConversation} onBack={onBack} />
       <ChatMessages conversation={activeConversation} />
       <ChatComposer

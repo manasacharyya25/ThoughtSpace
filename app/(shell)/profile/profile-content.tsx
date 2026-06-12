@@ -9,6 +9,7 @@ import { useLogout } from "@/hooks/use-logout";
 import { useProfile } from "@/hooks/use-profile";
 import { useUser } from "@/hooks/use-user";
 import { getProfileGenderLabel } from "@/lib/profile-mapper";
+import { cn } from "@/lib/utils";
 
 function formatDate(date: string) {
   return new Intl.DateTimeFormat("en", {
@@ -144,7 +145,11 @@ export function ProfileContent() {
         <Button
           type="button"
           variant="outline"
-          className="mt-6 w-full md:hidden"
+          className={cn(
+            "mt-6 w-full md:hidden",
+            "border-red-600 bg-red-600 text-white",
+            "hover:border-red-700 hover:bg-red-700 hover:text-white"
+          )}
           onClick={logout}
           disabled={signingOut}
         >

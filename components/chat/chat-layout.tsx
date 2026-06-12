@@ -9,7 +9,7 @@ export function ChatLayout() {
 
   if (activeId) {
     return (
-      <div className="mx-auto flex h-[100svh] max-w-2xl flex-col overflow-hidden bg-background">
+      <div className="mx-auto flex h-full min-h-0 w-full max-w-2xl flex-col overflow-hidden bg-background">
         <ChatWindow onBack={closeConversation} />
       </div>
     );

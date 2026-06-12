@@ -19,7 +19,7 @@ export function ChatComposer({ onSend, disabled }: ChatComposerProps) {
   };
 
   return (
-    <div className="border-t border-border bg-background/80 px-4 py-3 backdrop-blur-sm sm:px-5">
+    <div className="border-t border-border bg-background/80 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-sm sm:px-5">
       <div className="flex items-end gap-2">
         <textarea
           value={value}

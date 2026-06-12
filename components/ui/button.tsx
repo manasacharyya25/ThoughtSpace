@@ -15,7 +15,7 @@ const variants = {
   outline:
     "border border-border bg-transparent text-foreground hover:border-white/10 hover:bg-muted/40",
   ghost:
-    "border border-transparent text-foreground hover:bg-muted/40",
+    "border border-transparent text-foreground hover:bg-white/[0.04]",
 };
 
 const sizes = {

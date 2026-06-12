@@ -14,12 +14,14 @@ export function AppShell({ children }: AppShellProps) {
 
   if (isChatOpen) {
     return (
-      <div className="relative flex min-h-screen flex-col">
+      <div className="relative flex h-[100dvh] flex-col overflow-hidden">
         <div className="app-shell-ambient" aria-hidden="true">
           <div className="app-shell-ambient-glow app-shell-ambient-glow-violet" />
           <div className="app-shell-ambient-glow app-shell-ambient-glow-rose" />
         </div>
-        <main className="relative z-10 flex-1">{children}</main>
+        <main className="relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden">
+          {children}
+        </main>
         <LogoutButton className="bottom-5 right-6" />
       </div>
     );

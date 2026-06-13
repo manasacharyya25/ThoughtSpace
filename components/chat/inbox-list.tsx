@@ -46,6 +46,7 @@ export function InboxList() {
     openConversation,
     acceptPending,
     isConversationUnread,
+    isPendingUnread,
   } = useInbox();
 
   const isLoading = pendingLoading || conversationsLoading;
@@ -79,14 +80,17 @@ export function InboxList() {
         </FadeIn>
       ) : (
         <div className="overflow-hidden rounded-2xl border border-border bg-surface/30">
-          {pending.map((item, index) => (
+          {pending.map((item, index) => {
+            const pendingUnread = isPendingUnread(item.id);
+
+            return (
             <Fragment key={item.id}>
               {index > 0 && <VioletSeparator />}
               <div
                 className={cn("fade-in-up", inboxRowClass)}
                 style={staggerStyle(index)}
               >
-                <Avatar initial={item.fromInitial} showDot />
+                <Avatar initial={item.fromInitial} showDot={pendingUnread} />
                 <div className="min-w-0 flex-1 space-y-1">
                   <p className="line-clamp-2 text-[14px] leading-relaxed text-foreground/80 transition-colors duration-300 group-hover:text-foreground">
                     {item.responsePreview}
@@ -104,7 +108,8 @@ export function InboxList() {
                 </button>
               </div>
             </Fragment>
-          ))}
+            );
+          })}
 
           {conversations.map((conv, index) => {
             const lastMsg = conv.messages[conv.messages.length - 1];

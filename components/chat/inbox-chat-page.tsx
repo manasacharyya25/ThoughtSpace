@@ -14,7 +14,8 @@ export function InboxChatPage() {
   const params = useParams();
   const conversationId = params.conversationId as string;
   const { user } = useUser();
-  const { conversations, conversationsLoading, markConversationRead } = useInbox();
+  const { conversations, conversationsLoading, markConversationRead } =
+    useInbox();
   const [fetchedConversation, setFetchedConversation] =
     useState<ActiveConversation | null>(null);
   const [fetching, setFetching] = useState(false);
@@ -27,9 +28,9 @@ export function InboxChatPage() {
   );
 
   useEffect(() => {
-    if (!conversationId) return;
-    markConversationRead(conversationId);
-  }, [conversationId, markConversationRead]);
+    if (!conversationId || !conversation) return;
+    markConversationRead(conversationId, conversation);
+  }, [conversationId, conversation, markConversationRead]);
 
   useEffect(() => {
     if (!conversationId || !user || conversation || conversationsLoading) {
@@ -66,17 +67,19 @@ export function InboxChatPage() {
     return () => {
       cancelled = true;
     };
-  }, [
-    conversation,
-    conversationId,
-    conversationsLoading,
-    user,
-  ]);
+  }, [conversation, conversationId, conversationsLoading, user]);
 
   useEffect(() => {
     if (!fetchError) return;
     router.replace("/inbox");
   }, [fetchError, router]);
+
+  const handleBack = () => {
+    if (conversation) {
+      markConversationRead(conversationId, conversation);
+    }
+    router.push("/inbox");
+  };
 
   if (fetching || conversationsLoading || !conversation) {
     return (
@@ -91,7 +94,7 @@ export function InboxChatPage() {
       <ChatWindow
         conversation={conversation}
         conversationId={conversationId}
-        onBack={() => router.push("/inbox")}
+        onBack={handleBack}
       />
     </div>
   );

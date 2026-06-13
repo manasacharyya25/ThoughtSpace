@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -16,6 +17,14 @@ import {
   listConversations,
   sendMessage as sendMessageToDb,
 } from "@/lib/supabase/conversations";
+import {
+  getConversationReadTimestamp,
+  isConversationUnreadState,
+  loadReadAt,
+  loadSeenPendingIds,
+  saveReadAt,
+  saveSeenPendingIds,
+} from "@/lib/inbox-read-state";
 import {
   getInboxConversationId,
   inboxConversationPath,
@@ -37,10 +46,11 @@ interface InboxContextValue {
   conversationsError: string | null;
   activeConversationId: string | null;
   openConversation: (id: string) => void;
-  markConversationRead: (id: string) => void;
+  markConversationRead: (id: string, conversation?: ActiveConversation) => void;
   acceptPending: (pendingId: string) => Promise<void>;
   sendMessage: (conversationId: string, content: string) => Promise<void>;
   isConversationUnread: (id: string) => boolean;
+  isPendingUnread: (id: string) => boolean;
   hasUnread: boolean;
   refreshPending: () => Promise<void>;
   refreshConversations: () => Promise<void>;
@@ -61,11 +71,52 @@ export function InboxProvider({ children }: { children: ReactNode }) {
     null
   );
   const [readAt, setReadAt] = useState<Record<string, string>>({});
+  const [seenPendingIds, setSeenPendingIds] = useState<Set<string>>(new Set());
+  const readAtHydratedRef = useRef(false);
 
   const activeConversationId = useMemo(
     () => getInboxConversationId(pathname),
     [pathname]
   );
+
+  useEffect(() => {
+    if (!user?.id) {
+      setReadAt({});
+      setSeenPendingIds(new Set());
+      readAtHydratedRef.current = false;
+      return;
+    }
+
+    setReadAt(loadReadAt(user.id));
+    setSeenPendingIds(loadSeenPendingIds(user.id));
+    readAtHydratedRef.current = true;
+  }, [user?.id]);
+
+  useEffect(() => {
+    if (!user?.id || !readAtHydratedRef.current) return;
+    saveReadAt(user.id, readAt);
+  }, [readAt, user?.id]);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    saveSeenPendingIds(user.id, seenPendingIds);
+  }, [seenPendingIds, user?.id]);
+
+  useEffect(() => {
+    if (pathname !== "/inbox" || pending.length === 0) return;
+
+    setSeenPendingIds((prev) => {
+      const next = new Set(prev);
+      let changed = false;
+      for (const item of pending) {
+        if (!next.has(item.id)) {
+          next.add(item.id);
+          changed = true;
+        }
+      }
+      return changed ? next : prev;
+    });
+  }, [pathname, pending]);
 
   const refreshPending = useCallback(async () => {
     const supabase = createClient();
@@ -180,20 +231,33 @@ export function InboxProvider({ children }: { children: ReactNode }) {
   });
 
   const markConversationRead = useCallback(
-    (conversationId: string, at?: string) => {
-      const conv = conversations.find((c) => c.id === conversationId);
-      const timestamp = at ?? conv?.lastMessageAt ?? new Date().toISOString();
-      setReadAt((prev) => ({ ...prev, [conversationId]: timestamp }));
+    (conversationId: string, conversation?: ActiveConversation) => {
+      const conv =
+        conversation ?? conversations.find((c) => c.id === conversationId);
+      if (!conv) return;
+
+      const timestamp = getConversationReadTimestamp(conv);
+      setReadAt((prev) => {
+        const current = prev[conversationId];
+        if (
+          current &&
+          new Date(current).getTime() >= new Date(timestamp).getTime()
+        ) {
+          return prev;
+        }
+        return { ...prev, [conversationId]: timestamp };
+      });
     },
     [conversations]
   );
 
   const openConversation = useCallback(
     (id: string) => {
-      markConversationRead(id);
+      const conv = conversations.find((c) => c.id === id);
+      if (conv) markConversationRead(id, conv);
       router.push(inboxConversationPath(id));
     },
-    [markConversationRead, router]
+    [conversations, markConversationRead, router]
   );
 
   const acceptPending = useCallback(
@@ -204,6 +268,8 @@ export function InboxProvider({ children }: { children: ReactNode }) {
       } = await supabase.auth.getUser();
 
       if (!authUser) return;
+
+      setSeenPendingIds((prev) => new Set(prev).add(pendingId));
 
       const { error: acceptError } = await acceptResponse(supabase, pendingId);
 
@@ -227,7 +293,7 @@ export function InboxProvider({ children }: { children: ReactNode }) {
         conversation,
         ...prev.filter((c) => c.id !== conversation.id),
       ]);
-      markConversationRead(conversation.id);
+      markConversationRead(conversation.id, conversation);
       setPendingError(null);
       setConversationsError(null);
       router.push(inboxConversationPath(conversation.id));
@@ -286,18 +352,21 @@ export function InboxProvider({ children }: { children: ReactNode }) {
     (id: string) => {
       const conv = conversations.find((c) => c.id === id);
       if (!conv) return false;
-      const lastRead = readAt[id];
-      if (!lastRead) return true;
-      return conv.lastMessageAt > lastRead;
+      return isConversationUnreadState(conv, readAt);
     },
     [conversations, readAt]
   );
 
+  const isPendingUnread = useCallback(
+    (id: string) => !seenPendingIds.has(id),
+    [seenPendingIds]
+  );
+
   const hasUnread = useMemo(
     () =>
-      pending.length > 0 ||
-      conversations.some((c) => isConversationUnread(c.id)),
-    [pending.length, conversations, isConversationUnread]
+      pending.some((p) => !seenPendingIds.has(p.id)) ||
+      conversations.some((c) => isConversationUnreadState(c, readAt)),
+    [pending, seenPendingIds, conversations, readAt]
   );
 
   const value = useMemo(
@@ -314,6 +383,7 @@ export function InboxProvider({ children }: { children: ReactNode }) {
       acceptPending,
       sendMessage,
       isConversationUnread,
+      isPendingUnread,
       hasUnread,
       refreshPending,
       refreshConversations,
@@ -331,6 +401,7 @@ export function InboxProvider({ children }: { children: ReactNode }) {
       acceptPending,
       sendMessage,
       isConversationUnread,
+      isPendingUnread,
       hasUnread,
       refreshPending,
       refreshConversations,

@@ -6,6 +6,10 @@ import { mapInboxMessage } from "@/lib/conversation-mapper";
 import { applyIncomingMessage, reorderConversations } from "@/lib/inbox-realtime";
 import { createClient } from "@/lib/supabase/client";
 import { getConversationById } from "@/lib/supabase/conversations";
+import {
+  playMessageNotification,
+  playPendingNotification,
+} from "@/lib/notification-sound";
 import type { ActiveConversation, PendingResponse } from "@/types/inbox";
 import type { ConversationRow, MessageRow } from "@/types/conversation";
 import type { ResponseRow } from "@/types/response";
@@ -55,6 +59,8 @@ export function useRealtimeInbox({
       const row = payload.new as unknown as MessageRow;
       const message = mapInboxMessage(row, uid);
       const conversationId = row.conversation_id;
+      const isIncoming = row.sender_id !== uid;
+      const isActiveChat = activeIdRef.current === conversationId;
 
       setConversations((prev) => {
         const next = applyIncomingMessage(prev, conversationId, message);
@@ -65,11 +71,13 @@ export function useRealtimeInbox({
         return next;
       });
 
-      if (activeIdRef.current === conversationId) {
+      if (isActiveChat) {
         setReadAt((prev) => ({
           ...prev,
           [conversationId]: message.createdAt,
         }));
+      } else if (isIncoming) {
+        playMessageNotification();
       }
     };
 
@@ -91,7 +99,16 @@ export function useRealtimeInbox({
       });
     };
 
-    const handleResponseInsert = () => {
+    const handleResponseInsert = (
+      payload: RealtimePostgresChangesPayload<{ [key: string]: unknown }>
+    ) => {
+      const uid = userIdRef.current;
+      if (!uid || payload.eventType !== "INSERT") return;
+
+      const row = payload.new as unknown as ResponseRow;
+      if (row.responder_id === uid) return;
+
+      playPendingNotification();
       void refreshPendingRef.current();
     };
 

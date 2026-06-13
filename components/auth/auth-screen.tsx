@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
@@ -11,8 +11,6 @@ import { env } from "@/lib/env";
 import { cn } from "@/lib/utils";
 import { AuthModeToggle, type AuthMode } from "./auth-mode-toggle";
 import { GoogleIcon } from "./google-icon";
-
-type PhoneStep = "number" | "otp";
 
 const authCopy = {
   login: {
@@ -25,18 +23,28 @@ const authCopy = {
   },
 } as const;
 
-function isValidPhone(value: string): boolean {
-  return /^\+[1-9]\d{7,14}$/.test(value.replace(/\s/g, ""));
+const MIN_PASSWORD_LENGTH = 8;
+
+type FieldErrors = {
+  email?: string;
+  password?: string;
+  confirmPassword?: string;
+};
+
+function isValidEmail(value: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 }
 
 export function AuthScreen() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const [mode, setMode] = useState<AuthMode>("login");
-  const [phoneStep, setPhoneStep] = useState<PhoneStep>("number");
-  const [phone, setPhone] = useState("");
-  const [otp, setOtp] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [authError, setAuthError] = useState<string>();
-  const [error, setError] = useState<string>();
+  const [registerSuccess, setRegisterSuccess] = useState<string>();
   const [isLoading, setIsLoading] = useState(false);
 
   const copy = authCopy[mode];
@@ -47,59 +55,127 @@ export function AuthScreen() {
     }
   }, [searchParams]);
 
-  const resetPhoneFlow = () => {
-    setPhoneStep("number");
-    setOtp("");
-    setError(undefined);
+  const clearErrors = () => {
+    setFieldErrors({});
     setAuthError(undefined);
+    setRegisterSuccess(undefined);
+  };
+
+  const resetForm = () => {
+    setEmail("");
+    setPassword("");
+    setConfirmPassword("");
+    clearErrors();
   };
 
   const handleModeChange = (nextMode: AuthMode) => {
     setMode(nextMode);
-    resetPhoneFlow();
-    setError(undefined);
-    setAuthError(undefined);
+    resetForm();
+  };
+
+  const validateForm = (): boolean => {
+    const errors: FieldErrors = {};
+    const trimmedEmail = email.trim();
+
+    if (!trimmedEmail) {
+      errors.email = "Enter your email address.";
+    } else if (!isValidEmail(trimmedEmail)) {
+      errors.email = "Enter a valid email address.";
+    }
+
+    if (!password) {
+      errors.password = "Enter your password.";
+    } else if (password.length < MIN_PASSWORD_LENGTH) {
+      errors.password = `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`;
+    }
+
+    if (mode === "register") {
+      if (!confirmPassword) {
+        errors.confirmPassword = "Confirm your password.";
+      } else if (password !== confirmPassword) {
+        errors.confirmPassword = "Passwords do not match.";
+      }
+    }
+
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleGoogle = async () => {
     setIsLoading(true);
-    setAuthError(undefined);
+    clearErrors();
 
     const supabase = createClient();
     const next = mode === "register" ? "/onboarding" : "/feed";
     const redirectTo = `${window.location.origin}/auth/callback?next=${next}`;
 
-    const { error: authError } = await supabase.auth.signInWithOAuth({
+    const { error: oauthError } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo },
     });
 
-    if (authError) {
-      setAuthError(authError.message);
+    if (oauthError) {
+      setAuthError(oauthError.message);
       setIsLoading(false);
     }
   };
 
-  const handleSendCode = () => {
-    const normalized = phone.replace(/\s/g, "");
-    if (!isValidPhone(normalized)) {
-      setError("Enter a valid phone number with country code (e.g. +14155552671).");
-      return;
-    }
-    setPhone(normalized);
-    setError(undefined);
-    setPhoneStep("otp");
-    // TODO: supabase.auth.signInWithOtp({ phone: normalized })
-  };
+  const handleEmailAuth = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    clearErrors();
 
-  const handleVerifyOtp = () => {
-    if (otp.trim().length < 6) {
-      setError("Enter the 6-digit code we sent you.");
-      return;
+    if (!validateForm()) return;
+
+    setIsLoading(true);
+
+    try {
+      const supabase = createClient();
+      const trimmedEmail = email.trim();
+
+      if (mode === "login") {
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email: trimmedEmail,
+          password,
+        });
+
+        if (signInError) {
+          setAuthError(signInError.message);
+          return;
+        }
+
+        const next = searchParams.get("next") ?? "/feed";
+        router.refresh();
+        router.push(next);
+        return;
+      }
+
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email: trimmedEmail,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=/onboarding`,
+        },
+      });
+
+      if (signUpError) {
+        setAuthError(signUpError.message);
+        return;
+      }
+
+      if (data.session) {
+        router.refresh();
+        router.push("/onboarding");
+        return;
+      }
+
+      setRegisterSuccess(
+        "Check your email to confirm your account, then log in."
+      );
+      setPassword("");
+      setConfirmPassword("");
+    } finally {
+      setIsLoading(false);
     }
-    setError(undefined);
-    // TODO: supabase.auth.verifyOtp({ phone, token: otp, type: "sms" })
-    // register → /onboarding, login → /feed
   };
 
   return (
@@ -132,9 +208,6 @@ export function AuthScreen() {
                 <GoogleIcon className="h-4 w-4" />
                 {isLoading ? "Redirecting…" : "Continue with Google"}
               </Button>
-              {authError && (
-                <p className="text-center text-xs text-red-400">{authError}</p>
-              )}
             </div>
 
             <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
@@ -143,80 +216,106 @@ export function AuthScreen() {
               <div className="h-px flex-1 bg-border" />
             </div>
 
-            {phoneStep === "number" ? (
-              <div className="space-y-4">
-                <Input
-                  label="Phone number"
-                  type="tel"
-                  placeholder="+1 555 000 0000"
-                  value={phone}
-                  onChange={(e) => {
-                    setPhone(e.target.value);
-                    if (error) setError(undefined);
-                  }}
-                  error={error}
-                  autoComplete="tel"
-                />
-                <p className="text-[11px] text-muted-foreground">
-                  We&apos;ll send a one-time code. Include your country code.
-                </p>
+            {registerSuccess ? (
+              <div className="space-y-4 rounded-lg border border-border/40 bg-muted/20 px-4 py-5 text-center">
+                <p className="text-sm text-foreground">{registerSuccess}</p>
                 <Button
                   type="button"
-                  size="lg"
-                  className="w-full"
-                  onClick={handleSendCode}
-                  disabled={isLoading || !phone.trim()}
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setRegisterSuccess(undefined);
+                    setMode("login");
+                    clearErrors();
+                  }}
                 >
-                  {mode === "register" ? "Sign up with phone" : "Continue with phone"}
+                  Back to log in
                 </Button>
               </div>
             ) : (
-              <div className="space-y-4">
-                <p className="text-sm text-muted-foreground">
-                  Code sent to{" "}
-                  <span className="text-foreground">{phone}</span>
-                </p>
+              <form className="space-y-4" onSubmit={handleEmailAuth}>
                 <Input
-                  label="Verification code"
-                  type="text"
-                  inputMode="numeric"
-                  placeholder="000000"
-                  maxLength={6}
-                  value={otp}
+                  label="Email"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
                   onChange={(e) => {
-                    setOtp(e.target.value.replace(/\D/g, ""));
-                    if (error) setError(undefined);
+                    setEmail(e.target.value);
+                    if (fieldErrors.email) {
+                      setFieldErrors((prev) => ({ ...prev, email: undefined }));
+                    }
+                    if (authError) setAuthError(undefined);
                   }}
-                  error={error}
-                  autoFocus
-                  autoComplete="one-time-code"
+                  error={fieldErrors.email}
+                  autoComplete="email"
+                  disabled={isLoading}
                 />
+
+                <Input
+                  label="Password"
+                  type="password"
+                  placeholder={
+                    mode === "register" ? "At least 8 characters" : "Your password"
+                  }
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (fieldErrors.password) {
+                      setFieldErrors((prev) => ({
+                        ...prev,
+                        password: undefined,
+                      }));
+                    }
+                    if (authError) setAuthError(undefined);
+                  }}
+                  error={fieldErrors.password}
+                  autoComplete={
+                    mode === "register" ? "new-password" : "current-password"
+                  }
+                  disabled={isLoading}
+                />
+
+                {mode === "register" && (
+                  <Input
+                    label="Confirm password"
+                    type="password"
+                    placeholder="Repeat your password"
+                    value={confirmPassword}
+                    onChange={(e) => {
+                      setConfirmPassword(e.target.value);
+                      if (fieldErrors.confirmPassword) {
+                        setFieldErrors((prev) => ({
+                          ...prev,
+                          confirmPassword: undefined,
+                        }));
+                      }
+                      if (authError) setAuthError(undefined);
+                    }}
+                    error={fieldErrors.confirmPassword}
+                    autoComplete="new-password"
+                    disabled={isLoading}
+                  />
+                )}
+
+                {authError && (
+                  <p className="text-center text-xs text-red-400">{authError}</p>
+                )}
+
                 <Button
-                  type="button"
+                  type="submit"
                   size="lg"
                   className="w-full"
-                  onClick={handleVerifyOtp}
-                  disabled={isLoading || otp.length < 6}
+                  disabled={isLoading}
                 >
-                  {mode === "register" ? "Create account" : "Log in"}
+                  {isLoading
+                    ? mode === "register"
+                      ? "Creating account…"
+                      : "Logging in…"
+                    : mode === "register"
+                      ? "Create account"
+                      : "Log in"}
                 </Button>
-                <div className="flex items-center justify-between gap-3">
-                  <button
-                    type="button"
-                    onClick={resetPhoneFlow}
-                    className="text-xs text-muted-foreground transition-colors hover:text-foreground"
-                  >
-                    Change number
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleSendCode}
-                    className="text-xs text-muted-foreground transition-colors hover:text-foreground"
-                  >
-                    Resend code
-                  </button>
-                </div>
-              </div>
+              </form>
             )}
           </div>
         </div>

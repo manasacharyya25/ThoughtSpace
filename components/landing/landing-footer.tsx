@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { env } from "@/lib/env";
 
 export function LandingFooter() {
@@ -7,9 +8,27 @@ export function LandingFooter() {
         <span>
           &copy; {new Date().getFullYear()} {env.NEXT_PUBLIC_APP_NAME}
         </span>
-        <span className="tracking-wide">
-          Conversations before appearances.
-        </span>
+        <div className="flex items-center gap-4">
+          <Link
+            href="/terms-of-service"
+            className="transition-colors hover:text-foreground"
+          >
+            Terms of Service
+          </Link>
+          <span aria-hidden="true">·</span>
+          <Link
+            href="/privacy-policy"
+            className="transition-colors hover:text-foreground"
+          >
+            Privacy Policy
+          </Link>
+          <span className="hidden text-border sm:inline" aria-hidden="true">
+            ·
+          </span>
+          <span className="hidden tracking-wide sm:inline">
+            Conversations before appearances.
+          </span>
+        </div>
       </div>
     </footer>
   );

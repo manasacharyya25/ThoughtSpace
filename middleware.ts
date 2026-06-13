@@ -22,6 +22,8 @@ function isAuthRoute(pathname: string) {
 function isPublicPath(pathname: string) {
   return (
     pathname === "/" ||
+    pathname === "/privacy-policy" ||
+    pathname === "/terms-of-service" ||
     pathname === "/test" ||
     pathname.startsWith("/api/")
   );

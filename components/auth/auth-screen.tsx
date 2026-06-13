@@ -323,7 +323,21 @@ export function AuthScreen() {
 
       <FadeIn index={1}>
         <p className="mt-6 text-center text-xs text-muted-foreground">
-          By continuing, you agree to our terms and privacy policy.
+          By continuing, you agree to our{" "}
+          <Link
+            href="/terms-of-service"
+            className="text-foreground underline-offset-2 hover:underline"
+          >
+            Terms of Service
+          </Link>{" "}
+          and{" "}
+          <Link
+            href="/privacy-policy"
+            className="text-foreground underline-offset-2 hover:underline"
+          >
+            Privacy Policy
+          </Link>
+          .
         </p>
         <Link
           href="/"

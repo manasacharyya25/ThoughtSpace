@@ -7,7 +7,7 @@ export function LandingNav() {
     <header className="fixed inset-x-0 top-0 z-50 border-b border-border/50 bg-background/60 backdrop-blur-xl">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link
-          href="/landing"
+          href="/"
           className="text-sm font-medium tracking-tight transition-opacity hover:opacity-70"
         >
           {env.NEXT_PUBLIC_APP_NAME}

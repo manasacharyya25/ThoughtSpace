@@ -227,7 +227,7 @@ export function AuthScreen() {
           By continuing, you agree to our terms and privacy policy.
         </p>
         <Link
-          href="/landing"
+          href="/"
           className={cn(
             "mt-4 block text-center text-sm text-muted-foreground",
             "transition-colors hover:text-foreground"

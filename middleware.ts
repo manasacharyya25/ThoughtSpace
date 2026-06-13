@@ -22,7 +22,6 @@ function isAuthRoute(pathname: string) {
 function isPublicPath(pathname: string) {
   return (
     pathname === "/" ||
-    pathname === "/landing" ||
     pathname === "/test" ||
     pathname.startsWith("/api/")
   );
@@ -32,6 +31,12 @@ export async function middleware(request: NextRequest) {
   const { supabaseResponse, user, hasProfile: profileExists } =
     await updateSession(request);
   const { pathname } = request.nextUrl;
+
+  if (pathname === "/landing") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/";
+    return NextResponse.redirect(url);
+  }
 
   if (!user && (isProtectedPath(pathname) || pathname === "/onboarding")) {
     const url = request.nextUrl.clone();

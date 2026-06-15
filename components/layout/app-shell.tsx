@@ -22,7 +22,7 @@ export function AppShell({ children }: AppShellProps) {
   if (isInboxChat) {
     return (
       <div
-        className="fixed inset-x-0 top-0 z-40 flex flex-col overflow-hidden bg-background"
+        className="fixed inset-x-0 top-0 z-40 flex flex-col overflow-hidden bg-[#0b0b0a]"
         style={{ height: viewportHeight ?? "100dvh" }}
       >
         <div className="app-shell-ambient" aria-hidden="true">

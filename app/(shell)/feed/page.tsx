@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { FeedContent } from "./feed-content";
 
 export const metadata: Metadata = {
-  title: "Feed",
-  description: "Thoughts from minds worth knowing.",
+  title: "Whisper Feed",
+  description: "Read shared whispers and cast your own into the stream.",
 };
 
 export default function FeedPage() {

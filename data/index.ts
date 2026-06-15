@@ -10,4 +10,4 @@ export {
   GENDER_SELF_DESCRIBE,
   onboardingStepMeta,
 } from "./onboarding-options";
-export { howItWorksSteps, sampleConversations } from "./landing";
+export { howItWorksSteps } from "./landing";

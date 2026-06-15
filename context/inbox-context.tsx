@@ -47,7 +47,10 @@ interface InboxContextValue {
   activeConversationId: string | null;
   openConversation: (id: string) => void;
   markConversationRead: (id: string, conversation?: ActiveConversation) => void;
-  acceptPending: (pendingId: string) => Promise<void>;
+  acceptPending: (
+    pendingId: string,
+    options?: { redirect?: boolean }
+  ) => Promise<ActiveConversation | null>;
   sendMessage: (conversationId: string, content: string) => Promise<void>;
   isConversationUnread: (id: string) => boolean;
   isPendingUnread: (id: string) => boolean;
@@ -261,13 +264,16 @@ export function InboxProvider({ children }: { children: ReactNode }) {
   );
 
   const acceptPending = useCallback(
-    async (pendingId: string) => {
+    async (
+      pendingId: string,
+      options?: { redirect?: boolean }
+    ): Promise<ActiveConversation | null> => {
       const supabase = createClient();
       const {
         data: { user: authUser },
       } = await supabase.auth.getUser();
 
-      if (!authUser) return;
+      if (!authUser) return null;
 
       setSeenPendingIds((prev) => new Set(prev).add(pendingId));
 
@@ -275,7 +281,7 @@ export function InboxProvider({ children }: { children: ReactNode }) {
 
       if (acceptError) {
         setPendingError(acceptError.message);
-        return;
+        return null;
       }
 
       const { data: conversation, error: conversationError } =
@@ -285,7 +291,7 @@ export function InboxProvider({ children }: { children: ReactNode }) {
         setPendingError(
           conversationError?.message ?? "Could not start conversation."
         );
-        return;
+        return null;
       }
 
       setPending((prev) => prev.filter((p) => p.id !== pendingId));
@@ -296,7 +302,12 @@ export function InboxProvider({ children }: { children: ReactNode }) {
       markConversationRead(conversation.id, conversation);
       setPendingError(null);
       setConversationsError(null);
-      router.push(inboxConversationPath(conversation.id));
+
+      if (options?.redirect !== false) {
+        router.push(inboxConversationPath(conversation.id));
+      }
+
+      return conversation;
     },
     [markConversationRead, router]
   );

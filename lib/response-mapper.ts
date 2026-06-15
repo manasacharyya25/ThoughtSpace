@@ -26,6 +26,7 @@ function usernameInitial(username: string | null | undefined): string {
 }
 
 type PostJoin = {
+  id: string;
   content: string;
   category: string;
   author_id: string;
@@ -62,6 +63,7 @@ export function mapPendingResponseRow(
 
   return {
     id: row.id,
+    postId: post.id,
     fromInitial: usernameInitial(profile?.username),
     thoughtExcerpt: truncateText(post.content, 80),
     responsePreview: preview,

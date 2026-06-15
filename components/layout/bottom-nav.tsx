@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { useInbox } from "@/context/inbox-context";
 import { cn } from "@/lib/utils";
 import {
-  CreatePostIcon,
   FeedIcon,
   InboxIcon,
   ProfileIcon,
@@ -15,7 +14,6 @@ const navItems = [
   { label: "Feed", href: "/feed", icon: FeedIcon },
   { label: "Inbox", href: "/inbox", icon: InboxIcon, showUnread: true },
   { label: "Profile", href: "/profile", icon: ProfileIcon },
-  { label: "Post", href: "/create-post", icon: CreatePostIcon },
 ] as const;
 
 export function BottomNav() {

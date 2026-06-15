@@ -5,7 +5,6 @@ const PROTECTED_PREFIXES = [
   "/feed",
   "/inbox",
   "/profile",
-  "/create-post",
   "/chat",
 ];
 

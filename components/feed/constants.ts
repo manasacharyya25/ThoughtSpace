@@ -3,7 +3,6 @@ export const WHISPER_FEED_TAGS = [
   "wonder",
   "isolation",
   "melancholy",
-  "hope",
 ] as const;
 
 export type WhisperFeedTag = (typeof WHISPER_FEED_TAGS)[number];

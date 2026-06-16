@@ -31,7 +31,7 @@ export default function FeedLayout({
 }) {
   return (
     <div
-      className={`${landingSerif.variable} ${landingSans.variable} ${landingMono.variable} font-landing-sans`}
+      className={`${landingSerif.variable} ${landingSans.variable} ${landingMono.variable} w-full min-w-0 font-landing-sans`}
     >
       {children}
     </div>

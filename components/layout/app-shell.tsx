@@ -38,14 +38,19 @@ export function AppShell({ children }: AppShellProps) {
   }
 
   return (
-    <div className="relative flex min-h-screen flex-col">
+    <div
+      className="relative flex h-dvh w-full max-w-[100vw] flex-col overflow-hidden"
+      style={viewportHeight ? { height: viewportHeight } : undefined}
+    >
       <div className="app-shell-ambient" aria-hidden="true">
         <div className="app-shell-ambient-glow app-shell-ambient-glow-violet" />
         <div className="app-shell-ambient-glow app-shell-ambient-glow-rose" />
       </div>
 
-      <main className="relative z-10 flex-1 pb-28">
-        <Container className="py-4 md:py-6">{children}</Container>
+      <main className="relative z-10 w-full min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain">
+        <Container size="md" className="py-4 md:py-6">
+          {children}
+        </Container>
       </main>
       <BottomNav />
       <LogoutButton className="bottom-5 right-6" />

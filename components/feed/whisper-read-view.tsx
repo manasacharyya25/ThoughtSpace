@@ -50,14 +50,14 @@ export function WhisperReadView({ posts, loading, error }: WhisperReadViewProps)
   return (
     <div className="whisper-fade-in space-y-6">
       <div className="flex flex-col justify-between gap-4 rounded-xl border border-landing-border bg-landing-card p-4 sm:flex-row sm:items-center">
-        <div className="flex items-center space-x-2 overflow-x-auto pb-2 sm:pb-0">
+        <div className="flex flex-wrap items-center gap-2">
           {WHISPER_FEED_TAGS.map((tag) => (
             <button
               key={tag}
               type="button"
               onClick={() => setActiveFilter(tag)}
               className={cn(
-                "whisper-tag-pill rounded-full px-4 py-1.5 font-landing-mono text-xs",
+                "whisper-tag-pill rounded-full px-3 py-1 font-landing-mono text-[10px] sm:px-4 sm:py-1.5 sm:text-xs",
                 activeFilter === tag && "active"
               )}
             >

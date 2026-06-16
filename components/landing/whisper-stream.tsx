@@ -38,6 +38,7 @@ export function WhisperStream() {
   const [modalPrompt, setModalPrompt] = useState("");
   const [modalReply, setModalReply] = useState("");
   const [showAlert, setShowAlert] = useState(false);
+  const [hasEnteredView, setHasEnteredView] = useState(false);
 
   const [castInput, setCastInput] = useState("");
   const [myCasts, setMyCasts] = useState<UserCast[]>([]);
@@ -47,7 +48,26 @@ export function WhisperStream() {
   const [acceptedReply, setAcceptedReply] = useState("");
   const [isStrangerTyping, setIsStrangerTyping] = useState(false);
 
+  const sectionRef = useRef<HTMLElement>(null);
   const chatHistoryRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          setHasEnteredView(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.4 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const el = chatHistoryRef.current;
@@ -153,6 +173,7 @@ export function WhisperStream() {
   return (
     <>
       <section
+        ref={sectionRef}
         id="playground"
         className="border-b border-landing-border bg-black px-6 py-24"
       >
@@ -171,6 +192,41 @@ export function WhisperStream() {
             </p>
           </div>
 
+          <div
+            className={cn(
+              "simulator-card-stage mx-auto w-full max-w-6xl",
+              !hasEnteredView && "simulator-card-stage-enter-pending",
+              hasEnteredView && "simulator-card-stage-pop-in"
+            )}
+          >
+            <div className="simulator-card-backdrop" aria-hidden="true" />
+            <div className="simulator-card-attention simulator-card-front relative z-10 overflow-hidden rounded-2xl border border-landing-border bg-black shadow-2xl">
+              <div className="flex items-center justify-between border-b border-landing-border bg-landing-card px-6 py-4">
+                <div className="flex space-x-2">
+                  <span
+                    className="inline-block h-3 w-3 rounded-full bg-[#ff5f57]"
+                    aria-hidden="true"
+                  />
+                  <span
+                    className="inline-block h-3 w-3 rounded-full bg-[#febc2e]"
+                    aria-hidden="true"
+                  />
+                  <span
+                    className="inline-block h-3 w-3 rounded-full bg-[#28c840]"
+                    aria-hidden="true"
+                  />
+                </div>
+                <span
+                  className={cn(
+                    "font-landing-mono text-xs",
+                    showAcceptedChat ? "text-landing-gold" : "text-landing-muted"
+                  )}
+                >
+                  {showAcceptedChat ? "Connected" : "Whisper Stream"}
+                </span>
+              </div>
+
+              <div className="p-6 sm:p-8">
           {!showAcceptedChat && (
             <div className="mx-auto mb-12 flex max-w-md justify-center space-x-2 border-b border-landing-border pb-4">
               <button
@@ -429,6 +485,9 @@ export function WhisperStream() {
               </div>
             </div>
           )}
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

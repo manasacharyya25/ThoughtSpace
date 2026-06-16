@@ -102,7 +102,7 @@ export function WhisperReadView({ posts, loading, error }: WhisperReadViewProps)
                   <span className="font-bold text-landing-gold">
                     #{normalizeCategory(post.category)}
                   </span>
-                  <span>Matched {formatRelativeTime(post.timestamp)}</span>
+                  <span>{formatRelativeTime(post.timestamp)}</span>
                 </div>
 
                 <p className="text-sm font-light leading-relaxed text-gray-200">

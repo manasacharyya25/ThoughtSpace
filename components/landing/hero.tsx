@@ -17,7 +17,7 @@ export function Hero() {
 
       <div className="relative z-10 mx-auto max-w-4xl text-center">
         <span className="mb-6 inline-block rounded-full border border-landing-border bg-landing-gold/5 px-3 py-1 font-landing-mono text-xs uppercase tracking-widest text-landing-gold">
-          The Anti-Social Network
+          A New Way to Connect
         </span>
 
         <h1 className="font-landing-serif mb-8 text-4xl leading-none tracking-tight text-gray-100 sm:text-6xl md:text-7xl">

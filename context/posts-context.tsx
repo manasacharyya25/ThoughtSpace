@@ -19,7 +19,7 @@ interface PostsContextValue {
   categories: string[];
   loading: boolean;
   error: string | null;
-  addPost: (content: string, category: PostCategory) => Promise<void>;
+  addPost: (content: string, category: PostCategory) => Promise<Post>;
   refreshPosts: () => Promise<void>;
   bumpResponseCount: (postId: string) => void;
 }
@@ -110,6 +110,7 @@ export function PostsProvider({ children }: { children: ReactNode }) {
 
       setPosts((prev) => [data, ...prev]);
       setError(null);
+      return data;
     },
     []
   );

@@ -47,8 +47,8 @@ export function AppShell({ children }: AppShellProps) {
         <div className="app-shell-ambient-glow app-shell-ambient-glow-rose" />
       </div>
 
-      <main className="relative z-10 w-full min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain">
-        <Container size="md" className="py-4 md:py-6">
+      <main className="relative z-10 w-full min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain md:pb-28">
+        <Container size="md" className="py-4 pb-6 md:py-6 md:pb-8">
           {children}
         </Container>
       </main>

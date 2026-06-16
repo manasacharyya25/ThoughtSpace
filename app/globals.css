@@ -383,6 +383,115 @@
       0 8px 32px rgba(0, 0, 0, 0.45);
   }
 
+  @keyframes simulator-backdrop-pop {
+    from {
+      opacity: 0;
+      transform: scale(0.94) translateY(22px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1.02) translateY(8px);
+    }
+  }
+
+  @keyframes simulator-front-pop {
+    from {
+      opacity: 0;
+      transform: scale(0.96) translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  .simulator-card-stage {
+    position: relative;
+  }
+
+  .simulator-card-backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: 1rem;
+    pointer-events: none;
+    background: rgba(255, 255, 255, 0.03);
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.07),
+      0 0 48px rgba(255, 255, 255, 0.09),
+      0 32px 64px rgba(0, 0, 0, 0.55);
+    transform: scale(1.02) translateY(8px);
+  }
+
+  .simulator-card-stage-enter-pending .simulator-card-backdrop {
+    opacity: 0;
+    transform: scale(0.94) translateY(22px);
+  }
+
+  .simulator-card-stage-enter-pending .simulator-card-front {
+    opacity: 0;
+    transform: scale(0.96) translateY(14px);
+  }
+
+  .simulator-card-stage-pop-in .simulator-card-backdrop {
+    animation: simulator-backdrop-pop 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .simulator-card-stage-pop-in .simulator-card-front {
+    animation: simulator-front-pop 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes simulator-glow-pulse {
+    0%,
+    100% {
+      opacity: 0.55;
+      box-shadow:
+        inset 0 0 0 1px rgba(212, 195, 145, 0.22),
+        0 0 22px rgba(212, 195, 145, 0.1);
+    }
+    50% {
+      opacity: 1;
+      box-shadow:
+        inset 0 0 0 1px rgba(212, 195, 145, 0.45),
+        0 0 42px rgba(212, 195, 145, 0.22);
+    }
+  }
+
+  .simulator-card-attention::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+    pointer-events: none;
+    animation: simulator-glow-pulse 2.8s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .simulator-card-stage-enter-pending .simulator-card-backdrop,
+    .simulator-card-stage-enter-pending .simulator-card-front {
+      opacity: 1;
+      transform: none;
+    }
+
+    .simulator-card-stage-pop-in .simulator-card-backdrop,
+    .simulator-card-stage-pop-in .simulator-card-front {
+      animation: none;
+    }
+
+    .simulator-card-backdrop {
+      transform: scale(1.02) translateY(8px);
+    }
+
+    .simulator-card-attention::after {
+      animation: none;
+      opacity: 1;
+      box-shadow:
+        inset 0 0 0 1px rgba(212, 195, 145, 0.28),
+        0 0 28px rgba(212, 195, 145, 0.12);
+    }
+  }
+
   @keyframes whisper-fade-in {
     from {
       opacity: 0;

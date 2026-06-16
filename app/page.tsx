@@ -55,7 +55,7 @@ export default function HomePage() {
         <DepartureSection />
         <ManifestoSection />
         <LandingFaq />
-        <WaitlistSection />
+        {/*<WaitlistSection />*/}
       </main>
       <LandingFooter />
     </div>

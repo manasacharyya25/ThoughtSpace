@@ -1,13 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   conversationArcs,
   matchingSubtitles,
   sampleThoughts,
   type ConversationTurn,
 } from "@/data/landing-simulator";
-import { scrollToSection } from "@/lib/scroll-to-section";
 import { cn } from "@/lib/utils";
 
 type SimulatorStep = "input" | "matching" | "chat";
@@ -26,6 +26,7 @@ function generateKey() {
 }
 
 export function MatchSimulator() {
+  const router = useRouter();
   const [step, setStep] = useState<SimulatorStep>("input");
   const [thought, setThought] = useState("");
   const [matchingSubtitle, setMatchingSubtitle] = useState<string>(
@@ -40,7 +41,9 @@ export function MatchSimulator() {
   const [showCompletion, setShowCompletion] = useState(false);
   const [generatedKey, setGeneratedKey] = useState<string | null>(null);
   const [inputError, setInputError] = useState(false);
+  const [hasEnteredView, setHasEnteredView] = useState(false);
 
+  const sectionRef = useRef<HTMLElement>(null);
   const arcKeyRef = useRef<"lonely" | "default">("default");
   const turnIndexRef = useRef(0);
   const userCountRef = useRef(0);
@@ -65,12 +68,30 @@ export function MatchSimulator() {
     };
   }, []);
 
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          setHasEnteredView(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.4 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   const updateProgress = useCallback((userCount: number, strangerCount: number) => {
     const total = userCount + strangerCount;
     if (total >= 10) {
       setProgressText("Session Complete ✓");
     } else {
-      setProgressText(`Exchange Stability: ${total}/10 messages`);
+      setProgressText("");
     }
   }, []);
 
@@ -114,18 +135,18 @@ export function MatchSimulator() {
   const initiateChat = useCallback(
     (userThought: string) => {
       setStep("chat");
-      setStatusText("Connected to Anonymous Stranger");
+      setStatusText("Connected");
+      setProgressText("");
       setMessages([]);
       setShowCompletion(false);
       setGeneratedKey(null);
       turnIndexRef.current = 0;
       userCountRef.current = 1;
       strangerCountRef.current = 0;
-      updateProgress(1, 0);
       appendMessage("You", userThought, true);
       triggerStrangerTurn();
     },
-    [appendMessage, triggerStrangerTurn, updateProgress]
+    [appendMessage, triggerStrangerTurn]
   );
 
   const startMatch = () => {
@@ -187,6 +208,7 @@ export function MatchSimulator() {
 
   return (
     <section
+      ref={sectionRef}
       id="simulator"
       className="border-b border-landing-border px-6 py-20"
     >
@@ -205,34 +227,52 @@ export function MatchSimulator() {
           </p>
         </div>
 
-        <div className="mx-auto max-w-2xl overflow-hidden rounded-2xl border border-landing-border bg-black shadow-2xl">
+        <div
+          className={cn(
+            "simulator-card-stage mx-auto max-w-2xl",
+            !hasEnteredView && "simulator-card-stage-enter-pending",
+            hasEnteredView && "simulator-card-stage-pop-in"
+          )}
+        >
+          <div className="simulator-card-backdrop" aria-hidden="true" />
+          <div className="simulator-card-attention simulator-card-front relative z-10 overflow-hidden rounded-2xl border border-landing-border bg-black shadow-2xl">
           <div className="flex items-center justify-between border-b border-landing-border bg-landing-card px-6 py-4">
             <div className="flex space-x-2">
-              {[0, 1, 2].map((i) => (
-                <span
-                  key={i}
-                  className="inline-block h-3 w-3 rounded-full bg-landing-border"
-                />
-              ))}
+              <span
+                className="inline-block h-3 w-3 rounded-full bg-[#ff5f57]"
+                aria-hidden="true"
+              />
+              <span
+                className="inline-block h-3 w-3 rounded-full bg-[#febc2e]"
+                aria-hidden="true"
+              />
+              <span
+                className="inline-block h-3 w-3 rounded-full bg-[#28c840]"
+                aria-hidden="true"
+              />
             </div>
-            <span
-              className={cn(
-                "font-landing-mono text-xs",
-                step === "chat" ? "text-landing-gold" : "text-landing-muted"
+            <div className="flex items-center gap-3 text-right">
+              {progressText && (
+                <span
+                  className={cn(
+                    "font-landing-mono text-[10px]",
+                    progressText.includes("Complete")
+                      ? "text-emerald-400"
+                      : "text-landing-muted/70"
+                  )}
+                >
+                  {progressText}
+                </span>
               )}
-            >
-              {statusText}
-            </span>
-            <span
-              className={cn(
-                "font-landing-mono text-[10px]",
-                progressText.includes("Complete")
-                  ? "text-emerald-400"
-                  : "text-landing-muted/70"
-              )}
-            >
-              {progressText}
-            </span>
+              <span
+                className={cn(
+                  "font-landing-mono text-xs",
+                  step === "chat" ? "text-landing-gold" : "text-landing-muted"
+                )}
+              >
+                {statusText}
+              </span>
+            </div>
           </div>
 
           <div className="flex min-h-[420px] flex-col justify-between p-6 sm:p-8">
@@ -375,11 +415,11 @@ export function MatchSimulator() {
                           type="button"
                           onClick={() => {
                             resetSimulator();
-                            scrollToSection("waitlist");
+                            router.push("/login");
                           }}
                           className="w-full rounded-lg border border-landing-border bg-landing-card px-4 py-2 font-landing-mono text-xs uppercase text-landing-muted transition-colors hover:bg-white/[0.03] sm:w-auto"
                         >
-                          Join Waitlist for Real Humans
+                          Get Started
                         </button>
                       </div>
                     </div>
@@ -430,6 +470,7 @@ export function MatchSimulator() {
                 )}
               </div>
             )}
+          </div>
           </div>
         </div>
 

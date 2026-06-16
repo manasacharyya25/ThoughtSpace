@@ -25,60 +25,9 @@ export function DepartureSection() {
               and no algorithms to outrage you. Just two individuals, matching on
               shared questions of life, finding solace in honest conversation.
             </p>
-
-            <div className="mt-8 flex items-center space-x-4 rounded-xl border border-landing-border bg-landing-card/40 p-4">
-              <div className="rounded-lg bg-landing-gold/10 p-2 text-landing-gold">
-                <svg
-                  className="h-6 w-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </div>
-              <div>
-                <h4 className="font-landing-mono text-sm text-gray-200">
-                  The 100-percent privacy rule
-                </h4>
-                <p className="mt-1 text-xs text-landing-muted">
-                  We save zero chat histories on central servers once chats end.
-                  When you close your connection, your words dissipate
-                  beautifully into the atmosphere.
-                </p>
-              </div>
-            </div>
           </div>
 
           <div className="space-y-6">
-            <div className="relative overflow-hidden rounded-xl border border-landing-border bg-landing-card/30 p-6">
-              <div className="absolute left-0 top-0 h-full w-1 bg-red-400" />
-              <h3 className="mb-4 font-landing-mono text-xs uppercase tracking-widest text-red-400">
-                The Outward Loop (Legacy Social)
-              </h3>
-              <ul className="space-y-4">
-                {[
-                  "Curating a perfect aesthetic to earn validation from strangers.",
-                  "Comparing your internal chaos to everyone else's highlight reels.",
-                  "Broadcasting to an audience of hundreds, yet speaking to nobody.",
-                ].map((text) => (
-                  <li
-                    key={text}
-                    className="flex items-start text-sm text-landing-muted"
-                  >
-                    <span className="mr-2 font-bold text-red-400">✕</span>
-                    <span>{text}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
             <div className="relative overflow-hidden rounded-xl border border-landing-border bg-landing-card/30 p-6">
               <div className="absolute left-0 top-0 h-full w-1 bg-green-400" />
               <h3 className="mb-4 font-landing-mono text-xs uppercase tracking-widest text-landing-gold">

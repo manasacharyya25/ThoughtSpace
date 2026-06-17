@@ -26,10 +26,6 @@ export function WhisperFeed() {
     setActiveChatId(null);
   };
 
-  const openChat = (conversationId: string) => {
-    setActiveChatId(conversationId);
-  };
-
   const exitChat = () => {
     setActiveChatId(null);
     setActiveTab("read");
@@ -92,7 +88,7 @@ export function WhisperFeed() {
         ) : activeTab === "read" ? (
           <WhisperReadView posts={posts} loading={loading} error={error} />
         ) : (
-          <WhisperCastView onAcceptConnection={openChat} />
+          <WhisperCastView />
         )}
       </div>
     </div>

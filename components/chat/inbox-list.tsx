@@ -1,9 +1,13 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
+import { PendingResponseCard } from "@/components/inbox/pending-response-card";
 import { useInbox } from "@/context/inbox-context";
 import { env } from "@/lib/env";
 import { formatRelativeTime } from "@/lib/time";
 import { cn } from "@/lib/utils";
+
+type InboxTab = "new" | "connections";
 
 function InboxAvatar({
   initial,
@@ -29,14 +33,38 @@ function InboxAvatar({
 
 export function InboxList() {
   const {
+    pending,
+    pendingLoading,
+    pendingError,
     conversations,
     conversationsLoading,
     conversationsError,
     openConversation,
     isConversationUnread,
+    isPendingUnread,
   } = useInbox();
 
-  const isEmpty = !conversationsLoading && conversations.length === 0;
+  const unreadPendingCount = useMemo(
+    () => pending.filter((item) => isPendingUnread(item.id)).length,
+    [pending, isPendingUnread]
+  );
+
+  const unreadConversationCount = useMemo(
+    () => conversations.filter((c) => isConversationUnread(c.id)).length,
+    [conversations, isConversationUnread]
+  );
+
+  const [activeTab, setActiveTab] = useState<InboxTab>("connections");
+  const [tabInitialized, setTabInitialized] = useState(false);
+
+  useEffect(() => {
+    if (tabInitialized || pendingLoading) return;
+    setActiveTab(pending.length > 0 ? "new" : "connections");
+    setTabInitialized(true);
+  }, [pending.length, pendingLoading, tabInitialized]);
+
+  const loading = pendingLoading || conversationsLoading;
+  const hasError = pendingError || conversationsError;
 
   return (
     <div className="whisper-feed mx-auto w-full max-w-2xl space-y-6">
@@ -49,18 +77,72 @@ export function InboxList() {
         </p>
       </header>
 
-      {conversationsLoading ? (
+      <div className="flex w-full gap-2 border-b border-landing-border pb-4 sm:gap-4">
+        <button
+          type="button"
+          onClick={() => setActiveTab("new")}
+          className={cn(
+            "relative min-w-0 flex-1 py-2.5 text-center font-landing-mono text-[10px] uppercase tracking-wide transition-all focus:outline-none sm:py-3 sm:text-xs sm:tracking-wider",
+            activeTab === "new"
+              ? "border-b-2 border-landing-gold text-white"
+              : "text-landing-muted hover:text-gray-200"
+          )}
+        >
+          New responses
+          {unreadPendingCount > 0 && (
+            <span className="ml-1.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[9px] font-bold text-white">
+              {unreadPendingCount}
+            </span>
+          )}
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("connections")}
+          className={cn(
+            "relative min-w-0 flex-1 py-2.5 text-center font-landing-mono text-[10px] uppercase tracking-wide transition-all focus:outline-none sm:py-3 sm:text-xs sm:tracking-wider",
+            activeTab === "connections"
+              ? "border-b-2 border-landing-gold text-white"
+              : "text-landing-muted hover:text-gray-200"
+          )}
+        >
+          Connections
+          {unreadConversationCount > 0 && (
+            <span className="ml-1.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[9px] font-bold text-white">
+              {unreadConversationCount}
+            </span>
+          )}
+        </button>
+      </div>
+
+      {loading ? (
         <p className="font-landing-mono text-xs text-landing-muted">
           Loading inbox…
         </p>
-      ) : conversationsError ? (
+      ) : hasError ? (
         <p className="font-landing-mono text-xs text-red-400">
-          {conversationsError}
+          {pendingError ?? conversationsError}
         </p>
-      ) : isEmpty ? (
+      ) : activeTab === "new" ? (
+        pending.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-landing-border py-12 text-center">
+            <p className="font-landing-mono text-xs uppercase tracking-widest text-landing-muted">
+              No new responses waiting.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {pending.map((response) => (
+              <PendingResponseCard key={response.id} response={response} />
+            ))}
+          </div>
+        )
+      ) : conversations.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-landing-border py-12 text-center">
           <p className="font-landing-mono text-xs uppercase tracking-widest text-landing-muted">
-            No active connections found.
+            No active connections yet.
+          </p>
+          <p className="mt-2 font-landing-mono text-[10px] text-gray-600">
+            Accept a response from the New tab to start chatting.
           </p>
         </div>
       ) : (

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useInbox } from "@/context/inbox-context";
 import { usePosts } from "@/context/posts-context";
@@ -24,10 +25,6 @@ import type { Post } from "@/types/post";
 import { WHISPER_COMPOSER_TAGS } from "./constants";
 
 const MATCH_SEARCH_MS = 2800;
-
-interface WhisperCastViewProps {
-  onAcceptConnection: (conversationId: string) => void;
-}
 
 function groupPendingByPost(
   posts: Post[],
@@ -88,10 +85,10 @@ function WaitingMessage({
   );
 }
 
-export function WhisperCastView({ onAcceptConnection }: WhisperCastViewProps) {
+export function WhisperCastView() {
   const { user } = useUser();
   const { posts, addPost, loading: postsLoading } = usePosts();
-  const { pending, acceptPending, pendingLoading } = useInbox();
+  const { pending, pendingLoading, isPendingUnread } = useInbox();
   const { openResponseModal, hasResponded } = useResponses();
 
   const [content, setContent] = useState("");
@@ -99,7 +96,6 @@ export function WhisperCastView({ onAcceptConnection }: WhisperCastViewProps) {
   const [customTag, setCustomTag] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string>();
-  const [acceptingId, setAcceptingId] = useState<string | null>(null);
   const [resonanceAnchor, setResonanceAnchor] = useState<ResonanceAnchor | null>(
     null
   );
@@ -257,18 +253,6 @@ export function WhisperCastView({ onAcceptConnection }: WhisperCastViewProps) {
       );
     } finally {
       setSubmitting(false);
-    }
-  };
-
-  const handleAccept = async (pendingId: string) => {
-    setAcceptingId(pendingId);
-    try {
-      const conversation = await acceptPending(pendingId, { redirect: false });
-      if (conversation) {
-        onAcceptConnection(conversation.id);
-      }
-    } finally {
-      setAcceptingId(null);
     }
   };
 
@@ -452,7 +436,14 @@ export function WhisperCastView({ onAcceptConnection }: WhisperCastViewProps) {
         ) : sentWhispers.length === 0 ? null : (
           <div className="space-y-4">
             {sentWhispers.map((post) => {
-              const echoes = pendingByPost.get(post.id) ?? [];
+              const pendingEchoes = pendingByPost.get(post.id) ?? [];
+              const hasNewEcho = pendingEchoes.some((echo) =>
+                isPendingUnread(echo.id)
+              );
+              const responseCount = Math.max(
+                post.response_count,
+                pendingEchoes.length
+              );
 
               return (
                 <article
@@ -470,42 +461,25 @@ export function WhisperCastView({ onAcceptConnection }: WhisperCastViewProps) {
                     &ldquo;{post.content}&rdquo;
                   </p>
 
-                  {echoes.length > 0 && (
-                    <div className="space-y-3 border-t border-landing-border pt-4">
+                  {responseCount > 0 && (
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-t border-landing-border pt-4">
                       <p className="font-landing-mono text-xs text-landing-muted">
-                        {echoes.length}{" "}
-                        {echoes.length === 1 ? "response" : "responses"}
+                        {responseCount}{" "}
+                        {responseCount === 1 ? "response" : "responses"}
+                        {hasNewEcho && (
+                          <span className="ml-2 text-landing-gold">
+                            · new
+                          </span>
+                        )}
                       </p>
-                      {echoes.map((echo) => (
-                        <div
-                          key={echo.id}
-                          className="space-y-3 rounded-lg border border-landing-border bg-black p-4"
+                      {hasNewEcho && (
+                        <Link
+                          href="/inbox"
+                          className="font-landing-mono text-[10px] text-landing-gold transition-colors hover:text-white"
                         >
-                          <div className="flex items-center justify-between font-landing-mono text-[10px] text-landing-muted">
-                            <span>
-                              Anonymous Partner ({echo.fromInitial})
-                            </span>
-                            <span>
-                              received {formatRelativeTime(echo.receivedAt)}
-                            </span>
-                          </div>
-                          <p className="text-xs italic leading-relaxed text-gray-300">
-                            &ldquo;{echo.fullResponse}&rdquo;
-                          </p>
-                          <div className="flex justify-end pt-2">
-                            <button
-                              type="button"
-                              onClick={() => void handleAccept(echo.id)}
-                              disabled={acceptingId === echo.id}
-                              className="rounded-lg bg-landing-gold px-4 py-2 font-landing-mono text-[10px] font-bold uppercase text-black transition-colors hover:bg-landing-gold-hover disabled:opacity-50"
-                            >
-                              {acceptingId === echo.id
-                                ? "Opening channel…"
-                                : "Accept connection & chat 1-to-1"}
-                            </button>
-                          </div>
-                        </div>
-                      ))}
+                          Open inbox →
+                        </Link>
+                      )}
                     </div>
                   )}
                 </article>

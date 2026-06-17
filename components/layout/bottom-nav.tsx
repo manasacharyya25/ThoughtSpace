@@ -16,9 +16,47 @@ const navItems = [
   { label: "Profile", href: "/profile", icon: ProfileIcon },
 ] as const;
 
+function InboxNavBadges({
+  showConversationUnread,
+  showPending,
+}: {
+  showConversationUnread: boolean;
+  showPending: boolean;
+}) {
+  if (!showConversationUnread && !showPending) return null;
+
+  if (showConversationUnread && !showPending) {
+    return (
+      <span
+        className="absolute -right-1 -top-1 h-1.5 w-1.5 rounded-full bg-rose-500 ring-2 ring-surface"
+        aria-label="Unread conversations"
+      />
+    );
+  }
+
+  if (showPending && !showConversationUnread) {
+    return (
+      <span
+        className="absolute -right-1 -top-1 h-1.5 w-1.5 rounded-full bg-landing-gold ring-2 ring-surface"
+        aria-label="Unaccepted responses"
+      />
+    );
+  }
+
+  return (
+    <span
+      className="absolute -right-2 -top-1 flex items-center"
+      aria-label="Unread conversations and unaccepted responses"
+    >
+      <span className="h-1.5 w-1.5 rounded-full bg-landing-gold ring-2 ring-surface" />
+      <span className="-ml-1 h-1.5 w-1.5 rounded-full bg-rose-500 ring-2 ring-surface" />
+    </span>
+  );
+}
+
 function NavBar({ className }: { className?: string }) {
   const pathname = usePathname();
-  const { hasUnread } = useInbox();
+  const { hasUnreadConversations, hasUnacceptedPending } = useInbox();
 
   return (
     <nav
@@ -33,8 +71,8 @@ function NavBar({ className }: { className?: string }) {
           pathname === item.href ||
           (item.href === "/inbox" && pathname.startsWith("/inbox/"));
         const Icon = item.icon;
-        const showDot =
-          "showUnread" in item && item.showUnread && hasUnread && !isActive;
+        const showInboxBadges =
+          "showUnread" in item && item.showUnread && !isActive;
 
         return (
           <Link
@@ -49,10 +87,10 @@ function NavBar({ className }: { className?: string }) {
           >
             <span className="relative flex shrink-0 items-center justify-center">
               <Icon className="h-5 w-5" />
-              {showDot && (
-                <span
-                  className="absolute -right-1 -top-1 h-1.5 w-1.5 rounded-full bg-rose-500"
-                  aria-label="Unread messages"
+              {showInboxBadges && (
+                <InboxNavBadges
+                  showConversationUnread={hasUnreadConversations}
+                  showPending={hasUnacceptedPending}
                 />
               )}
             </span>

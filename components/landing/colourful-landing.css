@@ -1,0 +1,82 @@
+@keyframes colourful-float-y {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes colourful-rocket-pop {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.35);
+  }
+}
+
+.colourful-landing-rocket-pop {
+  animation: colourful-rocket-pop 1.5s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.colourful-landing-float-6s {
+  animation: colourful-float-y 6s ease-in-out infinite;
+}
+
+.colourful-landing-float-7s {
+  animation: colourful-float-y 7s ease-in-out infinite;
+}
+
+.colourful-landing-float-8s {
+  animation: colourful-float-y 8s ease-in-out infinite reverse;
+}
+
+.colourful-landing-float-5s {
+  animation: colourful-float-y 5s ease-in-out infinite reverse;
+}
+
+
+.colourful-landing-btn-primary {
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.colourful-landing-btn-primary:hover {
+  transform: translateY(-4px);
+}
+
+.colourful-landing-btn-primary:active {
+  transform: scale(0.96);
+}
+
+.colourful-landing-float-card {
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.colourful-landing-float-card:hover {
+  transform: scale(1.04) translateY(-4px);
+  box-shadow: 0 30px 60px -15px rgba(28, 29, 30, 0.15);
+}
+
+.colourful-landing-brand {
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.colourful-landing-brand:hover {
+  transform: scale(1.02);
+}
+
+.colourful-landing-brand:hover .colourful-landing-brand-logo {
+  background-color: #2f9cfa;
+}
+
+.colourful-landing-btn-arrow {
+  transition: transform 0.3s ease;
+}
+
+.colourful-landing-btn-primary:hover .colourful-landing-btn-arrow {
+  transform: translateX(4px);
+}

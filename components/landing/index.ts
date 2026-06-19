@@ -1,3 +1,4 @@
+export { ColourfulLanding } from "./colourful-landing";
 export { DepartureSection } from "./departure-section";
 export { Hero } from "./hero";
 export { LandingFaq } from "./landing-faq";

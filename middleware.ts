@@ -21,6 +21,7 @@ function isAuthRoute(pathname: string) {
 function isPublicPath(pathname: string) {
   return (
     pathname === "/" ||
+    pathname === "/colourful-landing" ||
     pathname === "/test" ||
     pathname.startsWith("/api/")
   );

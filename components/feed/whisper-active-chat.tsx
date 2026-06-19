@@ -5,6 +5,7 @@ import { useInbox } from "@/context/inbox-context";
 import { env } from "@/lib/env";
 import { cn } from "@/lib/utils";
 import type { ActiveConversation } from "@/types/inbox";
+import "@/components/landing/colourful-landing.css";
 
 interface WhisperActiveChatProps {
   conversation: ActiveConversation;
@@ -54,15 +55,15 @@ export function WhisperActiveChat({
   return (
     <div className="whisper-fade-in space-y-6">
       <div
-        className="flex flex-col justify-between rounded-2xl border border-landing-border bg-landing-card p-6"
+        className="whisper-card flex flex-col justify-between rounded-[20px] p-6"
         style={{ minHeight: 520 }}
       >
-        <div className="mb-4 flex items-center justify-between border-b border-landing-border pb-4">
+        <div className="mb-4 flex items-center justify-between border-b border-[#1C1D1E]/[0.06] pb-4">
           <div className="space-y-0.5">
-            <span className="block font-landing-mono text-xs uppercase tracking-wider text-landing-gold">
+            <span className="block text-xs font-bold uppercase tracking-wider text-landing-gold">
               Connection: Anonymous ({conversation.partnerInitial})
             </span>
-            <span className="block font-landing-mono text-[10px] text-landing-muted">
+            <span className="block text-[10px] text-landing-muted">
               Matched on original raw realization
             </span>
           </div>
@@ -70,28 +71,25 @@ export function WhisperActiveChat({
             <button
               type="button"
               onClick={handleExchangeKey}
-              className="rounded-lg border border-landing-border bg-black px-3 py-1.5 font-landing-mono text-[10px] text-landing-muted transition-colors hover:border-landing-gold hover:text-white"
+              className="rounded-2xl border border-[#1C1D1E]/10 bg-white px-3 py-1.5 text-[10px] font-medium text-landing-muted transition-colors hover:border-landing-gold hover:text-[#1C1D1E]"
             >
               Exchange Sonder Key
             </button>
             <button
               type="button"
               onClick={onExit}
-              className="rounded-lg bg-landing-card px-3 py-1.5 font-landing-mono text-[10px] text-landing-muted transition-colors hover:text-white"
+              className="rounded-2xl bg-[#EDF0F1] px-3 py-1.5 text-[10px] font-medium text-landing-muted transition-colors hover:text-[#1C1D1E]"
             >
               Return to Feed
             </button>
           </div>
         </div>
 
-        <div
-          className="space-y-1 rounded-xl border border-landing-border p-4 text-left text-xs text-landing-muted"
-          style={{ backgroundColor: "rgba(212,195,145,0.02)" }}
-        >
-          <span className="block font-landing-mono text-[9px] uppercase text-landing-gold">
+        <div className="space-y-1 rounded-[14px] border border-[#1C1D1E]/[0.06] bg-[#EDF0F1] p-4 text-left text-xs text-landing-muted">
+          <span className="block text-[9px] font-bold uppercase text-landing-gold">
             Origin Prompt:
           </span>
-          <p className="font-light italic">&ldquo;{conversation.startedFrom}&rdquo;</p>
+          <p className="font-medium italic">&ldquo;{conversation.startedFrom}&rdquo;</p>
         </div>
 
         <div
@@ -100,7 +98,7 @@ export function WhisperActiveChat({
           style={{ maxHeight: 280, minHeight: 240 }}
         >
           {sonderKey && (
-            <div className="border-b border-black py-2 text-center font-landing-mono text-[10px] text-landing-muted">
+            <div className="border-b border-[#1C1D1E]/[0.06] py-2 text-center text-[10px] text-landing-muted">
               Shared Sonder Key generated: &ldquo;{sonderKey}&rdquo;. Save this
               code to reconnect inside {env.NEXT_PUBLIC_APP_NAME}.
             </div>
@@ -116,7 +114,7 @@ export function WhisperActiveChat({
             >
               <span
                 className={cn(
-                  "font-landing-mono text-[10px]",
+                  "text-[10px] font-medium",
                   message.isFromMe ? "text-landing-muted" : "text-landing-gold"
                 )}
               >
@@ -125,10 +123,10 @@ export function WhisperActiveChat({
               </span>
               <div
                 className={cn(
-                  "max-w-[85%] rounded-xl border border-landing-border px-4 py-3 text-sm font-light leading-relaxed",
+                  "max-w-[85%] rounded-xl border border-[#1C1D1E]/[0.06] px-4 py-3 text-sm font-medium leading-relaxed",
                   message.isFromMe
-                    ? "ml-auto rounded-tr-none bg-landing-input text-right"
-                    : "mr-auto rounded-tl-none bg-[#070706] text-left"
+                    ? "ml-auto rounded-tr-none bg-[#EDF0F1] text-right text-[#1C1D1E]"
+                    : "mr-auto rounded-tl-none bg-white text-left text-[#1C1D1E]/80 shadow-sm"
                 )}
               >
                 {message.content}
@@ -137,7 +135,7 @@ export function WhisperActiveChat({
           ))}
         </div>
 
-        <div className="flex gap-3 border-t border-landing-border pt-4">
+        <div className="flex gap-3 border-t border-[#1C1D1E]/[0.06] pt-4">
           <input
             type="text"
             value={draft}
@@ -150,13 +148,13 @@ export function WhisperActiveChat({
             }}
             placeholder="Write your genuine response..."
             disabled={sending}
-            className="landing-input flex-1 rounded-xl px-4 py-3 text-sm"
+            className="landing-input flex-1 rounded-[14px] px-4 py-3 text-sm font-medium"
           />
           <button
             type="button"
             onClick={() => void handleSend()}
             disabled={sending || !draft.trim()}
-            className="rounded-xl bg-white px-6 py-3 font-landing-mono text-xs font-bold uppercase tracking-wider text-black transition-all duration-300 hover:bg-landing-gold disabled:opacity-50"
+            className="colourful-landing-btn-primary rounded-2xl border-none bg-[#1C1D1E] px-6 py-3 text-xs font-bold uppercase tracking-wider text-white transition-all duration-300 hover:bg-[#2F9CFA] disabled:opacity-50"
           >
             Send
           </button>

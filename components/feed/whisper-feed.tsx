@@ -34,33 +34,24 @@ export function WhisperFeed() {
   const showTabs = !activeChatId;
 
   return (
-    <div className="whisper-feed relative mx-auto min-h-[70vh] w-full max-w-2xl py-4 sm:py-8">
-      <div
-        className="whisper-ambient-glow pointer-events-none absolute right-10 top-20 h-96 w-96"
-        aria-hidden="true"
-      />
-      <div
-        className="whisper-ambient-glow pointer-events-none absolute bottom-20 left-10 h-96 w-96"
-        aria-hidden="true"
-      />
-
-      <div className="relative z-10 w-full min-w-0 space-y-8">
-        <div className="mb-2 py-4 text-center">
-          <h1 className="font-landing-serif text-3xl tracking-tight text-gray-100 sm:text-5xl">
-            The Live <span className="italic text-landing-gold">Whisper Feed</span>
+    <div className="whisper-feed relative mx-auto min-h-[70vh] w-full max-w-2xl py-2 sm:py-4">
+      <div className="relative z-10 w-full min-w-0 space-y-6">
+        <div className="py-2 text-center">
+          <h1 className="text-[clamp(1.35rem,3vw,2rem)] font-extrabold leading-[1.08] tracking-[-1px] text-[#1C1D1E]">
+            The Live <span className="text-[#2F9CFA]">Whisper Feed</span>
           </h1>
         </div>
 
         {showTabs && (
-          <div className="mx-auto flex w-full justify-center gap-2 border-b border-landing-border pb-4 sm:max-w-md sm:gap-4">
+          <div className="mx-auto flex w-full justify-center gap-2 border-b border-[#1C1D1E]/[0.06] pb-4 sm:max-w-md sm:gap-4">
             <button
               type="button"
               onClick={() => switchTab("read")}
               className={cn(
-                "min-w-0 flex-1 py-2.5 text-center font-landing-mono text-[10px] uppercase tracking-wide transition-all focus:outline-none sm:py-3 sm:text-xs sm:tracking-wider",
+                "min-w-0 flex-1 py-2.5 text-center text-[10px] font-bold uppercase tracking-wide transition-all focus:outline-none sm:py-3 sm:text-xs sm:tracking-wider",
                 activeTab === "read"
-                  ? "border-b-2 border-landing-gold text-white"
-                  : "text-landing-muted hover:text-gray-200"
+                  ? "border-b-2 border-[#2F9CFA] text-[#1C1D1E]"
+                  : "text-[#1C1D1E]/45 hover:text-[#1C1D1E]/70"
               )}
             >
               Read Shared Whispers
@@ -69,10 +60,10 @@ export function WhisperFeed() {
               type="button"
               onClick={() => switchTab("cast")}
               className={cn(
-                "min-w-0 flex-1 py-2.5 text-center font-landing-mono text-[10px] uppercase tracking-wide transition-all focus:outline-none sm:py-3 sm:text-xs sm:tracking-wider",
+                "min-w-0 flex-1 py-2.5 text-center text-[10px] font-bold uppercase tracking-wide transition-all focus:outline-none sm:py-3 sm:text-xs sm:tracking-wider",
                 activeTab === "cast"
-                  ? "border-b-2 border-landing-gold text-white"
-                  : "text-landing-muted hover:text-gray-200"
+                  ? "border-b-2 border-[#2F9CFA] text-[#1C1D1E]"
+                  : "text-[#1C1D1E]/45 hover:text-[#1C1D1E]/70"
               )}
             >
               Cast a Whisper

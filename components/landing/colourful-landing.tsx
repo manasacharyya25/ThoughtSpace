@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { BrandLogo } from "@/components/brand/brand-logo";
+import { LandingFooter } from "@/components/landing/landing-footer";
 import { env } from "@/lib/env";
 import { cn } from "@/lib/utils";
 import "./colourful-landing.css";
@@ -244,37 +246,8 @@ function OneToOneOnlyBadge({ className }: { className?: string }) {
   );
 }
 
-function BrandLogo({ brandLabel }: { brandLabel: string }) {
-  return (
-    <Link
-      href="/"
-      className="colourful-landing-brand inline-flex items-center gap-3 no-underline"
-    >
-      <div className="colourful-landing-brand-logo flex h-[38px] w-[38px] items-center justify-center rounded-xl bg-[#1C1D1E] text-white transition-[background-color] duration-300">
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden="true"
-        >
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-        </svg>
-      </div>
-      <div className="text-xl font-extrabold tracking-[-0.5px] text-[#1C1D1E]">
-        {brandLabel}.
-      </div>
-    </Link>
-  );
-}
-
 export function ColourfulLanding() {
   const appName = env.NEXT_PUBLIC_APP_NAME;
-  const brandLabel = appName.toLowerCase();
 
   return (
     <div className="relative flex min-h-dvh flex-col overflow-x-hidden bg-[#FAF8F5] font-[family-name:var(--font-colourful-landing)] text-[#1C1D1E] antialiased">
@@ -294,7 +267,7 @@ export function ColourfulLanding() {
       {/* Mobile layout — matches wireframe */}
       <div className="relative z-10 flex h-dvh flex-col overflow-hidden min-[1100px]:hidden">
         <header className="shrink-0 px-5 py-3">
-          <BrandLogo brandLabel={brandLabel} />
+          <BrandLogo />
         </header>
 
         <div className="relative flex min-h-0 flex-1 flex-col px-5 pb-3">
@@ -321,17 +294,19 @@ export function ColourfulLanding() {
             <OneToOneOnlyBadge className="bottom-[6%] right-0 sm:bottom-[8%] md:bottom-[10%]" />
           </div>
 
-          <div className="relative z-[5] mx-auto w-full max-w-sm shrink-0 space-y-3 pt-2">
+          <div className="relative z-[5] mx-auto w-full max-w-sm shrink-0 space-y-3 pt-2 pb-1">
             <CtaButton fullWidth compact />
             <AnonymousTrustLine />
           </div>
+
+          <LandingFooter />
         </div>
       </div>
 
       {/* Desktop layout */}
       <div className="relative hidden h-dvh flex-col overflow-hidden min-[1100px]:flex">
         <header className="relative z-10 mx-auto flex w-full max-w-[1200px] shrink-0 items-center justify-between px-8 py-3">
-            <BrandLogo brandLabel={brandLabel} />
+            <BrandLogo />
             <EarlyAccessBadge />
           </header>
 
@@ -366,6 +341,10 @@ export function ColourfulLanding() {
               <AnonymousTrustLine />
             </div>
           </main>
+
+          <div className="relative z-10 mx-auto w-full max-w-[1200px] shrink-0 px-8 xl:px-6">
+            <LandingFooter variant="desktop" />
+          </div>
       </div>
     </div>
   );

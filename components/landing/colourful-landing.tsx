@@ -41,19 +41,25 @@ const floatCards = [
 function FloatCardContent({
   card,
   compact = false,
+  mobileLayout = false,
 }: {
   card: (typeof floatCards)[number];
   compact?: boolean;
+  mobileLayout?: boolean;
 }) {
+  const metaSize = compact ? "text-[0.62rem]" : "text-[0.7rem]";
+
   return (
     <>
-      <div
-        className={`flex shrink-0 items-center justify-center rounded-full font-bold text-white ${card.avatarColor} ${
-          compact ? "h-8 w-8 text-[0.65rem]" : "h-10 w-10 text-xs"
-        }`}
-      >
-        {card.initials}
-      </div>
+      {!mobileLayout && (
+        <div
+          className={`flex shrink-0 items-center justify-center rounded-full font-bold text-white ${card.avatarColor} ${
+            compact ? "h-8 w-8 text-[0.65rem]" : "h-10 w-10 text-xs"
+          }`}
+        >
+          {card.initials}
+        </div>
+      )}
       <div className="min-w-0">
         <p
           className={`font-normal leading-relaxed text-[#1C1D1E]/70 ${
@@ -62,20 +68,28 @@ function FloatCardContent({
         >
           &ldquo;{card.message}&rdquo;
         </p>
-        <p
-          className={`mt-1.5 font-normal text-[#1C1D1E]/45 ${
-            compact ? "text-[0.62rem]" : "text-[0.7rem]"
-          }`}
-        >
-          {card.timeAgo}
-        </p>
-        <p
-          className={`mt-0.5 font-medium ${card.tagColor} ${
-            compact ? "text-[0.62rem]" : "text-[0.7rem]"
-          }`}
-        >
-          #{card.category}
-        </p>
+        {mobileLayout ? (
+          <p
+            className={`mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-0 font-normal text-[#1C1D1E]/45 ${metaSize}`}
+          >
+            <span>{card.timeAgo}</span>
+            <span className="text-[#1C1D1E]/25" aria-hidden="true">
+              ·
+            </span>
+            <span className={`font-medium ${card.tagColor}`}>
+              #{card.category}
+            </span>
+          </p>
+        ) : (
+          <>
+            <p className={`mt-1.5 font-normal text-[#1C1D1E]/45 ${metaSize}`}>
+              {card.timeAgo}
+            </p>
+            <p className={`mt-0.5 font-medium ${card.tagColor} ${metaSize}`}>
+              #{card.category}
+            </p>
+          </>
+        )}
       </div>
     </>
   );
@@ -85,10 +99,12 @@ function FloatCard({
   card,
   className,
   compact = false,
+  mobileLayout = false,
 }: {
   card: (typeof floatCards)[number];
   className?: string;
   compact?: boolean;
+  mobileLayout?: boolean;
 }) {
   return (
     <div
@@ -96,7 +112,11 @@ function FloatCard({
         compact ? "gap-2 p-2.5" : "gap-2.5 p-3 sm:gap-3 sm:p-4"
       } ${className ?? ""}`}
     >
-      <FloatCardContent card={card} compact={compact} />
+      <FloatCardContent
+        card={card}
+        compact={compact}
+        mobileLayout={mobileLayout}
+      />
     </div>
   );
 }
@@ -215,11 +235,20 @@ function EarlyAccessBadge() {
   );
 }
 
-function OneToOneOnlyBadge({ className }: { className?: string }) {
+function OneToOneOnlyBadge({
+  className,
+  inline = false,
+}: {
+  className?: string;
+  inline?: boolean;
+}) {
   return (
     <div
       className={cn(
-        "colourful-landing-float-card colourful-landing-float-5s pointer-events-none absolute z-[4] flex items-center gap-1.5 rounded-full border border-[#C5EAD0] bg-[#EBF7EE] px-3 py-2 text-[#1E6B37] shadow-[0_24px_48px_-12px_rgba(28,29,30,0.08)]",
+        "colourful-landing-float-card colourful-landing-float-5s flex items-center gap-1.5 rounded-full border border-[#C5EAD0] bg-[#EBF7EE] px-3 py-2 text-[#1E6B37] shadow-[0_24px_48px_-12px_rgba(28,29,30,0.08)]",
+        inline
+          ? "relative shrink-0"
+          : "pointer-events-none absolute z-[4]",
         className
       )}
     >
@@ -264,23 +293,24 @@ export function ColourfulLanding() {
         aria-hidden="true"
       />
 
-      {/* Mobile layout — matches wireframe */}
-      <div className="relative z-10 flex h-dvh flex-col overflow-hidden min-[1100px]:hidden">
+      {/* Mobile layout — vertical stack, footer pinned to bottom */}
+      <div className="relative z-10 flex min-h-dvh flex-col min-[1100px]:hidden">
         <header className="shrink-0 px-5 py-3">
           <BrandLogo />
         </header>
 
-        <div className="relative flex min-h-0 flex-1 flex-col px-5 pb-3">
-          <div className="relative flex min-h-0 flex-1 flex-col justify-evenly">
+        <div className="flex min-h-0 flex-1 flex-col px-5 pb-3">
+          <div className="flex min-h-0 flex-1 flex-col justify-evenly gap-3 py-2 sm:gap-4 sm:py-3">
             <FloatCard
               card={floatCards[0]}
               compact
-              className="colourful-landing-float-8s absolute right-0 top-0 z-[4] max-w-[58%]"
+              mobileLayout
+              className="colourful-landing-float-8s w-fit max-w-[min(75%,280px)] self-end"
             />
 
-            <div className="relative z-[5] mx-auto w-full max-w-md text-center">
+            <div className="mx-auto w-full max-w-md shrink-0 text-center">
               <HeroCopy appName={appName} />
-              <div className="mt-3 flex justify-center min-[1100px]:hidden">
+              <div className="mt-3 flex justify-center">
                 <EarlyAccessBadge />
               </div>
             </div>
@@ -288,18 +318,19 @@ export function ColourfulLanding() {
             <FloatCard
               card={floatCards[1]}
               compact
-              className="colourful-landing-float-6s relative z-[4] max-w-[68%] self-start"
+              mobileLayout
+              className="colourful-landing-float-6s w-fit max-w-[min(75%,280px)] self-start"
             />
 
-            <OneToOneOnlyBadge className="bottom-[6%] right-0 sm:bottom-[8%] md:bottom-[10%]" />
+            <OneToOneOnlyBadge inline className="self-end" />
+
+            <div className="mx-auto w-full max-w-sm shrink-0 space-y-3">
+              <CtaButton fullWidth compact />
+              <AnonymousTrustLine />
+            </div>
           </div>
 
-          <div className="relative z-[5] mx-auto w-full max-w-sm shrink-0 space-y-3 pt-2 pb-1">
-            <CtaButton fullWidth compact />
-            <AnonymousTrustLine />
-          </div>
-
-          <LandingFooter />
+          <LandingFooter className="mt-0 shrink-0" />
         </div>
       </div>
 
@@ -343,7 +374,7 @@ export function ColourfulLanding() {
           </main>
 
           <div className="relative z-10 mx-auto w-full max-w-[1200px] shrink-0 px-8 xl:px-6">
-            <LandingFooter variant="desktop" />
+            <LandingFooter />
           </div>
       </div>
     </div>

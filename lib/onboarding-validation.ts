@@ -37,8 +37,8 @@ export function validateQuestion(
       }
     }
 
-    if (question.id === "introLine" && value && value.length < 5) {
-      return "Use at least 5 characters.";
+    if (question.id === "introLine" && value && value.length < 10) {
+      return "Use at least 10 characters.";
     }
 
     if (question.maxLength && value.length > question.maxLength) {

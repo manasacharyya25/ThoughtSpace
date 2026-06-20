@@ -65,12 +65,7 @@ export function AuthPageShell({ children }: AuthPageShellProps) {
       </main>
 
       <div className="relative z-10 mx-auto w-full max-w-[1200px] shrink-0 px-5 pb-4 sm:px-8">
-        <div className="min-[1100px]:hidden">
-          <LandingFooter />
-        </div>
-        <div className="hidden min-[1100px]:block">
-          <LandingFooter variant="desktop" />
-        </div>
+        <LandingFooter />
       </div>
       </div>
     </div>

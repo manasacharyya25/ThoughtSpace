@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useRef, useState } from "react";
 import {
@@ -235,7 +235,7 @@ export function AboutUsWhisperStream() {
                 className={cn(
                   "flex-1 py-2 font-landing-mono text-xs uppercase tracking-wider transition-all",
                   activeTab === "browse"
-                    ? "border-b-2 border-landing-gold text-white"
+                    ? "border-b-2 border-landing-gold text-landing-gold"
                     : "text-landing-muted hover:text-gray-200"
                 )}
               >
@@ -247,7 +247,7 @@ export function AboutUsWhisperStream() {
                 className={cn(
                   "flex-1 py-2 font-landing-mono text-xs uppercase tracking-wider transition-all",
                   activeTab === "mine"
-                    ? "border-b-2 border-landing-gold text-white"
+                    ? "border-b-2 border-landing-gold text-landing-gold"
                     : "text-landing-muted hover:text-gray-200"
                 )}
               >

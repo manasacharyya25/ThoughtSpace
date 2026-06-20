@@ -29,7 +29,7 @@ export function AuthPageShell({ children }: AuthPageShellProps) {
       <div className="relative z-10 flex min-h-dvh flex-col">
       <header className="relative z-10 mx-auto flex w-full max-w-[1200px] shrink-0 items-center justify-between px-5 py-3 sm:px-8">
         <Link
-          href="/colourful-landing"
+          href="/"
           className="colourful-landing-brand flex items-center gap-3 no-underline"
         >
           <div className="colourful-landing-brand-logo flex h-[38px] w-[38px] items-center justify-center rounded-xl bg-[#1C1D1E] text-white transition-[background-color] duration-300">
@@ -80,7 +80,7 @@ export function AuthPageShell({ children }: AuthPageShellProps) {
         <p className="text-[0.58rem] font-medium leading-relaxed text-[#1C1D1E]/45">
           By continuing, you agree to our terms and privacy policy.{" "}
           <Link
-            href="/colourful-landing"
+            href="/"
             className="text-[#1C1D1E]/55 transition-colors hover:text-[#2F9CFA]"
           >
             ← Back to {env.NEXT_PUBLIC_APP_NAME}

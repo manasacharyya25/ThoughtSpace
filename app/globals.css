@@ -399,11 +399,8 @@
   }
 
   .echo-modal-panel {
-    border: 1px solid var(--landing-border);
-    box-shadow:
-      0 0 0 1px rgba(212, 195, 145, 0.22),
-      0 0 32px rgba(212, 195, 145, 0.14),
-      0 8px 32px rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(28, 29, 30, 0.03);
+    box-shadow: 0 24px 48px -12px rgba(28, 29, 30, 0.12);
   }
 
   @keyframes simulator-backdrop-pop {

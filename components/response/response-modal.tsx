@@ -9,6 +9,7 @@ import {
 } from "@/lib/response-validation";
 import { countWords } from "@/lib/words";
 import { cn } from "@/lib/utils";
+import "@/components/landing/colourful-landing.css";
 
 export function ResponseModal() {
   const { activePost, isModalOpen, closeResponseModal, sendResponse } =
@@ -60,35 +61,35 @@ export function ResponseModal() {
   return (
     <>
       {activePost && isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-6 backdrop-blur-sm">
-          <div className="echo-modal-panel w-full max-w-lg space-y-6 rounded-2xl bg-[#0c0c0b] p-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1C1D1E]/40 p-5 backdrop-blur-sm">
+          <div className="echo-modal-panel w-full max-w-lg space-y-5 rounded-[28px] bg-white p-5 sm:p-6">
             <div className="flex items-center justify-between">
-              <span className="font-landing-mono text-xs uppercase tracking-widest text-landing-gold">
-                Transmit Direct Echo
+              <span className="text-xs font-bold uppercase tracking-wider text-[#2F9CFA]">
+                Send a direct response
               </span>
               <button
                 type="button"
                 onClick={closeResponseModal}
                 disabled={sending}
-                className="font-landing-mono text-lg text-landing-muted transition-colors hover:text-gray-300"
+                className="flex h-8 w-8 items-center justify-center rounded-full text-lg text-[#1C1D1E]/40 transition-colors hover:bg-[#EDF0F1] hover:text-[#1C1D1E]"
                 aria-label="Close"
               >
                 ✕
               </button>
             </div>
 
-            <div className="rounded-xl border border-landing-border bg-[#121211] p-4">
-              <span className="mb-1 block font-landing-mono text-[9px] uppercase text-landing-muted">
-                Sonder Prompt:
+            <div className="rounded-[14px] border border-[#1C1D1E]/[0.06] bg-[#EDF0F1] p-4">
+              <span className="mb-1 block text-[9px] font-bold uppercase tracking-wider text-[#1C1D1E]/45">
+                Their whisper
               </span>
-              <p className="text-xs font-light italic text-gray-300">
-                {activePost.content}
+              <p className="text-xs font-medium italic leading-relaxed text-[#1C1D1E]/75">
+                &ldquo;{activePost.content}&rdquo;
               </p>
             </div>
 
             <div className="space-y-2">
-              <label className="block font-landing-mono text-xs text-landing-muted">
-                Your sincere echo:
+              <label className="block text-[0.65rem] font-extrabold uppercase tracking-[1.2px] text-[#1C1D1E]/50">
+                Your response
               </label>
               <textarea
                 value={content}
@@ -104,20 +105,20 @@ export function ResponseModal() {
                 disabled={sending}
                 placeholder="Avoid small talk. Write how you truly connect to this..."
                 className={cn(
-                  "whisper-cast-textarea w-full rounded-xl p-4 text-sm disabled:opacity-60",
-                  touched && error && "border-red-500/50"
+                  "w-full rounded-[14px] border-2 border-transparent bg-[#EDF0F1] p-4 text-sm font-medium leading-relaxed text-[#1C1D1E] placeholder:text-[#1C1D1E]/35 transition-[border-color,box-shadow,background-color] focus:border-[#2F9CFA] focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#2F9CFA]/10 disabled:opacity-60",
+                  touched && error && "border-red-500/50 focus:border-red-500/50 focus:ring-red-500/10"
                 )}
               />
-              <div className="flex items-center justify-between font-landing-mono text-[11px] text-landing-muted">
+              <div className="flex items-center justify-between text-[11px] font-medium text-[#1C1D1E]/45">
                 <span>
                   {RESPONSE_MIN_WORDS}–{RESPONSE_MAX_WORDS} words
                 </span>
-                <span className={isOverLimit ? "text-red-400" : undefined}>
+                <span className={isOverLimit ? "text-red-500" : undefined}>
                   {wordCount} / {RESPONSE_MAX_WORDS}
                 </span>
               </div>
               {touched && error && (
-                <p className="font-landing-mono text-xs text-red-400">{error}</p>
+                <p className="text-xs font-medium text-red-500">{error}</p>
               )}
             </div>
 
@@ -125,24 +126,24 @@ export function ResponseModal() {
               type="button"
               onClick={() => void handleSend()}
               disabled={sending || isOverLimit}
-              className="w-full rounded-xl bg-white py-3 font-landing-mono text-xs font-bold uppercase tracking-wider text-black transition-all duration-300 disabled:opacity-50"
+              className="colourful-landing-btn-primary w-full rounded-2xl border-none bg-[#1C1D1E] py-3 text-xs font-bold uppercase tracking-wider text-white transition-colors hover:bg-[#2F9CFA] disabled:opacity-50"
             >
-              {sending ? "Transmitting…" : "Transmit Response to Poster"}
+              {sending ? "Sending…" : "Send response"}
             </button>
           </div>
         </div>
       )}
 
       {showToast && (
-        <div className="fixed bottom-6 right-6 z-50 flex max-w-sm items-start space-x-3 rounded-xl border border-landing-gold/30 bg-[#121211] px-6 py-4 text-gray-200 shadow-xl">
-          <span className="font-bold text-landing-gold">✓</span>
+        <div className="fixed bottom-6 right-6 z-50 flex max-w-sm items-start gap-3 rounded-[20px] border border-[#1C1D1E]/[0.06] bg-white px-5 py-4 shadow-[0_24px_48px_-12px_rgba(28,29,30,0.12)]">
+          <span className="font-bold text-[#2F9CFA]">✓</span>
           <div>
-            <h5 className="font-landing-mono text-xs font-bold uppercase text-landing-gold">
-              Transmitted
+            <h5 className="text-xs font-bold uppercase tracking-wider text-[#2F9CFA]">
+              Sent
             </h5>
-            <p className="mt-1 font-landing-mono text-xs text-landing-muted">
-              Your response has been sent into their feed. If they accept, a
-              secure channel opens.
+            <p className="mt-1 text-xs font-medium leading-relaxed text-[#1C1D1E]/55">
+              Your response has been sent. If they accept, a secure channel
+              opens.
             </p>
           </div>
         </div>

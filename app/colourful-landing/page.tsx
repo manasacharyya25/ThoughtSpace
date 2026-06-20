@@ -1,23 +1,61 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
-import { ColourfulLanding } from "@/components/landing";
+import {
+  JetBrains_Mono,
+  Playfair_Display,
+  Plus_Jakarta_Sans,
+} from "next/font/google";
+import {
+  DepartureSection,
+  Hero,
+  LandingFaq,
+  LandingFooter,
+  LandingNav,
+  ManifestoSection,
+  MatchSimulator,
+  WhisperStream,
+} from "@/components/landing";
 
-const colourfulLandingSans = Plus_Jakarta_Sans({
+const landingSerif = Playfair_Display({
   subsets: ["latin"],
-  weight: ["500", "600", "700", "800"],
-  variable: "--font-colourful-landing",
+  weight: ["400", "600"],
+  style: ["normal", "italic"],
+  variable: "--font-landing-serif",
+});
+
+const landingSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
+  variable: "--font-landing-sans",
+});
+
+const landingMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["300", "400"],
+  style: ["normal", "italic"],
+  variable: "--font-landing-mono",
 });
 
 export const metadata: Metadata = {
-  title: "Connected Minds, Untethered from Metrics",
+  title: "Classic Landing",
   description:
-    "No profiles. No followers. Just real dialogue. A thought-first social sanctuary.",
+    "The original ThoughtSpace landing — manifesto, match simulator, and whisper stream.",
 };
 
-export default function ColourfulLandingPage() {
+export default function ClassicLandingPage() {
   return (
-    <div className={colourfulLandingSans.variable}>
-      <ColourfulLanding />
+    <div
+      className={`landing-page font-landing-sans antialiased ${landingSerif.variable} ${landingSans.variable} ${landingMono.variable}`}
+    >
+      <LandingNav />
+      <main>
+        <Hero />
+        <MatchSimulator />
+        <WhisperStream />
+        <DepartureSection />
+        <ManifestoSection />
+        <LandingFaq />
+      </main>
+      <LandingFooter />
     </div>
   );
 }

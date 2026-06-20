@@ -102,6 +102,7 @@ export function WhisperCastView() {
   );
   const [isSearchingMatches, setIsSearchingMatches] = useState(false);
   const [anchorHydrated, setAnchorHydrated] = useState(false);
+  const [showCastToast, setShowCastToast] = useState(false);
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const myPosts = useMemo(
@@ -173,6 +174,12 @@ export function WhisperCastView() {
       if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
     };
   }, []);
+
+  useEffect(() => {
+    if (!showCastToast) return;
+    const timer = setTimeout(() => setShowCastToast(false), 4500);
+    return () => clearTimeout(timer);
+  }, [showCastToast]);
 
   useEffect(() => {
     if (!user?.id || anchorHydrated) return;
@@ -248,6 +255,8 @@ export function WhisperCastView() {
           true
         );
       }
+
+      setShowCastToast(true);
     } catch (err) {
       setFormError(
         err instanceof Error ? err.message : "Could not cast whisper."
@@ -262,6 +271,7 @@ export function WhisperCastView() {
     : myPosts;
 
   return (
+    <>
     <div className="whisper-fade-in space-y-6">
       <div className="whisper-card whisper-cast-composer space-y-4 rounded-2xl p-6">
         <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -490,5 +500,21 @@ export function WhisperCastView() {
         )}
       </div>
     </div>
+
+      {showCastToast && (
+        <div className="fixed bottom-6 right-6 z-50 flex max-w-sm items-start gap-3 rounded-[20px] border border-[#1C1D1E]/[0.06] bg-white px-5 py-4 shadow-[0_24px_48px_-12px_rgba(28,29,30,0.12)]">
+          <span className="font-bold text-[#2F9CFA]">✓</span>
+          <div>
+            <h5 className="text-xs font-bold uppercase tracking-wider text-[#2F9CFA]">
+              Cast
+            </h5>
+            <p className="mt-1 text-xs font-medium leading-relaxed text-[#1C1D1E]/55">
+              Your whisper is out in the stream. Anonymous minds can now
+              respond.
+            </p>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

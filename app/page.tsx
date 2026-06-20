@@ -1,39 +1,11 @@
 import type { Metadata } from "next";
-import {
-  JetBrains_Mono,
-  Playfair_Display,
-  Plus_Jakarta_Sans,
-} from "next/font/google";
-import {
-  DepartureSection,
-  Hero,
-  LandingFaq,
-  LandingFooter,
-  LandingNav,
-  ManifestoSection,
-  MatchSimulator,
-  WaitlistSection,
-  WhisperStream,
-} from "@/components/landing";
+import { Plus_Jakarta_Sans } from "next/font/google";
+import { ColourfulLanding } from "@/components/landing";
 
-const landingSerif = Playfair_Display({
+const colourfulLandingSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  weight: ["400", "600"],
-  style: ["normal", "italic"],
-  variable: "--font-landing-serif",
-});
-
-const landingSans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
-  variable: "--font-landing-sans",
-});
-
-const landingMono = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["300", "400"],
-  style: ["normal", "italic"],
-  variable: "--font-landing-mono",
+  weight: ["500", "600", "700", "800"],
+  variable: "--font-colourful-landing",
 });
 
 export const metadata: Metadata = {
@@ -44,20 +16,8 @@ export const metadata: Metadata = {
 
 export default function HomePage() {
   return (
-    <div
-      className={`landing-page font-landing-sans antialiased ${landingSerif.variable} ${landingSans.variable} ${landingMono.variable}`}
-    >
-      <LandingNav />
-      <main>
-        <Hero />
-        <MatchSimulator />
-        <WhisperStream />
-        <DepartureSection />
-        <ManifestoSection />
-        <LandingFaq />
-        {/*<WaitlistSection />*/}
-      </main>
-      <LandingFooter />
+    <div className={colourfulLandingSans.variable}>
+      <ColourfulLanding />
     </div>
   );
 }

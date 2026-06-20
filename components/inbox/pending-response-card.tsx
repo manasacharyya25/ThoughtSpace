@@ -7,6 +7,7 @@ import { inboxAcceptPath } from "@/lib/inbox-routes";
 import { formatRelativeTime } from "@/lib/time";
 import { cn } from "@/lib/utils";
 import type { PendingResponse } from "@/types/inbox";
+import "@/components/landing/colourful-landing.css";
 
 interface PendingResponseCardProps {
   response: PendingResponse;
@@ -35,18 +36,18 @@ export function PendingResponseCard({ response }: PendingResponseCardProps) {
   return (
     <article
       className={cn(
-        "whisper-card space-y-3 rounded-xl p-4",
-        unread && "border-landing-gold/40"
+        "whisper-card space-y-3 rounded-[20px] p-4",
+        unread && "border-[#2F9CFA]/30"
       )}
     >
       <div className="flex items-start gap-3">
         <div className="relative shrink-0">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full border border-landing-border bg-gray-900 font-landing-mono text-xs text-landing-muted">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#FFAB91] text-xs font-bold text-white">
             {response.fromInitial}
           </div>
           {unread && (
             <span
-              className="absolute -right-0.5 -top-0.5 h-1.5 w-1.5 rounded-full bg-rose-500 ring-2 ring-landing-bg"
+              className="absolute -right-0.5 -top-0.5 h-1.5 w-1.5 rounded-full bg-rose-500 ring-2 ring-white"
               aria-label="Unread"
             />
           )}
@@ -54,19 +55,19 @@ export function PendingResponseCard({ response }: PendingResponseCardProps) {
 
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <span className="font-landing-mono text-[10px] text-landing-muted">
+            <span className="text-[10px] font-medium text-landing-muted">
               Anonymous Partner ({response.fromInitial})
             </span>
-            <span className="font-landing-mono text-[10px] text-gray-600">
+            <span className="text-[10px] font-medium text-[#1C1D1E]/45">
               {formatRelativeTime(response.receivedAt)}
             </span>
           </div>
 
-          <p className="mt-2 font-landing-mono text-[10px] text-landing-muted">
+          <p className="mt-2 text-[10px] font-medium text-landing-muted">
             On your whisper: &ldquo;{response.thoughtExcerpt}&rdquo;
           </p>
 
-          <p className="mt-2 text-sm font-light italic leading-relaxed text-gray-200">
+          <p className="mt-2 text-sm font-medium italic leading-relaxed text-[#1C1D1E]/75">
             &ldquo;
             {expanded ? response.fullResponse : response.responsePreview}
             &rdquo;
@@ -76,7 +77,7 @@ export function PendingResponseCard({ response }: PendingResponseCardProps) {
             <button
               type="button"
               onClick={handleExpand}
-              className="mt-2 font-landing-mono text-[10px] text-landing-gold transition-colors hover:text-white"
+              className="mt-2 text-[10px] font-bold text-landing-gold transition-colors hover:text-[#1C1D1E]"
             >
               Read full response →
             </button>
@@ -84,11 +85,11 @@ export function PendingResponseCard({ response }: PendingResponseCardProps) {
         </div>
       </div>
 
-      <div className="flex justify-end border-t border-landing-border pt-3">
+      <div className="flex justify-end border-t border-[#1C1D1E]/[0.06] pt-3">
         <button
           type="button"
           onClick={handleAccept}
-          className="rounded-lg bg-landing-gold px-4 py-2 font-landing-mono text-[10px] font-bold uppercase text-black transition-colors hover:bg-landing-gold-hover"
+          className="colourful-landing-btn-primary rounded-2xl border-none bg-[#1C1D1E] px-4 py-2 text-[10px] font-bold uppercase text-white transition-colors hover:bg-[#2F9CFA]"
         >
           Accept connection & chat 1-to-1
         </button>

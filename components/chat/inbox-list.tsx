@@ -18,12 +18,12 @@ function InboxAvatar({
 }) {
   return (
     <div className="relative shrink-0">
-      <div className="flex h-9 w-9 items-center justify-center rounded-full border border-landing-border bg-gray-900 font-landing-mono text-xs text-landing-muted">
+      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#2F9CFA] text-xs font-bold text-white">
         {initial}
       </div>
       {unread && (
         <span
-          className="absolute -right-0.5 -top-0.5 h-1.5 w-1.5 rounded-full bg-rose-500 ring-2 ring-landing-bg"
+          className="absolute -right-0.5 -top-0.5 h-1.5 w-1.5 rounded-full bg-rose-500 ring-2 ring-white"
           aria-label="Unread"
         />
       )}
@@ -67,30 +67,30 @@ export function InboxList() {
   const hasError = pendingError || conversationsError;
 
   return (
-    <div className="whisper-feed mx-auto w-full max-w-2xl space-y-6">
-      <header className="space-y-1">
-        <h1 className="font-landing-serif text-3xl text-white sm:text-4xl">
+    <div className="whisper-feed relative mx-auto min-h-[70vh] w-full max-w-2xl space-y-6 py-2 sm:py-4">
+      <header className="space-y-1 text-center sm:text-left">
+        <h1 className="text-[clamp(1.35rem,3vw,2rem)] font-extrabold leading-[1.08] tracking-[-1px] text-[#1C1D1E]">
           Inbox
         </h1>
-        <p className="font-landing-mono text-[10px] uppercase tracking-widest text-landing-muted sm:text-xs">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-[#1C1D1E]/45 sm:text-xs">
           Private, one-to-one
         </p>
       </header>
 
-      <div className="flex w-full gap-2 border-b border-landing-border pb-4 sm:gap-4">
+      <div className="flex w-full gap-2 border-b border-[#1C1D1E]/[0.06] pb-4 sm:gap-4">
         <button
           type="button"
           onClick={() => setActiveTab("new")}
           className={cn(
-            "relative min-w-0 flex-1 py-2.5 text-center font-landing-mono text-[10px] uppercase tracking-wide transition-all focus:outline-none sm:py-3 sm:text-xs sm:tracking-wider",
+            "relative min-w-0 flex-1 py-2.5 text-center text-[10px] font-bold uppercase tracking-wide transition-all focus:outline-none sm:py-3 sm:text-xs sm:tracking-wider",
             activeTab === "new"
-              ? "border-b-2 border-landing-gold text-white"
-              : "text-landing-muted hover:text-gray-200"
+              ? "border-b-2 border-[#2F9CFA] text-[#1C1D1E]"
+              : "text-[#1C1D1E]/45 hover:text-[#1C1D1E]/70"
           )}
         >
           New responses
           {unreadPendingCount > 0 && (
-            <span className="ml-1.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[9px] font-bold text-white">
+            <span className="ml-1.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-[#2F9CFA] px-1 text-[9px] font-bold text-white">
               {unreadPendingCount}
             </span>
           )}
@@ -99,10 +99,10 @@ export function InboxList() {
           type="button"
           onClick={() => setActiveTab("connections")}
           className={cn(
-            "relative min-w-0 flex-1 py-2.5 text-center font-landing-mono text-[10px] uppercase tracking-wide transition-all focus:outline-none sm:py-3 sm:text-xs sm:tracking-wider",
+            "relative min-w-0 flex-1 py-2.5 text-center text-[10px] font-bold uppercase tracking-wide transition-all focus:outline-none sm:py-3 sm:text-xs sm:tracking-wider",
             activeTab === "connections"
-              ? "border-b-2 border-landing-gold text-white"
-              : "text-landing-muted hover:text-gray-200"
+              ? "border-b-2 border-[#2F9CFA] text-[#1C1D1E]"
+              : "text-[#1C1D1E]/45 hover:text-[#1C1D1E]/70"
           )}
         >
           Connections
@@ -115,17 +115,15 @@ export function InboxList() {
       </div>
 
       {loading ? (
-        <p className="font-landing-mono text-xs text-landing-muted">
-          Loading inbox…
-        </p>
+        <p className="text-xs font-medium text-landing-muted">Loading inbox…</p>
       ) : hasError ? (
-        <p className="font-landing-mono text-xs text-red-400">
+        <p className="text-xs font-medium text-red-500">
           {pendingError ?? conversationsError}
         </p>
       ) : activeTab === "new" ? (
         pending.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-landing-border py-12 text-center">
-            <p className="font-landing-mono text-xs uppercase tracking-widest text-landing-muted">
+          <div className="whisper-card rounded-[20px] border border-dashed border-[#1C1D1E]/10 py-12 text-center">
+            <p className="text-xs font-bold uppercase tracking-widest text-landing-muted">
               No new responses waiting.
             </p>
           </div>
@@ -137,11 +135,11 @@ export function InboxList() {
           </div>
         )
       ) : conversations.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-landing-border py-12 text-center">
-          <p className="font-landing-mono text-xs uppercase tracking-widest text-landing-muted">
+        <div className="whisper-card rounded-[20px] border border-dashed border-[#1C1D1E]/10 py-12 text-center">
+          <p className="text-xs font-bold uppercase tracking-widest text-landing-muted">
             No active connections yet.
           </p>
-          <p className="mt-2 font-landing-mono text-[10px] text-gray-600">
+          <p className="mt-2 text-[10px] font-medium text-[#1C1D1E]/45">
             Accept a response from the New tab to start chatting.
           </p>
         </div>
@@ -159,8 +157,8 @@ export function InboxList() {
                 type="button"
                 onClick={() => openConversation(conversation.id)}
                 className={cn(
-                  "whisper-card flex w-full cursor-pointer items-center gap-3 rounded-xl p-4 text-left",
-                  unread && "border-landing-gold/40"
+                  "whisper-card flex w-full cursor-pointer items-center gap-3 rounded-[20px] p-4 text-left",
+                  unread && "border-[#2F9CFA]/30"
                 )}
               >
                 <InboxAvatar
@@ -168,10 +166,10 @@ export function InboxList() {
                   unread={unread}
                 />
                 <div className="min-w-0 flex-1">
-                  <p className="line-clamp-2 text-sm font-light italic text-gray-200">
+                  <p className="line-clamp-2 text-sm font-medium italic leading-relaxed text-[#1C1D1E]/75">
                     &ldquo;{preview}&rdquo;
                   </p>
-                  <span className="mt-1 block font-landing-mono text-[10px] text-gray-600">
+                  <span className="mt-1 block text-[10px] font-medium text-[#1C1D1E]/45">
                     {formatRelativeTime(conversation.lastMessageAt)}
                   </span>
                 </div>
@@ -181,7 +179,7 @@ export function InboxList() {
         </div>
       )}
 
-      <footer className="hidden pt-2 text-center font-landing-mono text-[10px] uppercase text-gray-700 sm:block">
+      <footer className="hidden pt-2 text-center text-[10px] font-medium uppercase text-[#1C1D1E]/35 sm:block">
         © {new Date().getFullYear()} {env.NEXT_PUBLIC_APP_NAME}. Secure &amp;
         Anonymous.
       </footer>

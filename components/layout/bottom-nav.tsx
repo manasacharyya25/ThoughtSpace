@@ -58,7 +58,9 @@ function NavBar({ className }: { className?: string }) {
   const pathname = usePathname();
   const { hasUnreadConversations, hasUnacceptedPending } = useInbox();
   const isColourfulShell =
-    pathname === "/feed" || pathname.startsWith("/feed/");
+    pathname === "/feed" ||
+    pathname.startsWith("/feed/") ||
+    pathname === "/inbox";
 
   return (
     <nav

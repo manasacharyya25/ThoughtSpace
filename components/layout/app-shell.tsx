@@ -17,6 +17,8 @@ export function AppShell({ children }: AppShellProps) {
   const pathname = usePathname();
   const isInboxChat = isInboxChatRoute(pathname);
   const isColourfulFeed = pathname === "/feed";
+  const isColourfulInboxList = pathname === "/inbox";
+  const isColourfulShell = isColourfulFeed || isColourfulInboxList;
   const viewportHeight = useVisualViewportHeight();
 
   useBodyScrollLock(isInboxChat);
@@ -43,11 +45,11 @@ export function AppShell({ children }: AppShellProps) {
     <div
       className={cn(
         "relative flex h-dvh w-full max-w-[100vw] flex-col overflow-hidden",
-        isColourfulFeed && "bg-[#FAF8F5]"
+        isColourfulShell && "bg-[#FAF8F5]"
       )}
       style={viewportHeight ? { height: viewportHeight } : undefined}
     >
-      {!isColourfulFeed && (
+      {!isColourfulShell && (
         <div className="app-shell-ambient" aria-hidden="true">
           <div className="app-shell-ambient-glow app-shell-ambient-glow-violet" />
           <div className="app-shell-ambient-glow app-shell-ambient-glow-rose" />
@@ -57,7 +59,7 @@ export function AppShell({ children }: AppShellProps) {
       <main
         className={cn(
           "relative z-10 w-full min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain md:pb-28",
-          isColourfulFeed && "bg-[#FAF8F5]"
+          isColourfulShell && "bg-[#FAF8F5]"
         )}
       >
         <Container size="md" className="py-4 pb-6 md:py-6 md:pb-8">

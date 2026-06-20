@@ -1,27 +1,10 @@
-import {
-  JetBrains_Mono,
-  Playfair_Display,
-  Plus_Jakarta_Sans,
-} from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
+import "@/components/landing/colourful-landing.css";
 
-const landingSerif = Playfair_Display({
+const colourfulProfileSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  weight: ["400", "600"],
-  style: ["normal", "italic"],
-  variable: "--font-landing-serif",
-});
-
-const landingSans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
-  variable: "--font-landing-sans",
-});
-
-const landingMono = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["300", "400"],
-  style: ["normal", "italic"],
-  variable: "--font-landing-mono",
+  weight: ["500", "600", "700", "800"],
+  variable: "--font-colourful-landing",
 });
 
 export default function ProfileLayout({
@@ -31,9 +14,18 @@ export default function ProfileLayout({
 }) {
   return (
     <div
-      className={`${landingSerif.variable} ${landingSans.variable} ${landingMono.variable} font-landing-sans`}
+      className={`${colourfulProfileSans.variable} relative -mx-4 -mt-4 min-h-full w-[calc(100%+2rem)] bg-[#FAF8F5] px-4 pb-2 pt-4 sm:-mx-6 sm:w-[calc(100%+3rem)] sm:px-6 md:-mt-6 md:pb-4`}
     >
-      {children}
+      <div
+        className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
+        aria-hidden="true"
+      >
+        <div className="whisper-ambient-glow whisper-ambient-glow-blue absolute -left-[20vw] -top-[20vw] h-[50vw] w-[50vw]" />
+        <div className="whisper-ambient-glow whisper-ambient-glow-peach absolute -bottom-[15vw] -right-[15vw] h-[45vw] w-[45vw]" />
+        <div className="whisper-ambient-glow whisper-ambient-glow-lilac absolute left-1/2 top-1/4 h-[35vw] w-[35vw] -translate-x-1/2 -translate-y-1/2" />
+      </div>
+
+      <div className="relative z-10 w-full min-w-0">{children}</div>
     </div>
   );
 }

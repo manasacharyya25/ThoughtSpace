@@ -18,7 +18,9 @@ export function AppShell({ children }: AppShellProps) {
   const isInboxChat = isInboxChatRoute(pathname);
   const isColourfulFeed = pathname === "/feed";
   const isColourfulInboxList = pathname === "/inbox";
-  const isColourfulShell = isColourfulFeed || isColourfulInboxList;
+  const isColourfulProfile = pathname === "/profile";
+  const isColourfulShell =
+    isColourfulFeed || isColourfulInboxList || isColourfulProfile;
   const viewportHeight = useVisualViewportHeight();
 
   useBodyScrollLock(isInboxChat);

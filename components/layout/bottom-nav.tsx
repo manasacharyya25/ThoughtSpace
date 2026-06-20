@@ -60,7 +60,8 @@ function NavBar({ className }: { className?: string }) {
   const isColourfulShell =
     pathname === "/feed" ||
     pathname.startsWith("/feed/") ||
-    pathname === "/inbox";
+    pathname === "/inbox" ||
+    pathname === "/profile";
 
   return (
     <nav

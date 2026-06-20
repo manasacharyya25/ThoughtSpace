@@ -1,0 +1,177 @@
+.about-us-page {
+  --landing-bg: #faf8f5;
+  --landing-card: #ffffff;
+  --landing-border: rgba(28, 29, 30, 0.06);
+  --landing-gold: #2f9cfa;
+  --landing-gold-hover: #1a8ae6;
+  --landing-fg: #1c1d1e;
+  --landing-muted: rgba(28, 29, 30, 0.45);
+  --landing-input: #edf0f1;
+  min-height: 100svh;
+  background: var(--landing-bg);
+  color: var(--landing-fg);
+  scroll-behavior: smooth;
+  font-family: var(--font-colourful-landing), ui-sans-serif, system-ui, sans-serif;
+}
+
+.about-us-ambient-glow {
+  background: radial-gradient(
+    circle,
+    rgba(47, 156, 250, 0.12) 0%,
+    rgba(250, 248, 245, 0) 70%
+  );
+  border-radius: 50%;
+}
+
+.about-us-input {
+  background-color: var(--landing-input);
+  border: 2px solid transparent;
+  color: var(--landing-fg);
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    background-color 0.3s ease;
+}
+
+.about-us-input::placeholder {
+  color: rgba(28, 29, 30, 0.35);
+}
+
+.about-us-input:focus {
+  border-color: var(--landing-gold);
+  background-color: #ffffff;
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(47, 156, 250, 0.1);
+}
+
+.about-us-quick-prompt {
+  background-color: var(--landing-input);
+  border: 1px solid var(--landing-border);
+  color: var(--landing-muted);
+  transition: all 0.2s ease;
+}
+
+.about-us-quick-prompt:hover {
+  background-color: #ffffff;
+  color: var(--landing-fg);
+  border-color: rgba(47, 156, 250, 0.25);
+}
+
+.about-us-btn-primary {
+  background-color: #1c1d1e;
+  color: #ffffff;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.about-us-btn-primary:hover {
+  background-color: var(--landing-gold);
+  transform: translateY(-1px);
+}
+
+/* Override hardcoded dark-theme Tailwind in duplicated components */
+.about-us-page .bg-black,
+.about-us-page .bg-\[\#0c0c0b\],
+.about-us-page .bg-\[\#0a0a09\],
+.about-us-page .bg-\[\#070706\],
+.about-us-page .bg-\[\#111110\],
+.about-us-page .bg-\[\#121211\] {
+  background-color: var(--landing-card) !important;
+}
+
+.about-us-page .text-gray-100,
+.about-us-page .text-gray-200 {
+  color: var(--landing-fg) !important;
+}
+
+.about-us-page .text-gray-300,
+.about-us-page .text-gray-400 {
+  color: var(--landing-muted) !important;
+}
+
+.about-us-page nav.sticky {
+  background: rgba(250, 248, 245, 0.9);
+  border-color: var(--landing-border);
+  backdrop-filter: blur(12px);
+}
+
+.about-us-page nav.sticky button:hover,
+.about-us-page nav.sticky a:hover {
+  color: var(--landing-gold) !important;
+}
+
+.about-us-page .bg-white.text-black,
+.about-us-page a.bg-white.text-black {
+  background-color: #1c1d1e !important;
+  color: #ffffff !important;
+}
+
+.about-us-page .bg-white.text-black:hover,
+.about-us-page a.bg-white.text-black:hover {
+  background-color: var(--landing-gold) !important;
+  color: #ffffff !important;
+}
+
+.about-us-page .border.border-landing-border.bg-landing-card:hover,
+.about-us-page button.border.border-landing-border.bg-landing-card:hover {
+  background-color: #ffffff !important;
+  border-color: rgba(47, 156, 250, 0.2) !important;
+}
+
+.about-us-page .hover\:bg-white\/\[0\.03\]:hover {
+  background-color: rgba(47, 156, 250, 0.06) !important;
+}
+
+.about-us-page .hover\:border-gray-700:hover {
+  border-color: rgba(47, 156, 250, 0.25) !important;
+}
+
+.about-us-page .bg-black\/80 {
+  background-color: rgba(28, 29, 30, 0.4) !important;
+}
+
+.about-us-page .shadow-2xl {
+  box-shadow: 0 24px 48px -12px rgba(28, 29, 30, 0.08) !important;
+}
+
+.about-us-page .simulator-card-backdrop {
+  opacity: 0.35;
+}
+
+.about-us-page .border-landing-gold\/30 {
+  border-color: rgba(47, 156, 250, 0.25) !important;
+}
+
+.about-us-page .bg-landing-gold\/\[0\.03\],
+.about-us-page .bg-landing-card\/30,
+.about-us-page .bg-landing-card\/40 {
+  background-color: rgba(47, 156, 250, 0.06) !important;
+}
+
+.about-us-page .hover\:text-white:hover {
+  color: var(--landing-gold) !important;
+}
+
+.about-us-page .hover\:text-gray-200:hover,
+.about-us-page .hover\:text-gray-300:hover {
+  color: var(--landing-fg) !important;
+}
+
+.about-us-page footer.bg-black {
+  background-color: var(--landing-bg) !important;
+}
+
+.about-us-page section.bg-black {
+  background-color: var(--landing-bg) !important;
+}
+
+.about-us-page .font-landing-serif {
+  font-family: var(--font-colourful-landing), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.about-us-page .font-landing-mono {
+  font-family: var(--font-colourful-landing), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 600;
+}

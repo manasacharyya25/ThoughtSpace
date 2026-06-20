@@ -213,6 +213,37 @@ function EarlyAccessBadge() {
   );
 }
 
+function OneToOneOnlyBadge({ className }: { className?: string }) {
+  return (
+    <div
+      className={cn(
+        "colourful-landing-float-card colourful-landing-float-5s pointer-events-none absolute z-[4] flex items-center gap-1.5 rounded-full border border-[#C5EAD0] bg-[#EBF7EE] px-3 py-2 text-[#1E6B37] shadow-[0_24px_48px_-12px_rgba(28,29,30,0.08)]",
+        className
+      )}
+    >
+      <svg
+        width="12"
+        height="12"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      </svg>
+      <span className="text-[0.6rem] font-extrabold tracking-[0.5px]">
+        1-TO-1 ONLY
+      </span>
+    </div>
+  );
+}
+
 function BrandLogo({ brandLabel }: { brandLabel: string }) {
   return (
     <Link
@@ -276,6 +307,9 @@ export function ColourfulLanding() {
 
             <div className="relative z-[5] mx-auto w-full max-w-md text-center">
               <HeroCopy appName={appName} />
+              <div className="mt-3 flex justify-center min-[1100px]:hidden">
+                <EarlyAccessBadge />
+              </div>
             </div>
 
             <FloatCard
@@ -283,6 +317,8 @@ export function ColourfulLanding() {
               compact
               className="colourful-landing-float-6s relative z-[4] max-w-[68%] self-start"
             />
+
+            <OneToOneOnlyBadge className="bottom-[6%] right-0 sm:bottom-[8%] md:bottom-[10%]" />
           </div>
 
           <div className="relative z-[5] mx-auto w-full max-w-sm shrink-0 space-y-3 pt-2">
@@ -314,27 +350,7 @@ export function ColourfulLanding() {
             />
           ))}
 
-          <div className="colourful-landing-float-card colourful-landing-float-5s pointer-events-none absolute bottom-[18%] z-[4] hidden items-center gap-1.5 rounded-full border border-[#C5EAD0] bg-[#EBF7EE] px-3 py-2 text-[#1E6B37] shadow-[0_24px_48px_-12px_rgba(28,29,30,0.08)] xl:right-[15%] xl:flex xl:bottom-[22%]">
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="3"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-              <circle cx="9" cy="7" r="4" />
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-            </svg>
-            <span className="text-[0.6rem] font-extrabold tracking-[0.5px]">
-              1-TO-1 ONLY
-            </span>
-          </div>
+          <OneToOneOnlyBadge className="bottom-[16%] right-[5%] min-[1100px]:bottom-[18%] xl:bottom-[22%] xl:right-[15%]" />
 
           <main className="relative z-10 mx-auto flex w-full max-w-[900px] min-h-0 flex-1 flex-col items-center justify-evenly px-8 py-[clamp(0.5rem,2dvh,1.25rem)] text-center xl:px-6">
             <div className="inline-flex items-center gap-2 rounded-full border border-[#1C1D1E]/[0.04] bg-white px-5 py-2.5 text-[0.7rem] font-extrabold uppercase tracking-[1.5px] text-[#1C1D1E] shadow-[0_4px_12px_rgba(0,0,0,0.02)]">

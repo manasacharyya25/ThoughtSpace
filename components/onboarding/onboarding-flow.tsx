@@ -3,50 +3,43 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { onboardingStepMeta } from "@/data/onboarding-options";
-import { validateOnboardingStep } from "@/lib/onboarding-validation";
+import {
+  initialOnboardingProfile,
+  ONBOARDING_THEMES,
+} from "@/data/onboarding-themes";
+import {
+  prepareProfileForSave,
+  validateThemeStep,
+} from "@/lib/onboarding-validation";
 import { createClient } from "@/lib/supabase/client";
 import {
   createProfileFromOnboarding,
   isUsernameTakenError,
 } from "@/lib/supabase/profiles";
 import { FadeIn } from "@/components/ui/fade-in";
-import type {
-  OnboardingProfile,
-  OnboardingStepId,
-} from "@/types/onboarding-profile";
-import { OnboardingStepContent } from "./onboarding-steps";
-import { ProgressIndicator } from "./progress-indicator";
+import { OnboardingContextPanel } from "./onboarding-context-panel";
+import { OnboardingPageShell } from "./onboarding-page-shell";
+import { OnboardingProgressBar } from "./onboarding-progress-bar";
+import { OnboardingQuestionnaire } from "./onboarding-questionnaire";
 
-const STEPS: OnboardingStepId[] = [
-  "username",
-  "age",
-  "gender",
-  "country",
-  "bio",
-];
+const primaryButtonClassName =
+  "colourful-landing-btn-primary h-auto flex-1 rounded-2xl border-none bg-[#1C1D1E] px-6 py-3 text-xs font-bold text-white hover:bg-[#2F9CFA]";
 
-const initialProfile: OnboardingProfile = {
-  username: "",
-  ageRange: "",
-  gender: "",
-  genderCustom: "",
-  country: "",
-  bio: "",
-};
+const secondaryButtonClassName =
+  "h-auto flex-1 rounded-2xl border-2 border-[#1C1D1E]/10 bg-white px-6 py-3 text-xs font-bold text-[#1C1D1E] hover:border-[#2F9CFA]/30 hover:bg-[#FAF8F5]";
 
 export function OnboardingFlow() {
   const router = useRouter();
   const [stepIndex, setStepIndex] = useState(0);
-  const [profile, setProfile] = useState<OnboardingProfile>(initialProfile);
+  const [profile, setProfile] = useState(initialOnboardingProfile);
   const [error, setError] = useState<string>();
   const [isComplete, setIsComplete] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  const currentStep = STEPS[stepIndex];
-  const meta = onboardingStepMeta[stepIndex];
+  const currentTheme = ONBOARDING_THEMES[stepIndex];
+  const isLastStep = stepIndex === ONBOARDING_THEMES.length - 1;
 
-  const updateProfile = (updates: Partial<OnboardingProfile>) => {
+  const updateProfile = (updates: Partial<typeof profile>) => {
     setProfile((prev) => ({ ...prev, ...updates }));
     if (error) setError(undefined);
   };
@@ -65,10 +58,11 @@ export function OnboardingFlow() {
       return;
     }
 
+    const preparedProfile = prepareProfileForSave(profile);
     const { error: saveError } = await createProfileFromOnboarding(
       supabase,
       user.id,
-      profile
+      preparedProfile
     );
 
     if (saveError) {
@@ -88,14 +82,14 @@ export function OnboardingFlow() {
   };
 
   const goNext = async () => {
-    const validationError = validateOnboardingStep(currentStep, profile);
+    const validationError = validateThemeStep(currentTheme.id, profile);
     if (validationError) {
       setError(validationError);
       return;
     }
 
-    if (stepIndex < STEPS.length - 1) {
-      setStepIndex((i) => i + 1);
+    if (!isLastStep) {
+      setStepIndex((index) => index + 1);
       setError(undefined);
       return;
     }
@@ -105,89 +99,114 @@ export function OnboardingFlow() {
 
   const goBack = () => {
     if (stepIndex > 0) {
-      setStepIndex((i) => i - 1);
+      setStepIndex((index) => index - 1);
       setError(undefined);
     }
   };
 
+  const skipStep = () => {
+    if (!currentTheme.skippable || isLastStep) return;
+    setStepIndex((index) => index + 1);
+    setError(undefined);
+  };
+
   if (isComplete) {
     return (
-      <div className="onboarding-complete-animate flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
-        <div className="response-check-animate flex h-16 w-16 items-center justify-center rounded-full border border-emerald-500/30 bg-emerald-500/10">
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            className="h-8 w-8 text-emerald-400"
-            aria-hidden="true"
-          >
-            <path d="M5 13l4 4L19 7" className="response-check-path" />
-          </svg>
+      <OnboardingPageShell
+        progress={
+          <OnboardingProgressBar
+            currentStep={ONBOARDING_THEMES.length - 1}
+            totalSteps={ONBOARDING_THEMES.length}
+          />
+        }
+      >
+        <div className="mx-auto flex min-h-[50vh] w-full max-w-md flex-col items-center justify-center px-4 py-12 text-center lg:col-span-3">
+          <div className="response-check-animate flex h-16 w-16 items-center justify-center rounded-full border border-[#2F9CFA]/30 bg-[#2F9CFA]/10">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              className="h-8 w-8 text-[#2F9CFA]"
+              aria-hidden="true"
+            >
+              <path d="M5 13l4 4L19 7" className="response-check-path" />
+            </svg>
+          </div>
+          <h2 className="mt-6 text-[clamp(1.15rem,2.2vw,1.5rem)] font-extrabold tracking-[-1px] text-[#1C1D1E]">
+            You&apos;re all set, {profile.username}
+          </h2>
+          <p className="mt-2 text-[clamp(0.7rem,1.35vw,0.79rem)] font-medium text-[#1C1D1E]/65">
+            Taking you to your feed…
+          </p>
         </div>
-        <h2 className="mt-6 text-2xl font-semibold tracking-tight">
-          You&apos;re all set, {profile.username}
-        </h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Taking you to your feed…
-        </p>
-      </div>
+      </OnboardingPageShell>
     );
   }
 
   return (
-    <div className="mx-auto w-full max-w-md px-4 py-8 sm:py-12">
-      <FadeIn index={0}>
-        <ProgressIndicator currentStep={stepIndex} totalSteps={STEPS.length} />
+    <OnboardingPageShell
+      progress={
+        <OnboardingProgressBar
+          currentStep={stepIndex}
+          totalSteps={ONBOARDING_THEMES.length}
+        />
+      }
+    >
+      <FadeIn
+        index={0}
+        className="w-full lg:col-start-1 lg:flex lg:items-center lg:justify-end lg:pr-6 xl:pr-10"
+      >
+        <OnboardingContextPanel theme={currentTheme} />
       </FadeIn>
 
-      <div key={currentStep} className="mt-10">
+      <div className="mx-auto mt-6 w-full max-w-lg lg:col-start-2 lg:mt-0">
         <FadeIn index={1}>
-          <div className="space-y-2">
-            <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-              {meta.title}
-            </h1>
-            <p className="text-sm leading-relaxed text-muted-foreground">
-              {meta.description}
-            </p>
-          </div>
-        </FadeIn>
-
-        <FadeIn index={2} className="mt-8">
-          <OnboardingStepContent
-            step={currentStep}
+          <OnboardingQuestionnaire
+            theme={currentTheme}
             profile={profile}
             onChange={updateProfile}
             error={error}
           />
+
+          <div className="relative z-0 mt-4 flex flex-wrap gap-3">
+            {stepIndex > 0 ? (
+              <Button
+                type="button"
+                variant="outline"
+                className={secondaryButtonClassName}
+                onClick={goBack}
+                disabled={isSaving}
+              >
+                Back
+              </Button>
+            ) : null}
+
+            {currentTheme.skippable && !isLastStep ? (
+              <Button
+                type="button"
+                variant="ghost"
+                className="h-auto rounded-2xl px-4 py-3 text-xs font-bold text-[#1C1D1E]/45 hover:bg-[#1C1D1E]/5 hover:text-[#1C1D1E]"
+                onClick={skipStep}
+                disabled={isSaving}
+              >
+                Skip
+              </Button>
+            ) : null}
+
+            <Button
+              type="button"
+              className={primaryButtonClassName}
+              onClick={goNext}
+              disabled={isSaving}
+            >
+              {isSaving ? "Saving…" : isLastStep ? "Finish" : "Continue"}
+            </Button>
+          </div>
         </FadeIn>
       </div>
 
-      <FadeIn index={3} className="mt-10 flex gap-3">
-        {stepIndex > 0 && (
-          <Button
-            type="button"
-            variant="outline"
-            className="flex-1"
-            onClick={goBack}
-            disabled={isSaving}
-          >
-            Back
-          </Button>
-        )}
-        <Button
-          type="button"
-          className="flex-1"
-          onClick={goNext}
-          disabled={isSaving}
-        >
-          {isSaving
-            ? "Saving…"
-            : stepIndex === STEPS.length - 1
-              ? "Finish"
-              : "Continue"}
-        </Button>
-      </FadeIn>
-    </div>
+      <div className="hidden lg:block lg:col-start-3" aria-hidden="true" />
+    </OnboardingPageShell>
   );
 }

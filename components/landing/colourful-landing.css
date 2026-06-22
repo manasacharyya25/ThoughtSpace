@@ -61,6 +61,27 @@
   cursor: grabbing;
 }
 
+/* Desktop: lift the active cloud above cards/CTA only while dragging */
+@media (min-width: 1100px) {
+  .colourful-landing-cloud--dragging {
+    z-index: 50;
+  }
+}
+
+/*
+ * Mobile: only top-sky clouds accept touch so the CTA and cards stay tappable.
+ * Clouds behind content remain decorative (pointer-events: none).
+ */
+@media (max-width: 1099px) {
+  .colourful-landing-cloud-handle {
+    pointer-events: none;
+  }
+
+  .colourful-landing-cloud-handle--mobile-draggable {
+    pointer-events: auto;
+  }
+}
+
 .colourful-landing-cloud--ltr {
   animation: colourful-cloud-drift-ltr linear infinite;
 }

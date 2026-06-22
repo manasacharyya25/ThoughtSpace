@@ -14,6 +14,7 @@ const clouds = [
       "colourful-landing-cloud colourful-landing-cloud--ltr colourful-landing-cloud--slow top-[4%] h-[110px] w-[200px] sm:h-[140px] sm:w-[255px]",
     delay: "0s",
     opacity: 0.95,
+    mobileDraggable: true,
   },
   {
     id: "sun",
@@ -23,15 +24,17 @@ const clouds = [
       "colourful-landing-cloud colourful-landing-cloud--rtl colourful-landing-cloud--medium top-[20%] h-[100px] w-[190px] sm:h-[128px] sm:w-[245px]",
     delay: "-18s",
     opacity: 0.92,
+    mobileDraggable: true,
   },
   {
     id: "soft",
     src: "/landing/clouds/cloud-soft.png",
     alt: "",
     className:
-      "colourful-landing-cloud colourful-landing-cloud--ltr colourful-landing-cloud--fast top-[44%] hidden h-[88px] w-[175px] sm:block sm:h-[112px] sm:w-[225px]",
+      "colourful-landing-cloud colourful-landing-cloud--ltr colourful-landing-cloud--fast top-[44%] h-[88px] w-[175px] sm:h-[112px] sm:w-[225px]",
     delay: "-32s",
     opacity: 0.88,
+    mobileDraggable: false,
   },
   {
     id: "glow",
@@ -41,6 +44,7 @@ const clouds = [
       "colourful-landing-cloud colourful-landing-cloud--rtl colourful-landing-cloud--slow top-[58%] h-[104px] w-[195px] sm:h-[132px] sm:w-[250px]",
     delay: "-45s",
     opacity: 0.9,
+    mobileDraggable: false,
   },
 ] as const;
 
@@ -101,13 +105,15 @@ function DraggableCloud({ cloud }: { cloud: CloudConfig }) {
     <div
       className={cn(
         cloud.className,
-        isDragging && "colourful-landing-cloud--paused z-[5]",
+        isDragging && "colourful-landing-cloud--paused colourful-landing-cloud--dragging",
       )}
       style={{ animationDelay: cloud.delay }}
     >
       <div
         className={cn(
           "colourful-landing-cloud-handle h-full w-full",
+          cloud.mobileDraggable &&
+            "colourful-landing-cloud-handle--mobile-draggable",
           isDragging && "colourful-landing-cloud-handle--dragging",
         )}
         style={{ transform: `translate(${offset.x}px, ${offset.y}px)` }}

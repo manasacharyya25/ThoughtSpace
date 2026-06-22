@@ -1,9 +1,13 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { PendingResponseCard } from "@/components/inbox/pending-response-card";
 import { useInbox } from "@/context/inbox-context";
+import { useTrial } from "@/context/trial-context";
 import { env } from "@/lib/env";
+import { INBOX_CHAT_GATE_MESSAGE } from "@/lib/trial/constants";
+import { consumeInboxChatGateFlag } from "@/lib/trial/storage";
 import { formatRelativeTime } from "@/lib/time";
 import { cn } from "@/lib/utils";
 
@@ -43,6 +47,12 @@ export function InboxList() {
     isConversationUnread,
     isPendingUnread,
   } = useInbox();
+  const {
+    isGuest,
+    showInboxChatGate,
+    promptInboxChatSignup,
+    dismissInboxChatGate,
+  } = useTrial();
 
   const unreadPendingCount = useMemo(
     () => pending.filter((item) => isPendingUnread(item.id)).length,
@@ -63,6 +73,20 @@ export function InboxList() {
     setTabInitialized(true);
   }, [pending.length, pendingLoading, tabInitialized]);
 
+  useEffect(() => {
+    if (consumeInboxChatGateFlag()) {
+      promptInboxChatSignup();
+    }
+  }, [promptInboxChatSignup]);
+
+  const handleConversationClick = (conversationId: string) => {
+    if (isGuest) {
+      promptInboxChatSignup();
+      return;
+    }
+    openConversation(conversationId);
+  };
+
   const loading = pendingLoading || conversationsLoading;
   const hasError = pendingError || conversationsError;
 
@@ -76,6 +100,30 @@ export function InboxList() {
           Private, one-to-one
         </p>
       </header>
+
+      {showInboxChatGate ? (
+        <div className="flex items-center justify-between gap-3 rounded-[20px] border border-[#2F9CFA]/20 bg-[#EBF5FF] px-4 py-3">
+          <p className="text-sm font-semibold text-[#1C1D1E]">
+            {INBOX_CHAT_GATE_MESSAGE}
+          </p>
+          <div className="flex shrink-0 items-center gap-2">
+            <Link
+              href="/login?next=/inbox"
+              className="rounded-2xl bg-[#1C1D1E] px-3 py-1.5 text-[10px] font-bold uppercase text-white transition-colors hover:bg-[#2F9CFA]"
+            >
+              Sign up
+            </Link>
+            <button
+              type="button"
+              onClick={dismissInboxChatGate}
+              className="text-[10px] font-semibold text-[#1C1D1E]/45 transition-colors hover:text-[#1C1D1E]"
+              aria-label="Dismiss"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      ) : null}
 
       <div className="flex w-full gap-2 border-b border-[#1C1D1E]/[0.06] pb-4 sm:gap-4">
         <button
@@ -155,7 +203,7 @@ export function InboxList() {
               <button
                 key={conversation.id}
                 type="button"
-                onClick={() => openConversation(conversation.id)}
+                onClick={() => handleConversationClick(conversation.id)}
                 className={cn(
                   "whisper-card flex w-full cursor-pointer items-center gap-3 rounded-[20px] p-4 text-left",
                   unread && "border-[#2F9CFA]/30"

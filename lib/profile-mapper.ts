@@ -67,6 +67,7 @@ export function mapProfileRow(row: ProfileRow): Profile {
     gender_custom: row.gender_custom,
     country: row.country,
     bio: row.bio,
+    account_status: row.account_status ?? "registered",
     created_at: row.created_at,
     updated_at: row.updated_at,
     onboarding_answers: parseOnboardingAnswers(row.onboarding_answers),
@@ -75,7 +76,8 @@ export function mapProfileRow(row: ProfileRow): Profile {
 
 export function onboardingToProfileInsert(
   userId: string,
-  profile: OnboardingProfile
+  profile: OnboardingProfile,
+  accountStatus: "anonymous" | "registered" = "registered"
 ) {
   return {
     id: userId,
@@ -88,6 +90,7 @@ export function onboardingToProfileInsert(
         : null,
     country: profile.country,
     bio: profile.bio.trim(),
+    account_status: accountStatus,
     onboarding_answers: getOnboardingAnswers(profile),
   };
 }

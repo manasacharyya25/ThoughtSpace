@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { isGuestUser } from "@/lib/auth/session";
 import { mapProfileRow, onboardingToProfileInsert } from "@/lib/profile-mapper";
 import type { OnboardingProfile } from "@/types/onboarding-profile";
 import type { Profile, ProfileRow } from "@/types/profile";
@@ -38,9 +39,19 @@ export async function getProfileByUserId(
 export async function createProfileFromOnboarding(
   supabase: SupabaseClient,
   userId: string,
-  profile: OnboardingProfile
+  profile: OnboardingProfile,
+  options?: { isGuest?: boolean }
 ) {
-  const payload = onboardingToProfileInsert(userId, profile);
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const isGuest = options?.isGuest ?? isGuestUser(user);
+  const payload = onboardingToProfileInsert(
+    userId,
+    profile,
+    isGuest ? "anonymous" : "registered"
+  );
 
   const { data, error } = await supabase
     .from("profiles")
@@ -49,4 +60,17 @@ export async function createProfileFromOnboarding(
     .single();
 
   return { data: data ? mapProfileRow(data as ProfileRow) : null, error };
+}
+
+export async function markProfileRegistered(
+  supabase: SupabaseClient,
+  userId: string
+) {
+  const { error } = await supabase
+    .from("profiles")
+    .update({ account_status: "registered" })
+    .eq("id", userId)
+    .eq("account_status", "anonymous");
+
+  return { error: error ? new Error(error.message) : null };
 }

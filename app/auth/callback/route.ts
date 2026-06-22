@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { hasProfile } from "@/lib/supabase/profiles";
+import { hasProfile, markProfileRegistered } from "@/lib/supabase/profiles";
 import { createClient } from "@/lib/supabase/server";
 
 export async function GET(request: Request) {
@@ -18,6 +18,11 @@ export async function GET(request: Request) {
 
       if (user) {
         const profileExists = await hasProfile(supabase, user.id);
+
+        if (profileExists && !user.is_anonymous) {
+          await markProfileRegistered(supabase, user.id);
+        }
+
         const next =
           requestedNext && !profileExists && requestedNext !== "/feed"
             ? requestedNext

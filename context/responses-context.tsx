@@ -15,6 +15,7 @@ import { mapPrivateResponse } from "@/lib/response-mapper";
 import type { Post } from "@/types/post";
 import type { PrivateResponse } from "@/types/response";
 import { usePosts } from "@/context/posts-context";
+import { useTrialOptional } from "@/context/trial-context";
 
 interface ResponsesContextValue {
   responses: PrivateResponse[];
@@ -31,6 +32,7 @@ const ResponsesContext = createContext<ResponsesContextValue | null>(null);
 
 export function ResponsesProvider({ children }: { children: ReactNode }) {
   const { bumpResponseCount } = usePosts();
+  const trial = useTrialOptional();
   const [responses, setResponses] = useState<PrivateResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [activePost, setActivePost] = useState<Post | null>(null);
@@ -71,10 +73,16 @@ export function ResponsesProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const openResponseModal = useCallback((post: Post) => {
-    setActivePost(post);
-    setIsModalOpen(true);
-  }, []);
+  const openResponseModal = useCallback(
+    (post: Post) => {
+      if (trial && !trial.guardReply()) {
+        return;
+      }
+      setActivePost(post);
+      setIsModalOpen(true);
+    },
+    [trial]
+  );
 
   const closeResponseModal = useCallback(() => {
     setIsModalOpen(false);
@@ -84,6 +92,10 @@ export function ResponsesProvider({ children }: { children: ReactNode }) {
   const sendResponse = useCallback(
     async (content: string) => {
       if (!activePost) return;
+
+      if (trial && !trial.guardReply()) {
+        throw new Error("Guest reply limit reached.");
+      }
 
       const supabase = createClient();
       const {
@@ -108,8 +120,9 @@ export function ResponsesProvider({ children }: { children: ReactNode }) {
       const response = mapPrivateResponse(data, activePost.content);
       setResponses((prev) => [response, ...prev]);
       bumpResponseCount(activePost.id);
+      trial?.notifyReplySuccess();
     },
-    [activePost, bumpResponseCount]
+    [activePost, bumpResponseCount, trial]
   );
 
   const hasResponded = useCallback(

@@ -6,6 +6,7 @@ export interface Profile {
   gender_custom: string | null;
   country: string;
   bio: string;
+  account_status: "anonymous" | "registered";
   created_at: string;
   updated_at: string;
   onboarding_answers?: OnboardingAnswers;
@@ -38,6 +39,7 @@ export interface ProfileRow {
   gender_custom: string | null;
   country: string;
   bio: string;
+  account_status?: "anonymous" | "registered";
   created_at: string;
   updated_at: string;
   onboarding_answers?: OnboardingAnswers | Record<string, unknown> | null;

@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import { getUniqueCategories } from "@/lib/category";
+import { useTrialOptional } from "@/context/trial-context";
 import { createClient } from "@/lib/supabase/client";
 import { createPost, listPosts } from "@/lib/supabase/posts";
 import type { Post, PostCategory } from "@/types/post";
@@ -27,6 +28,7 @@ interface PostsContextValue {
 const PostsContext = createContext<PostsContextValue | null>(null);
 
 export function PostsProvider({ children }: { children: ReactNode }) {
+  const trial = useTrialOptional();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -88,6 +90,10 @@ export function PostsProvider({ children }: { children: ReactNode }) {
 
   const addPost = useCallback(
     async (content: string, category: PostCategory) => {
+      if (trial && !trial.guardCast()) {
+        throw new Error("Guest cast limit reached.");
+      }
+
       const supabase = createClient();
       const {
         data: { user },
@@ -110,9 +116,10 @@ export function PostsProvider({ children }: { children: ReactNode }) {
 
       setPosts((prev) => [data, ...prev]);
       setError(null);
+      trial?.notifyCastSuccess();
       return data;
     },
-    []
+    [trial]
   );
 
   const value = useMemo(

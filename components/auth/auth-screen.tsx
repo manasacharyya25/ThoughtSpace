@@ -113,8 +113,24 @@ export function AuthScreen() {
     clearErrors();
 
     const supabase = createClient();
-    const next = mode === "register" ? "/onboarding" : "/feed";
-    const redirectTo = `${window.location.origin}/auth/callback?next=${next}`;
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    const next = searchParams.get("next") ?? "/feed";
+    const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`;
+
+    if (user?.is_anonymous) {
+      const { error: linkError } = await supabase.auth.linkIdentity({
+        provider: "google",
+        options: { redirectTo },
+      });
+
+      if (linkError) {
+        setAuthError(linkError.message);
+        setIsLoading(false);
+      }
+      return;
+    }
 
     const { error: oauthError } = await supabase.auth.signInWithOAuth({
       provider: "google",

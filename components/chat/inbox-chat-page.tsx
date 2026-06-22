@@ -3,7 +3,9 @@
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useInbox } from "@/context/inbox-context";
+import { useTrial } from "@/context/trial-context";
 import { createClient } from "@/lib/supabase/client";
+import { setInboxChatGateFlag } from "@/lib/trial/storage";
 import { getConversationById } from "@/lib/supabase/conversations";
 import { useUser } from "@/hooks/use-user";
 import type { ActiveConversation } from "@/types/inbox";
@@ -14,6 +16,7 @@ export function InboxChatPage() {
   const params = useParams();
   const conversationId = params.conversationId as string;
   const { user } = useUser();
+  const { isGuest } = useTrial();
   const { conversations, conversationsLoading, markConversationRead } =
     useInbox();
   const [fetchedConversation, setFetchedConversation] =
@@ -28,12 +31,18 @@ export function InboxChatPage() {
   );
 
   useEffect(() => {
-    if (!conversationId || !conversation) return;
-    markConversationRead(conversationId, conversation);
-  }, [conversationId, conversation, markConversationRead]);
+    if (!isGuest) return;
+    setInboxChatGateFlag();
+    router.replace("/inbox");
+  }, [isGuest, router]);
 
   useEffect(() => {
-    if (!conversationId || !user || conversation || conversationsLoading) {
+    if (isGuest || !conversationId || !conversation) return;
+    markConversationRead(conversationId, conversation);
+  }, [conversation, conversationId, isGuest, markConversationRead]);
+
+  useEffect(() => {
+    if (isGuest || !conversationId || !user || conversation || conversationsLoading) {
       return;
     }
 
@@ -67,12 +76,12 @@ export function InboxChatPage() {
     return () => {
       cancelled = true;
     };
-  }, [conversation, conversationId, conversationsLoading, user]);
+  }, [conversation, conversationId, conversationsLoading, isGuest, user]);
 
   useEffect(() => {
-    if (!fetchError) return;
+    if (isGuest || !fetchError) return;
     router.replace("/inbox");
-  }, [fetchError, router]);
+  }, [fetchError, isGuest, router]);
 
   const handleBack = () => {
     if (conversation) {
@@ -80,6 +89,10 @@ export function InboxChatPage() {
     }
     router.push("/inbox");
   };
+
+  if (isGuest) {
+    return null;
+  }
 
   if (fetching || conversationsLoading || !conversation) {
     return (

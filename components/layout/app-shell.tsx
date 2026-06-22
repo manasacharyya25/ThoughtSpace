@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { BottomNav } from "./bottom-nav";
 import { Container } from "./container";
 import { LogoutButton } from "./logout-button";
+import { TrialBadge } from "./trial-badge";
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -64,6 +65,7 @@ export function AppShell({ children }: AppShellProps) {
           isColourfulShell && "bg-[#FAF8F5]"
         )}
       >
+        {isColourfulShell ? <TrialBadge /> : null}
         <Container size="md" className="py-4 pb-6 md:py-6 md:pb-8">
           {children}
         </Container>

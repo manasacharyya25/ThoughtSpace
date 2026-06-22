@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useInbox } from "@/context/inbox-context";
+import { useTrial } from "@/context/trial-context";
 import { inboxAcceptPath } from "@/lib/inbox-routes";
 import { formatRelativeTime } from "@/lib/time";
 import { cn } from "@/lib/utils";
@@ -16,6 +17,7 @@ interface PendingResponseCardProps {
 export function PendingResponseCard({ response }: PendingResponseCardProps) {
   const router = useRouter();
   const { isPendingUnread, markPendingSeen } = useInbox();
+  const { isGuest, promptInboxChatSignup } = useTrial();
   const [expanded, setExpanded] = useState(false);
   const unread = isPendingUnread(response.id);
 
@@ -30,6 +32,10 @@ export function PendingResponseCard({ response }: PendingResponseCardProps) {
 
   const handleAccept = () => {
     markPendingSeen(response.id);
+    if (isGuest) {
+      promptInboxChatSignup();
+      return;
+    }
     router.push(inboxAcceptPath(response.id));
   };
 

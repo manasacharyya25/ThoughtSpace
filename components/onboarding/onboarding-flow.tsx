@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,6 +11,7 @@ import {
   prepareProfileForSave,
   validateThemeStep,
 } from "@/lib/onboarding-validation";
+import { ensureAnonymousSession } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/client";
 import {
   createProfileFromOnboarding,
@@ -35,6 +36,28 @@ export function OnboardingFlow() {
   const [error, setError] = useState<string>();
   const [isComplete, setIsComplete] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [sessionReady, setSessionReady] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const bootstrap = async () => {
+      const supabase = createClient();
+      const { error } = await ensureAnonymousSession(supabase);
+      if (!cancelled) {
+        if (error) {
+          setError(error.message);
+        }
+        setSessionReady(true);
+      }
+    };
+
+    void bootstrap();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const currentTheme = ONBOARDING_THEMES[stepIndex];
   const isLastStep = stepIndex === ONBOARDING_THEMES.length - 1;
@@ -49,12 +72,11 @@ export function OnboardingFlow() {
     setError(undefined);
 
     const supabase = createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const { user, error: sessionError } = await ensureAnonymousSession(supabase);
 
-    if (!user) {
-      router.push("/login?next=/onboarding");
+    if (sessionError || !user) {
+      setIsSaving(false);
+      setError(sessionError?.message ?? "Could not start your session. Try again.");
       return;
     }
 
@@ -62,7 +84,8 @@ export function OnboardingFlow() {
     const { error: saveError } = await createProfileFromOnboarding(
       supabase,
       user.id,
-      preparedProfile
+      preparedProfile,
+      { isGuest: user.is_anonymous }
     );
 
     if (saveError) {
@@ -198,7 +221,7 @@ export function OnboardingFlow() {
               type="button"
               className={primaryButtonClassName}
               onClick={goNext}
-              disabled={isSaving}
+              disabled={isSaving || !sessionReady}
             >
               {isSaving ? "Saving…" : isLastStep ? "Finish" : "Continue"}
             </Button>

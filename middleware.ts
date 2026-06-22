@@ -39,16 +39,19 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (!user && (isProtectedPath(pathname) || pathname === "/onboarding")) {
+  if (!user && pathname === "/onboarding") {
+    return supabaseResponse;
+  }
+
+  if (!user && isProtectedPath(pathname)) {
     const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    url.searchParams.set("next", pathname);
+    url.pathname = "/onboarding";
     return NextResponse.redirect(url);
   }
 
-  if (user && pathname === "/login") {
+  if (user && pathname === "/login" && !user.is_anonymous && profileExists) {
     const url = request.nextUrl.clone();
-    url.pathname = profileExists ? "/feed" : "/onboarding";
+    url.pathname = "/feed";
     url.searchParams.delete("next");
     return NextResponse.redirect(url);
   }
@@ -67,7 +70,7 @@ export async function middleware(request: NextRequest) {
 
   if (!user && !isPublicPath(pathname) && !isAuthRoute(pathname)) {
     const url = request.nextUrl.clone();
-    url.pathname = "/login";
+    url.pathname = pathname === "/onboarding" ? "/onboarding" : "/login";
     return NextResponse.redirect(url);
   }
 

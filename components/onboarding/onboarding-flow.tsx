@@ -14,6 +14,7 @@ import {
 import { createClient } from "@/lib/supabase/client";
 import {
   createProfileFromOnboarding,
+  isUsernameTaken,
   isUsernameTakenError,
 } from "@/lib/supabase/profiles";
 import { FadeIn } from "@/components/ui/fade-in";
@@ -35,6 +36,7 @@ export function OnboardingFlow() {
   const [error, setError] = useState<string>();
   const [isComplete, setIsComplete] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isContinuing, setIsContinuing] = useState(false);
   const [sessionReady, setSessionReady] = useState(false);
 
   useEffect(() => {
@@ -115,6 +117,29 @@ export function OnboardingFlow() {
     if (validationError) {
       setError(validationError);
       return;
+    }
+
+    if (stepIndex === 0) {
+      setIsContinuing(true);
+      setError(undefined);
+
+      try {
+        const supabase = createClient();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+
+        const taken = await isUsernameTaken(supabase, profile.username, {
+          excludeUserId: user?.id,
+        });
+
+        if (taken) {
+          setError("That username is already taken. Choose another.");
+          return;
+        }
+      } finally {
+        setIsContinuing(false);
+      }
     }
 
     if (!isLastStep) {
@@ -205,7 +230,7 @@ export function OnboardingFlow() {
                 variant="outline"
                 className={secondaryButtonClassName}
                 onClick={goBack}
-                disabled={isSaving}
+                disabled={isSaving || isContinuing}
               >
                 Back
               </Button>
@@ -217,7 +242,7 @@ export function OnboardingFlow() {
                 variant="ghost"
                 className="h-auto rounded-2xl px-4 py-3 text-xs font-bold text-[#1C1D1E]/45 hover:bg-[#1C1D1E]/5 hover:text-[#1C1D1E]"
                 onClick={skipStep}
-                disabled={isSaving}
+                disabled={isSaving || isContinuing}
               >
                 Skip
               </Button>
@@ -226,10 +251,16 @@ export function OnboardingFlow() {
             <Button
               type="button"
               className={primaryButtonClassName}
-              onClick={goNext}
-              disabled={isSaving || !sessionReady}
+              onClick={() => void goNext()}
+              disabled={isSaving || isContinuing || !sessionReady}
             >
-              {isSaving ? "Saving…" : isLastStep ? "Finish" : "Continue"}
+              {isSaving
+                ? "Saving…"
+                : isContinuing
+                  ? "Checking…"
+                  : isLastStep
+                    ? "Finish"
+                    : "Continue"}
             </Button>
           </div>
         </FadeIn>

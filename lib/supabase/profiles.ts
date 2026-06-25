@@ -8,6 +8,25 @@ export function isUsernameTakenError(error: { code?: string } | null): boolean {
   return error?.code === "23505";
 }
 
+export async function isUsernameTaken(
+  supabase: SupabaseClient,
+  username: string,
+  options?: { excludeUserId?: string }
+): Promise<boolean> {
+  const normalized = username.trim().toLowerCase();
+  if (!normalized) return false;
+
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("username", normalized)
+    .maybeSingle();
+
+  if (error || !data) return false;
+  if (options?.excludeUserId && data.id === options.excludeUserId) return false;
+  return true;
+}
+
 export async function hasProfile(
   supabase: SupabaseClient,
   userId: string

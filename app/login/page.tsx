@@ -13,6 +13,7 @@ const authSans = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: "Log in",
   description: `Sign in to ${env.NEXT_PUBLIC_APP_NAME} — a high-quality space for genuine, anonymous conversations.`,
+  robots: { index: false, follow: true },
 };
 
 export default function LoginPage() {

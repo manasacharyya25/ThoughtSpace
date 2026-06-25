@@ -15,6 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
   title: {
     default: env.NEXT_PUBLIC_APP_NAME,
     template: `%s | ${env.NEXT_PUBLIC_APP_NAME}`,

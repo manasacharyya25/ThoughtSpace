@@ -6,6 +6,7 @@ const PROTECTED_PREFIXES = [
   "/inbox",
   "/profile",
   "/chat",
+  "/board",
 ];
 
 function isProtectedPath(pathname: string) {

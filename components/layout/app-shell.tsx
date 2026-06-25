@@ -17,6 +17,7 @@ interface AppShellProps {
 export function AppShell({ children }: AppShellProps) {
   const pathname = usePathname();
   const isInboxChat = isInboxChatRoute(pathname);
+  const isBoard = pathname === "/board";
   const isColourfulFeed = pathname === "/feed";
   const isColourfulInboxList = pathname === "/inbox";
   const isColourfulProfile = pathname === "/profile";
@@ -24,7 +25,7 @@ export function AppShell({ children }: AppShellProps) {
     isColourfulFeed || isColourfulInboxList || isColourfulProfile;
   const viewportHeight = useVisualViewportHeight();
 
-  useBodyScrollLock(isInboxChat);
+  useBodyScrollLock(isInboxChat || isBoard);
 
   if (isInboxChat) {
     return (
@@ -36,6 +37,20 @@ export function AppShell({ children }: AppShellProps) {
           <div className="app-shell-ambient-glow app-shell-ambient-glow-violet" />
           <div className="app-shell-ambient-glow app-shell-ambient-glow-rose" />
         </div>
+        <main className="relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden">
+          {children}
+        </main>
+        <LogoutButton className="bottom-5 right-6" />
+      </div>
+    );
+  }
+
+  if (isBoard) {
+    return (
+      <div
+        className="fixed inset-x-0 top-0 z-40 flex flex-col overflow-hidden bg-white"
+        style={{ height: viewportHeight ?? "100dvh" }}
+      >
         <main className="relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden">
           {children}
         </main>

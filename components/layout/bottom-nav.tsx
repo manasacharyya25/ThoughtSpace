@@ -7,12 +7,14 @@ import { cn } from "@/lib/utils";
 import {
   FeedIcon,
   InboxIcon,
+  LiveIcon,
   ProfileIcon,
 } from "./nav-icons";
 
 const navItems = [
   { label: "Feed", href: "/feed", icon: FeedIcon },
   { label: "Inbox", href: "/inbox", icon: InboxIcon, showUnread: true },
+  { label: "Live", href: "/board", icon: LiveIcon },
   { label: "Profile", href: "/profile", icon: ProfileIcon },
 ] as const;
 
@@ -87,7 +89,7 @@ function NavBar({ className }: { className?: string }) {
             key={item.href}
             href={item.href}
             className={cn(
-              "relative flex min-w-[72px] flex-col items-center justify-center gap-1 rounded-xl px-3 py-2 transition-[background-color,border-color,color,box-shadow] duration-300 ease sm:min-w-[80px] sm:px-4",
+              "relative flex min-w-[64px] flex-col items-center justify-center gap-1 rounded-xl px-2 py-2 transition-[background-color,border-color,color,box-shadow] duration-300 ease sm:min-w-[72px] sm:px-3",
               isActive
                 ? "bg-[#2F9CFA]/12 text-[#2F9CFA] shadow-[inset_0_0_0_1px_rgba(47,156,250,0.25)]"
                 : isColourfulShell

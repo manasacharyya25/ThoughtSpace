@@ -12,6 +12,7 @@ const onboardingSans = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: "Get Started",
   description: `Set up your ${env.NEXT_PUBLIC_APP_NAME} profile — a few questions to help us match you with thoughtful conversations.`,
+  robots: { index: false, follow: true },
 };
 
 export default function OnboardingPage() {

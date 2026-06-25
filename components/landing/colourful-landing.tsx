@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BrandLogo } from "@/components/brand/brand-logo";
+import { LandingClouds } from "@/components/landing/landing-clouds";
 import { LandingFooter } from "@/components/landing/landing-footer";
 import { env } from "@/lib/env";
 import { cn } from "@/lib/utils";
@@ -292,6 +293,8 @@ export function ColourfulLanding() {
         className="pointer-events-none absolute left-1/2 top-1/4 z-[1] h-[35vw] w-[35vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#B39DDB] opacity-30 blur-[100px]"
         aria-hidden="true"
       />
+
+      <LandingClouds />
 
       {/* Mobile layout — vertical stack, footer pinned to bottom */}
       <div className="relative z-10 flex min-h-dvh flex-col min-[1100px]:hidden">

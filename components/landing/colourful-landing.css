@@ -8,6 +8,108 @@
   }
 }
 
+@keyframes colourful-cloud-drift-ltr {
+  0% {
+    transform: translateX(-15vw) translateY(0);
+  }
+  50% {
+    transform: translateX(55vw) translateY(-6px);
+  }
+  100% {
+    transform: translateX(115vw) translateY(0);
+  }
+}
+
+@keyframes colourful-cloud-drift-rtl {
+  0% {
+    transform: translateX(115vw) translateY(0);
+  }
+  50% {
+    transform: translateX(45vw) translateY(6px);
+  }
+  100% {
+    transform: translateX(-15vw) translateY(0);
+  }
+}
+
+.colourful-landing-cloud {
+  position: absolute;
+  left: 0;
+  will-change: transform;
+}
+
+.colourful-landing-cloud-svg {
+  overflow: visible;
+}
+
+.colourful-landing-cloud-image {
+  mix-blend-mode: screen;
+  user-select: none;
+}
+
+.colourful-landing-cloud--paused {
+  animation-play-state: paused;
+}
+
+.colourful-landing-cloud-handle {
+  pointer-events: auto;
+  cursor: grab;
+  touch-action: none;
+}
+
+.colourful-landing-cloud-handle--dragging {
+  cursor: grabbing;
+}
+
+/* Desktop: lift the active cloud above cards/CTA only while dragging */
+@media (min-width: 1100px) {
+  .colourful-landing-cloud--dragging {
+    z-index: 50;
+  }
+}
+
+/*
+ * Mobile: only top-sky clouds accept touch so the CTA and cards stay tappable.
+ * Clouds behind content remain decorative (pointer-events: none).
+ */
+@media (max-width: 1099px) {
+  .colourful-landing-cloud-handle {
+    pointer-events: none;
+  }
+
+  .colourful-landing-cloud-handle--mobile-draggable {
+    pointer-events: auto;
+  }
+}
+
+.colourful-landing-cloud--ltr {
+  animation: colourful-cloud-drift-ltr linear infinite;
+}
+
+.colourful-landing-cloud--rtl {
+  animation: colourful-cloud-drift-rtl linear infinite;
+}
+
+.colourful-landing-cloud--slow {
+  animation-duration: 85s;
+}
+
+.colourful-landing-cloud--medium {
+  animation-duration: 68s;
+}
+
+.colourful-landing-cloud--fast {
+  animation-duration: 52s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .colourful-landing-cloud--ltr,
+  .colourful-landing-cloud--rtl {
+    animation: none;
+    opacity: 0.12 !important;
+  }
+}
+
 @keyframes colourful-rocket-pop {
   0%,
   100% {

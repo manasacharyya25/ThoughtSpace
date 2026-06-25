@@ -193,7 +193,7 @@ function CtaButton({
 }) {
   return (
     <Link
-      href="/onboarding"
+      href="/login"
       className={cn(
         "colourful-landing-btn-primary inline-flex items-center justify-center gap-3 rounded-[20px] border-none bg-[#1C1D1E] font-bold text-white no-underline shadow-[0_24px_48px_-12px_rgba(28,29,30,0.08)] hover:bg-[#2F9CFA] hover:shadow-[0_12px_32px_-4px_rgba(47,156,250,0.4)]",
         compact

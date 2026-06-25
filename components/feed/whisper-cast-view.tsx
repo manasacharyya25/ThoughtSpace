@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { PostReactions } from "@/components/feed/post-reactions";
 import { useInbox } from "@/context/inbox-context";
 import { usePosts } from "@/context/posts-context";
 import { useResponses } from "@/context/responses-context";
+import { usePostReactions } from "@/hooks/use-post-reactions";
 import { useUser } from "@/hooks/use-user";
 import { normalizeCategory } from "@/lib/category";
 import {
@@ -270,6 +272,9 @@ export function WhisperCastView() {
     ? myPosts.filter((post) => post.id !== resonanceAnchor.postId)
     : myPosts;
 
+  const myPostIds = useMemo(() => myPosts.map((post) => post.id), [myPosts]);
+  const { getSummary } = usePostReactions(myPostIds);
+
   return (
     <>
     <div className="whisper-fade-in space-y-6">
@@ -364,6 +369,12 @@ export function WhisperCastView() {
             &ldquo;{anchorPost.content}&rdquo;
           </p>
 
+          <PostReactions
+            postId={anchorPost.id}
+            summary={getSummary(anchorPost.id)}
+            readOnly
+          />
+
           {isSearchingMatches ? (
             <WaitingMessage message="Scanning the ether for echoes" />
           ) : (
@@ -455,6 +466,8 @@ export function WhisperCastView() {
                 post.response_count,
                 pendingEchoes.length
               );
+              const reactionSummary = getSummary(post.id);
+              const hasReactions = reactionSummary.emojis.length > 0;
 
               return (
                 <article
@@ -472,25 +485,37 @@ export function WhisperCastView() {
                     &ldquo;{post.content}&rdquo;
                   </p>
 
-                  {responseCount > 0 && (
-                    <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[#1C1D1E]/[0.06] pt-4">
-                      <p className="text-xs text-landing-muted">
-                        {responseCount}{" "}
-                        {responseCount === 1 ? "response" : "responses"}
-                        {hasNewEcho && (
-                          <span className="ml-2 text-landing-gold">
-                            · new
-                          </span>
-                        )}
-                      </p>
-                      {hasNewEcho && (
-                        <Link
-                          href="/inbox"
-                          className="text-[10px] font-bold text-landing-gold transition-colors hover:text-[#1C1D1E]"
-                        >
-                          Open inbox →
-                        </Link>
-                      )}
+                  {(hasReactions || responseCount > 0) && (
+                    <div className="flex flex-col gap-3 border-t border-[#1C1D1E]/[0.06] pt-4 sm:flex-row sm:items-center sm:justify-between">
+                      {hasReactions ? (
+                        <PostReactions
+                          postId={post.id}
+                          summary={reactionSummary}
+                          readOnly
+                        />
+                      ) : null}
+
+                      {responseCount > 0 ? (
+                        <div className="flex flex-wrap items-center justify-end gap-2">
+                          <p className="text-xs text-landing-muted">
+                            {responseCount}{" "}
+                            {responseCount === 1 ? "response" : "responses"}
+                            {hasNewEcho && (
+                              <span className="ml-2 text-landing-gold">
+                                · new
+                              </span>
+                            )}
+                          </p>
+                          {hasNewEcho && (
+                            <Link
+                              href="/inbox"
+                              className="text-[10px] font-bold text-landing-gold transition-colors hover:text-[#1C1D1E]"
+                            >
+                              Open inbox →
+                            </Link>
+                          )}
+                        </div>
+                      ) : null}
                     </div>
                   )}
                 </article>

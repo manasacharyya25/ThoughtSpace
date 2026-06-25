@@ -31,10 +31,10 @@ export function InboxChatPage() {
   );
 
   useEffect(() => {
-    if (!isGuest) return;
-    setInboxChatGateFlag();
+    if (!isGuest || !user?.id) return;
+    setInboxChatGateFlag(user.id);
     router.replace("/inbox");
-  }, [isGuest, router]);
+  }, [isGuest, router, user?.id]);
 
   useEffect(() => {
     if (isGuest || !conversationId || !conversation) return;

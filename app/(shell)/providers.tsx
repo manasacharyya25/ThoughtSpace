@@ -1,6 +1,7 @@
 "use client";
 
 import { ResponseModal } from "@/components/response";
+import { ReactionNotifications } from "@/components/feed/reaction-notifications";
 import { NotificationSoundUnlock } from "@/components/layout/notification-sound-unlock";
 import { TrialProvider } from "@/context/trial-context";
 import { InboxProvider } from "@/context/inbox-context";
@@ -15,6 +16,7 @@ export function ShellProviders({ children }: { children: React.ReactNode }) {
           <InboxProvider>
             {children}
             <ResponseModal />
+            <ReactionNotifications />
             <NotificationSoundUnlock />
           </InboxProvider>
         </ResponsesProvider>

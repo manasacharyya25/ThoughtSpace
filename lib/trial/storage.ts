@@ -1,4 +1,5 @@
-const STORAGE_KEY = "thoughtspace:trial-triggers";
+const STORAGE_KEY_PREFIX = "thoughtspace:trial-triggers";
+const LEGACY_STORAGE_KEY = "thoughtspace:trial-triggers";
 
 export type TrialTriggerKey = "firstCast" | "firstReply" | "inbox" | "profile";
 
@@ -16,11 +17,15 @@ const DEFAULT_STATE: TrialTriggerState = {
   profile: false,
 };
 
-function readState(): TrialTriggerState {
-  if (typeof window === "undefined") return DEFAULT_STATE;
+function storageKey(userId: string): string {
+  return `${STORAGE_KEY_PREFIX}:${userId}`;
+}
+
+function readState(userId: string): TrialTriggerState {
+  if (typeof window === "undefined" || !userId) return DEFAULT_STATE;
 
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(storageKey(userId));
     if (!raw) return DEFAULT_STATE;
     const parsed = JSON.parse(raw) as Partial<TrialTriggerState>;
     return { ...DEFAULT_STATE, ...parsed };
@@ -29,31 +34,50 @@ function readState(): TrialTriggerState {
   }
 }
 
-function writeState(state: TrialTriggerState) {
+function writeState(userId: string, state: TrialTriggerState) {
+  if (typeof window === "undefined" || !userId) return;
+  localStorage.setItem(storageKey(userId), JSON.stringify(state));
+}
+
+/** Remove the old browser-wide key so new guests are not affected. */
+export function clearLegacyTrialTriggerStorage() {
   if (typeof window === "undefined") return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  localStorage.removeItem(LEGACY_STORAGE_KEY);
 }
 
-export function hasShownTrialTrigger(key: TrialTriggerKey): boolean {
-  return readState()[key];
+export function hasShownTrialTrigger(
+  userId: string | undefined,
+  key: TrialTriggerKey
+): boolean {
+  if (!userId) return false;
+  return readState(userId)[key];
 }
 
-export function markTrialTriggerShown(key: TrialTriggerKey) {
-  const state = readState();
+export function markTrialTriggerShown(
+  userId: string | undefined,
+  key: TrialTriggerKey
+) {
+  if (!userId) return;
+
+  const state = readState(userId);
   if (state[key]) return;
-  writeState({ ...state, [key]: true });
+  writeState(userId, { ...state, [key]: true });
 }
 
-export const INBOX_CHAT_GATE_KEY = "thoughtspace:inbox-chat-gate";
-
-export function setInboxChatGateFlag() {
-  if (typeof window === "undefined") return;
-  sessionStorage.setItem(INBOX_CHAT_GATE_KEY, "1");
+function inboxChatGateKey(userId: string): string {
+  return `thoughtspace:inbox-chat-gate:${userId}`;
 }
 
-export function consumeInboxChatGateFlag(): boolean {
-  if (typeof window === "undefined") return false;
-  const value = sessionStorage.getItem(INBOX_CHAT_GATE_KEY) === "1";
-  if (value) sessionStorage.removeItem(INBOX_CHAT_GATE_KEY);
+export function setInboxChatGateFlag(userId: string | undefined) {
+  if (typeof window === "undefined" || !userId) return;
+  sessionStorage.setItem(inboxChatGateKey(userId), "1");
+}
+
+export function consumeInboxChatGateFlag(userId: string | undefined): boolean {
+  if (typeof window === "undefined" || !userId) return false;
+
+  const key = inboxChatGateKey(userId);
+  const value = sessionStorage.getItem(key) === "1";
+  if (value) sessionStorage.removeItem(key);
   return value;
 }

@@ -1,7 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { PostReactions } from "@/components/feed/post-reactions";
 import { useResponses } from "@/context/responses-context";
+import { usePostReactions } from "@/hooks/use-post-reactions";
 import { useUser } from "@/hooks/use-user";
 import { formatRelativeTime } from "@/lib/time";
 import { sortFeedForUser } from "@/lib/feed-sort";
@@ -46,6 +48,13 @@ export function WhisperReadView({ posts, loading, error }: WhisperReadViewProps)
       return matchesTag && matchesSearch;
     });
   }, [sortedPosts, activeFilter, searchQuery, user?.id]);
+
+  const filteredPostIds = useMemo(
+    () => filteredPosts.map((post) => post.id),
+    [filteredPosts]
+  );
+
+  const { getSummary, toggleReaction } = usePostReactions(filteredPostIds);
 
   return (
     <div className="whisper-fade-in space-y-6">
@@ -109,33 +118,35 @@ export function WhisperReadView({ posts, loading, error }: WhisperReadViewProps)
                   &ldquo;{post.content}&rdquo;
                 </p>
 
-                <div
-                  className={cn(
-                    "flex items-center border-t border-[#1C1D1E]/[0.06] pt-4",
-                    post.response_count > 0
-                      ? "justify-between"
-                      : "justify-end"
-                  )}
-                >
-                  {post.response_count > 0 && (
-                    <span className="text-xs text-landing-muted">
-                      {post.response_count}{" "}
-                      {post.response_count === 1 ? "echo" : "echoes"} matched
-                    </span>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => openResponseModal(post)}
-                    disabled={responded}
-                    className={cn(
-                      "rounded-2xl border border-[#1C1D1E]/10 px-3 py-1.5 text-xs font-bold text-landing-gold transition-colors hover:border-landing-gold hover:bg-[#EDF0F1]",
-                      responded && "cursor-default opacity-50"
+                <div className="flex flex-col gap-3 border-t border-[#1C1D1E]/[0.06] pt-4 sm:flex-row sm:items-center sm:justify-between">
+                  <PostReactions
+                    postId={post.id}
+                    summary={getSummary(post.id)}
+                    onToggle={toggleReaction}
+                    disabled={!user}
+                  />
+
+                  <div className="flex items-center justify-end gap-3">
+                    {post.response_count > 0 && (
+                      <span className="text-xs text-landing-muted">
+                        {post.response_count}{" "}
+                        {post.response_count === 1 ? "echo" : "echoes"} matched
+                      </span>
                     )}
-                  >
-                    {responded
-                      ? "Response transmitted"
-                      : "Send direct response →"}
-                  </button>
+                    <button
+                      type="button"
+                      onClick={() => openResponseModal(post)}
+                      disabled={responded}
+                      className={cn(
+                        "rounded-2xl border border-[#1C1D1E]/10 px-3 py-1.5 text-xs font-bold text-landing-gold transition-colors hover:border-landing-gold hover:bg-[#EDF0F1]",
+                        responded && "cursor-default opacity-50"
+                      )}
+                    >
+                      {responded
+                        ? "Response transmitted"
+                        : "Send direct response →"}
+                    </button>
+                  </div>
                 </div>
               </article>
             );

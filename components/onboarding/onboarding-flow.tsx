@@ -11,7 +11,6 @@ import {
   prepareProfileForSave,
   validateThemeStep,
 } from "@/lib/onboarding-validation";
-import { ensureAnonymousSession } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/client";
 import {
   createProfileFromOnboarding,
@@ -41,23 +40,28 @@ export function OnboardingFlow() {
   useEffect(() => {
     let cancelled = false;
 
-    const bootstrap = async () => {
+    const checkSession = async () => {
       const supabase = createClient();
-      const { error } = await ensureAnonymousSession(supabase);
-      if (!cancelled) {
-        if (error) {
-          setError(error.message);
-        }
-        setSessionReady(true);
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (cancelled) return;
+
+      if (!user) {
+        router.replace("/login");
+        return;
       }
+
+      setSessionReady(true);
     };
 
-    void bootstrap();
+    void checkSession();
 
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [router]);
 
   const currentTheme = ONBOARDING_THEMES[stepIndex];
   const isLastStep = stepIndex === ONBOARDING_THEMES.length - 1;
@@ -72,11 +76,13 @@ export function OnboardingFlow() {
     setError(undefined);
 
     const supabase = createClient();
-    const { user, error: sessionError } = await ensureAnonymousSession(supabase);
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-    if (sessionError || !user) {
+    if (!user) {
       setIsSaving(false);
-      setError(sessionError?.message ?? "Could not start your session. Try again.");
+      router.replace("/login");
       return;
     }
 

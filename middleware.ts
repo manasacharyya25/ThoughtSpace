@@ -42,12 +42,15 @@ export async function middleware(request: NextRequest) {
   }
 
   if (!user && pathname === "/onboarding") {
-    return supabaseResponse;
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    return NextResponse.redirect(url);
   }
 
   if (!user && isProtectedPath(pathname)) {
     const url = request.nextUrl.clone();
-    url.pathname = "/onboarding";
+    url.pathname = "/login";
+    url.searchParams.set("next", pathname);
     return NextResponse.redirect(url);
   }
 
@@ -72,7 +75,7 @@ export async function middleware(request: NextRequest) {
 
   if (!user && !isPublicPath(pathname) && !isAuthRoute(pathname)) {
     const url = request.nextUrl.clone();
-    url.pathname = pathname === "/onboarding" ? "/onboarding" : "/login";
+    url.pathname = "/login";
     return NextResponse.redirect(url);
   }
 

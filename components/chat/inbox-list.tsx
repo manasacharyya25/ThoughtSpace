@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { PendingResponseCard } from "@/components/inbox/pending-response-card";
 import { useInbox } from "@/context/inbox-context";
 import { useTrial } from "@/context/trial-context";
+import { useUser } from "@/hooks/use-user";
 import { env } from "@/lib/env";
 import { INBOX_CHAT_GATE_MESSAGE } from "@/lib/trial/constants";
 import { consumeInboxChatGateFlag } from "@/lib/trial/storage";
@@ -53,6 +54,7 @@ export function InboxList() {
     promptInboxChatSignup,
     dismissInboxChatGate,
   } = useTrial();
+  const { user } = useUser();
 
   const unreadPendingCount = useMemo(
     () => pending.filter((item) => isPendingUnread(item.id)).length,
@@ -74,10 +76,11 @@ export function InboxList() {
   }, [pending.length, pendingLoading, tabInitialized]);
 
   useEffect(() => {
-    if (consumeInboxChatGateFlag()) {
+    if (!user?.id) return;
+    if (consumeInboxChatGateFlag(user.id)) {
       promptInboxChatSignup();
     }
-  }, [promptInboxChatSignup]);
+  }, [promptInboxChatSignup, user?.id]);
 
   const handleConversationClick = (conversationId: string) => {
     if (isGuest) {

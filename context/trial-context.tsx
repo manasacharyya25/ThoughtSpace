@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -21,6 +22,7 @@ import {
   TRIAL_REPLY_LIMIT,
 } from "@/lib/trial/constants";
 import {
+  clearLegacyTrialTriggerStorage,
   hasShownTrialTrigger,
   markTrialTriggerShown,
   type TrialTriggerKey,
@@ -61,9 +63,15 @@ export function TrialProvider({ children }: { children: ReactNode }) {
     null
   );
   const [showInboxChatGate, setShowInboxChatGate] = useState(false);
+  const pendingRetentionKey = useRef<TrialTriggerKey | null>(null);
 
   const isGuest = isGuestUser(user);
   const isRegistered = isRegisteredUser(user);
+  const userId = user?.id;
+
+  useEffect(() => {
+    clearLegacyTrialTriggerStorage();
+  }, []);
 
   const refreshUsage = useCallback(async () => {
     if (!user) {
@@ -94,21 +102,38 @@ export function TrialProvider({ children }: { children: ReactNode }) {
     void markProfileRegistered(supabase, user.id);
   }, [isRegistered, user]);
 
+  const acknowledgeRetentionModal = useCallback(() => {
+    const key = pendingRetentionKey.current;
+    if (!key || !userId) return;
+    markTrialTriggerShown(userId, key);
+    pendingRetentionKey.current = null;
+  }, [userId]);
+
   const openSignupModal = useCallback((variant: SignupModalVariant) => {
     setModalVariant(variant);
   }, []);
 
   const closeSignupModal = useCallback(() => {
-    setModalVariant(null);
-  }, []);
+    setModalVariant((current) => {
+      if (current === "retention") {
+        acknowledgeRetentionModal();
+      }
+      return null;
+    });
+  }, [acknowledgeRetentionModal]);
 
   const showRetentionOnce = useCallback(
     (key: TrialTriggerKey) => {
-      if (!isGuest || hasShownTrialTrigger(key)) return;
-      markTrialTriggerShown(key);
+      if (!isGuest || !userId) return;
+      if (hasShownTrialTrigger(userId, key)) return;
+      if (pendingRetentionKey.current === key && modalVariant === "retention") {
+        return;
+      }
+
+      pendingRetentionKey.current = key;
       openSignupModal("retention");
     },
-    [isGuest, openSignupModal]
+    [isGuest, userId, modalVariant, openSignupModal]
   );
 
   const guardAction = useCallback(
@@ -119,6 +144,7 @@ export function TrialProvider({ children }: { children: ReactNode }) {
       const limit = kind === "cast" ? TRIAL_CAST_LIMIT : TRIAL_REPLY_LIMIT;
 
       if (count >= limit) {
+        pendingRetentionKey.current = null;
         openSignupModal("limit");
         return false;
       }
@@ -179,6 +205,11 @@ export function TrialProvider({ children }: { children: ReactNode }) {
     }
   }, [isGuest, pathname, triggerRouteSignupPrompt, userLoading]);
 
+  useEffect(() => {
+    pendingRetentionKey.current = null;
+    setModalVariant(null);
+  }, [userId]);
+
   const modalMessage =
     modalVariant === "limit" ? LIMIT_MODAL_MESSAGE : RETENTION_MODAL_MESSAGE;
 
@@ -220,6 +251,12 @@ export function TrialProvider({ children }: { children: ReactNode }) {
     ]
   );
 
+  const handleModalAcknowledge = useCallback(() => {
+    if (modalVariant === "retention") {
+      acknowledgeRetentionModal();
+    }
+  }, [acknowledgeRetentionModal, modalVariant]);
+
   return (
     <TrialContext.Provider value={value}>
       {children}
@@ -228,6 +265,7 @@ export function TrialProvider({ children }: { children: ReactNode }) {
         variant={modalVariant ?? "retention"}
         message={modalMessage}
         onClose={closeSignupModal}
+        onAcknowledge={handleModalAcknowledge}
         onSignedUp={() => {
           closeSignupModal();
           router.refresh();

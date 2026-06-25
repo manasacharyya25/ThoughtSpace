@@ -15,6 +15,7 @@ interface SignupRetentionModalProps {
   variant: SignupModalVariant;
   message: string;
   onClose: () => void;
+  onAcknowledge?: () => void;
   onSignedUp: () => void;
 }
 
@@ -23,6 +24,7 @@ export function SignupRetentionModal({
   variant,
   message,
   onClose,
+  onAcknowledge,
   onSignedUp,
 }: SignupRetentionModalProps) {
   const pathname = usePathname();
@@ -35,6 +37,7 @@ export function SignupRetentionModal({
   const handleGoogle = async () => {
     setIsLoading(true);
     setError(undefined);
+    onAcknowledge?.();
 
     const supabase = createClient();
     const {
@@ -105,7 +108,10 @@ export function SignupRetentionModal({
             className={cn(
               "colourful-landing-btn-primary flex h-auto w-full items-center justify-center rounded-2xl border-none bg-[#1C1D1E] px-6 py-3 text-xs font-bold text-white no-underline hover:bg-[#2F9CFA]"
             )}
-            onClick={onClose}
+            onClick={() => {
+              onAcknowledge?.();
+              onClose();
+            }}
           >
             Sign up with email
           </Link>

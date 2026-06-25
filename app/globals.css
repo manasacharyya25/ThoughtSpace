@@ -527,6 +527,36 @@
     animation: whisper-fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 
+  @keyframes reaction-toast-in {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes reaction-toast-out {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+  }
+
+  .reaction-toast-enter {
+    animation: reaction-toast-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .reaction-toast-exit {
+    animation: reaction-toast-out 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
   .inbox-chat {
     --inbox-chat-bg: #0b0b0a;
     --inbox-chat-card: #0f0f0e;

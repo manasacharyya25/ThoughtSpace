@@ -1,5 +1,5 @@
 import type { OnboardingIllustrationId } from "@/types/onboarding-profile";
-import type { OnboardingTheme } from "@/types/onboarding-profile";
+import type { ProfileEditTheme } from "@/types/onboarding-profile";
 
 function ThemeIllustration({ themeId }: { themeId: OnboardingIllustrationId }) {
   const common =
@@ -94,6 +94,7 @@ function ThemeIllustration({ themeId }: { themeId: OnboardingIllustrationId }) {
           </svg>
         </div>
       );
+    case "connections":
     case "looking-for":
       return (
         <div className={common} aria-hidden="true">
@@ -101,6 +102,21 @@ function ThemeIllustration({ themeId }: { themeId: OnboardingIllustrationId }) {
             <circle cx="36" cy="36" r="18" stroke="#2F9CFA" strokeWidth="2.5" />
             <circle cx="36" cy="36" r="8" stroke="#FFAB91" strokeWidth="2.5" />
             <path d="M36 18v8M36 46v8M18 36h8M46 36h8" stroke="#B39DDB" strokeWidth="2" />
+          </svg>
+        </div>
+      );
+    case "conversation-style":
+      return (
+        <div className={common} aria-hidden="true">
+          <svg width="72" height="72" viewBox="0 0 72 72" fill="none">
+            <circle cx="24" cy="30" r="10" stroke="#2F9CFA" strokeWidth="2.5" />
+            <circle cx="48" cy="30" r="10" stroke="#FFAB91" strokeWidth="2.5" />
+            <path
+              d="M18 48c4-6 10-8 18-8s14 2 18 8"
+              stroke="#81C784"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+            />
           </svg>
         </div>
       );
@@ -144,7 +160,7 @@ function ThemeIllustration({ themeId }: { themeId: OnboardingIllustrationId }) {
 }
 
 interface OnboardingContextPanelProps {
-  theme: OnboardingTheme;
+  theme: ProfileEditTheme;
 }
 
 export function OnboardingContextPanel({ theme }: OnboardingContextPanelProps) {

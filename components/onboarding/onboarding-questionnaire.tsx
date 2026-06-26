@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import type {
   OnboardingProfile,
   OnboardingQuestion,
-  OnboardingTheme,
+  ProfileEditTheme,
 } from "@/types/onboarding-profile";
 
 const inputClassName =
@@ -348,10 +348,11 @@ function QuestionField({ question, profile, onChange }: QuestionFieldProps) {
 }
 
 interface OnboardingQuestionnaireProps {
-  theme: OnboardingTheme;
+  theme: ProfileEditTheme;
   profile: OnboardingProfile;
   onChange: (updates: Partial<OnboardingProfile>) => void;
   error?: string;
+  pendingQuestionIds?: Set<string>;
 }
 
 export function OnboardingQuestionnaire({
@@ -359,17 +360,35 @@ export function OnboardingQuestionnaire({
   profile,
   onChange,
   error,
+  pendingQuestionIds,
 }: OnboardingQuestionnaireProps) {
   return (
     <section className="mx-auto w-full max-w-lg">
       <div className="overflow-visible rounded-[28px] border border-[#1C1D1E]/[0.03] bg-white p-5 shadow-[0_24px_48px_-12px_rgba(28,29,30,0.08)] sm:p-6">
         <div className="space-y-6">
-          {theme.questions.map((question) => (
-            <div key={question.id} className="space-y-2">
+          {theme.questions.map((question) => {
+            const isPending = pendingQuestionIds?.has(question.id) ?? false;
+
+            return (
+            <div
+              key={question.id}
+              id={`question-${question.id}`}
+              className={cn(
+                "space-y-2 rounded-[14px] transition-colors",
+                isPending && "border border-[#2F9CFA]/25 bg-[#EBF5FF]/40 p-3"
+              )}
+            >
               <div>
-                <label htmlFor={question.id} className={labelClassName}>
-                  {question.label}
-                </label>
+                <div className="flex flex-wrap items-center gap-2">
+                  <label htmlFor={question.id} className={labelClassName}>
+                    {question.label}
+                  </label>
+                  {isPending ? (
+                    <span className="rounded-full bg-[#2F9CFA]/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-[#2F9CFA]">
+                      Not answered
+                    </span>
+                  ) : null}
+                </div>
                 {question.hint ? (
                   <p className="mt-1 text-[11px] font-medium text-[#1C1D1E]/45">
                     {question.hint}
@@ -382,7 +401,8 @@ export function OnboardingQuestionnaire({
                 onChange={onChange}
               />
             </div>
-          ))}
+            );
+          })}
         </div>
 
         {error ? (

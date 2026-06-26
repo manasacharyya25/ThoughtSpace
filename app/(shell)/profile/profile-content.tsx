@@ -10,6 +10,10 @@ import {
   getProfileGenderLabel,
   hasCompleteProfileAnswers,
 } from "@/lib/profile-mapper";
+import {
+  getPendingCompleteProfileQuestions,
+  profileToOnboardingProfile,
+} from "@/lib/profile-edit";
 import { cn } from "@/lib/utils";
 import type { OnboardingAnswers } from "@/types/profile";
 import "@/components/landing/colourful-landing.css";
@@ -141,7 +145,7 @@ function ProfileHeader({ showEdit = false }: { showEdit?: boolean }) {
       </h1>
       {showEdit && (
         <Link
-          href="/onboarding"
+          href="/profile/edit"
           className="pb-1 text-[10px] font-bold uppercase tracking-widest text-[#1C1D1E]/45 transition-colors hover:text-[#2F9CFA]"
         >
           Edit profile
@@ -246,17 +250,23 @@ function CompleteProfileSection({ answers }: { answers: OnboardingAnswers }) {
   );
 }
 
-function CompleteProfilePrompt() {
+function CompleteProfilePrompt({ pendingCount }: { pendingCount: number }) {
   return (
-    <ProfileCard className="border-dashed p-6 sm:p-8">
+    <ProfileCard className="border-dashed border-[#2F9CFA]/25 bg-[#EBF5FF]/30 p-6 sm:p-8">
       <h3 className="text-base font-extrabold tracking-tight text-[#1C1D1E]">
         Complete your profile
       </h3>
       <p className="mt-2 text-xs font-medium leading-relaxed text-[#1C1D1E]/55">
-        Share more about what you&apos;re looking for, your privacy preferences,
-        and a few personal touches. A dedicated profile completion flow is
-        coming soon.
+        {pendingCount > 0
+          ? `${pendingCount} optional ${pendingCount === 1 ? "question" : "questions"} left — share more about what you're looking for, your privacy preferences, and a few personal touches.`
+          : "Share more about what you're looking for, your privacy preferences, and a few personal touches."}
       </p>
+      <Link
+        href="/profile/edit?theme=connections"
+        className="colourful-landing-btn-primary mt-5 inline-block rounded-2xl border-none bg-[#1C1D1E] px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-white transition-colors hover:bg-[#2F9CFA]"
+      >
+        Complete profile
+      </Link>
     </ProfileCard>
   );
 }
@@ -307,6 +317,9 @@ export function ProfileContent() {
   const showCompleteProfilePrompt =
     !hasCompleteProfileAnswers(answers) &&
     COMPLETE_PROFILE_FIELD_IDS.length > 0;
+  const pendingCompleteCount = getPendingCompleteProfileQuestions(
+    profileToOnboardingProfile(profile)
+  ).length;
 
   const initial = profile.username.charAt(0).toUpperCase();
 
@@ -409,7 +422,9 @@ export function ProfileContent() {
 
         <CompleteProfileSection answers={answers} />
 
-        {showCompleteProfilePrompt ? <CompleteProfilePrompt /> : null}
+        {showCompleteProfilePrompt ? (
+          <CompleteProfilePrompt pendingCount={pendingCompleteCount} />
+        ) : null}
 
         
 

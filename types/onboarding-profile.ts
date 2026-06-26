@@ -11,6 +11,8 @@ export type OnboardingIllustrationId =
   | "values"
   | "interests"
   | "looking-for"
+  | "connections"
+  | "conversation-style"
   | "privacy"
   | "extras";
 
@@ -72,8 +74,8 @@ export interface OnboardingTheme {
 
 /** Deferred to a future "Complete profile" flow — not shown during onboarding. */
 export type CompleteProfileThemeId =
-  | "looking-for"
-  | "privacy"
+  | "connections"
+  | "conversation-style"
   | "extras";
 
 export interface CompleteProfileTheme {
@@ -84,3 +86,7 @@ export interface CompleteProfileTheme {
   illustration: OnboardingIllustrationId;
   questions: OnboardingQuestion[];
 }
+
+/** Shared shape for onboarding and complete-profile steps. */
+export type ProfileEditTheme = OnboardingTheme | CompleteProfileTheme;
+

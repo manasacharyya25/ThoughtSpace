@@ -4,6 +4,7 @@ import type {
   OnboardingProfile,
   OnboardingQuestion,
   OnboardingThemeId,
+  ProfileEditTheme,
 } from "@/types/onboarding-profile";
 
 const USERNAME_REGEX = /^[a-zA-Z0-9_]{3,20}$/;
@@ -83,6 +84,18 @@ export function validateThemeStep(
   const theme = ONBOARDING_THEMES.find((item) => item.id === themeId);
   if (!theme) return undefined;
 
+  for (const question of theme.questions) {
+    const error = validateQuestion(question, profile);
+    if (error) return error;
+  }
+
+  return undefined;
+}
+
+export function validateProfileEditTheme(
+  theme: ProfileEditTheme,
+  profile: OnboardingProfile
+): string | undefined {
   for (const question of theme.questions) {
     const error = validateQuestion(question, profile);
     if (error) return error;

@@ -186,9 +186,10 @@ export const ONBOARDING_THEMES: OnboardingTheme[] = [
  */
 export const COMPLETE_PROFILE_THEMES: CompleteProfileTheme[] = [
   {
-    id: "looking-for",
-    title: "What are you looking for?",
-    subtitle: "The type of connections you want on ThoughtSpace.",
+    id: "connections",
+    title: "What you're looking for",
+    subtitle:
+      "What kind of connections are you hoping to find? What would a great connection look like for you?",
     whyWeAsk:
       "Sets the right expectations and helps us recommend the right people and spaces.",
     illustration: "looking-for",
@@ -215,20 +216,22 @@ export const COMPLETE_PROFILE_THEMES: CompleteProfileTheme[] = [
         rows: 3,
         maxLength: 200,
       },
+    ],
+  },
+  {
+    id: "conversation-style",
+    title: "How you connect",
+    subtitle:
+      "Do you prefer deep dives or light chats? What hobbies or activities energize you?",
+    whyWeAsk:
+      "Helps us understand your rhythm in conversation and what you like to talk about.",
+    illustration: "connect",
+    questions: [
       {
-        id: "impact",
-        label: "What kind of impact do you want to make?",
-        type: "textarea",
-        placeholder: "Share what you hope to contribute or change…",
-        rows: 3,
-        maxLength: 200,
-      },
-      {
-        id: "hobbies",
-        label: "What hobbies or activities energize you?",
-        type: "text",
-        placeholder: "Writing, hiking, film, music…",
-        maxLength: 120,
+        id: "conversationDepth",
+        label: "Do you prefer deep dives or light chats?",
+        type: "single",
+        options: ["Deep dives", "A bit of both", "Light chats"],
       },
       {
         id: "conversationMeaning",
@@ -239,52 +242,17 @@ export const COMPLETE_PROFILE_THEMES: CompleteProfileTheme[] = [
         maxLength: 200,
       },
       {
-        id: "conversationDepth",
-        label: "Do you prefer deep dives or light chats?",
-        type: "single",
-        options: ["Deep dives", "A bit of both", "Light chats"],
-      },
-    ],
-  },
-  {
-    id: "privacy",
-    title: "Privacy & comfort",
-    subtitle: "Control what you share and how you appear.",
-    whyWeAsk:
-      "You're in control. We respect your privacy and give you flexibility.",
-    illustration: "privacy",
-    questions: [
-      {
-        id: "comfortableSharing",
-        label: "What are you comfortable sharing?",
-        type: "multi",
-        maxSelections: 6,
-        options: [
-          "Name",
-          "Photo",
-          "Location",
-          "Interests",
-          "Occupation",
-          "Other",
-        ],
-      },
-      {
-        id: "displayPreference",
-        label: "How would you like to appear on ThoughtSpace?",
-        type: "single",
-        options: ["Use my real name", "Use a nickname"],
-      },
-      {
-        id: "contentVisibility",
-        label: "Who can see your content?",
-        type: "single",
-        options: ["Everyone", "Connections", "Only me"],
+        id: "hobbies",
+        label: "What hobbies or activities energize you?",
+        type: "text",
+        placeholder: "Writing, hiking, film, music…",
+        maxLength: 120,
       },
     ],
   },
   {
     id: "extras",
-    title: "The little extras",
+    title: "The Little Extras",
     subtitle: "Fun and light questions to personalize your experience.",
     whyWeAsk:
       "Helps your personality shine and makes connections more memorable.",

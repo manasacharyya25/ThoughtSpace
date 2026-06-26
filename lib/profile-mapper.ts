@@ -1,5 +1,6 @@
 import { getOnboardingAnswers } from "@/data/onboarding-themes";
 import { GENDER_SELF_DESCRIBE } from "@/data/onboarding-options";
+import { prepareProfileForSave } from "@/lib/onboarding-validation";
 import type { OnboardingProfile } from "@/types/onboarding-profile";
 import type { OnboardingAnswers, Profile, ProfileRow } from "@/types/profile";
 
@@ -71,6 +72,22 @@ export function mapProfileRow(row: ProfileRow): Profile {
     created_at: row.created_at,
     updated_at: row.updated_at,
     onboarding_answers: parseOnboardingAnswers(row.onboarding_answers),
+  };
+}
+
+export function onboardingToProfileUpdate(profile: OnboardingProfile) {
+  const prepared = prepareProfileForSave(profile);
+
+  return {
+    age_range: prepared.ageRange,
+    gender: prepared.gender,
+    gender_custom:
+      prepared.gender === GENDER_SELF_DESCRIBE
+        ? prepared.genderCustom.trim() || null
+        : null,
+    country: prepared.country,
+    bio: prepared.bio.trim(),
+    onboarding_answers: getOnboardingAnswers(prepared),
   };
 }
 

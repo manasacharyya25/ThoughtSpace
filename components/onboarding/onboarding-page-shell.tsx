@@ -6,11 +6,18 @@ import "@/components/landing/colourful-landing.css";
 interface OnboardingPageShellProps {
   children: ReactNode;
   progress: ReactNode;
+  backLink?: {
+    href: string;
+    label: string;
+  };
+  pageTitle?: string;
 }
 
 export function OnboardingPageShell({
   children,
   progress,
+  backLink,
+  pageTitle,
 }: OnboardingPageShellProps) {
   const brandLabel = env.NEXT_PUBLIC_APP_NAME.toLowerCase();
 
@@ -53,6 +60,23 @@ export function OnboardingPageShell({
         </header>
 
         <div className="mx-auto w-full max-w-[1200px] shrink-0 px-5 sm:px-8">
+          {backLink || pageTitle ? (
+            <div className="mb-4 space-y-2">
+              {backLink ? (
+                <Link
+                  href={backLink.href}
+                  className="text-[10px] font-bold uppercase tracking-widest text-[#1C1D1E]/45 transition-colors hover:text-[#2F9CFA]"
+                >
+                  ← {backLink.label}
+                </Link>
+              ) : null}
+              {pageTitle ? (
+                <h1 className="text-[clamp(1.35rem,3vw,2rem)] font-extrabold leading-[1.08] tracking-[-1px] text-[#1C1D1E]">
+                  {pageTitle}
+                </h1>
+              ) : null}
+            </div>
+          ) : null}
           {progress}
         </div>
 

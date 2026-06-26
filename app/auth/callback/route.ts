@@ -6,6 +6,16 @@ export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
   const requestedNext = searchParams.get("next");
+  const oauthError = searchParams.get("error");
+  const errorCode = searchParams.get("error_code");
+
+  if (oauthError) {
+    const loginError =
+      errorCode === "identity_already_exists"
+        ? "identity_already_exists"
+        : "auth";
+    return NextResponse.redirect(`${origin}/login?error=${loginError}`);
+  }
 
   if (code) {
     const supabase = await createClient();

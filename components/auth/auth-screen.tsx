@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { getAuthErrorMessage } from "@/lib/auth/errors";
 import { ensureAnonymousSession } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/client";
 import { getProfileByUserId } from "@/lib/supabase/profiles";
@@ -59,8 +60,9 @@ export function AuthScreen() {
   const copy = authCopy[mode];
 
   useEffect(() => {
-    if (searchParams.get("error") === "auth") {
-      setAuthError("Sign in failed. Please try again.");
+    const message = getAuthErrorMessage(searchParams.get("error"));
+    if (message) {
+      setAuthError(message);
     }
   }, [searchParams]);
 
@@ -149,16 +151,7 @@ export function AuthScreen() {
     const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`;
 
     if (user?.is_anonymous) {
-      const { error: linkError } = await supabase.auth.linkIdentity({
-        provider: "google",
-        options: { redirectTo },
-      });
-
-      if (linkError) {
-        setAuthError(linkError.message);
-        setIsLoading(false);
-      }
-      return;
+      await supabase.auth.signOut();
     }
 
     const { error: oauthError } = await supabase.auth.signInWithOAuth({
@@ -185,6 +178,14 @@ export function AuthScreen() {
       const trimmedEmail = email.trim();
 
       if (mode === "login") {
+        const {
+          data: { user: currentUser },
+        } = await supabase.auth.getUser();
+
+        if (currentUser?.is_anonymous) {
+          await supabase.auth.signOut();
+        }
+
         const { error: signInError } = await supabase.auth.signInWithPassword({
           email: trimmedEmail,
           password,

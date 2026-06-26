@@ -31,7 +31,7 @@ export function AboutUsNav() {
         </div>
 
         <Link
-          href="/login"
+          href="/start"
           className="inline-block rounded-full bg-white px-5 py-2 font-landing-mono text-xs uppercase tracking-wider text-black transition-all duration-300 hover:bg-landing-gold"
         >
           Get Started

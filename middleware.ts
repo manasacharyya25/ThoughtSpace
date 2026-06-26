@@ -22,6 +22,7 @@ function isAuthRoute(pathname: string) {
 function isPublicPath(pathname: string) {
   return (
     pathname === "/" ||
+    pathname === "/start" ||
     pathname === "/colourful-landing" ||
     pathname === "/about-us" ||
     pathname === "/test" ||
@@ -55,7 +56,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (user && pathname === "/login" && !user.is_anonymous && profileExists) {
+  if (user && pathname === "/login" && profileExists) {
     const url = request.nextUrl.clone();
     url.pathname = "/feed";
     url.searchParams.delete("next");

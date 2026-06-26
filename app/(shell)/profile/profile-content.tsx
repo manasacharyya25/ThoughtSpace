@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { Pencil, Sparkles } from "lucide-react";
+import { PostAuthorAvatar } from "@/components/feed/post-author-avatar";
 import { COMPLETE_PROFILE_FIELD_IDS } from "@/data/onboarding-themes";
 import { useLogout } from "@/hooks/use-logout";
 import { useProfile } from "@/hooks/use-profile";
@@ -16,6 +18,12 @@ import {
 } from "@/lib/profile-edit";
 import { cn } from "@/lib/utils";
 import type { OnboardingAnswers } from "@/types/profile";
+import {
+  ProfileIconBadge,
+  ProfileSectionHeader,
+  type ProfileFieldKey,
+  profileCardAccent,
+} from "@/components/profile/profile-field-meta";
 import "@/components/landing/colourful-landing.css";
 
 function formatMemberSince(date: string) {
@@ -26,56 +34,66 @@ function formatMemberSince(date: string) {
 }
 
 function ProfileField({
+  fieldKey,
   label,
   value,
   className,
   valueClassName,
 }: {
+  fieldKey: ProfileFieldKey;
   label: string;
   value: string;
   className?: string;
   valueClassName?: string;
 }) {
   return (
-    <div className={cn("space-y-1", className)}>
-      <label className="block text-[0.65rem] font-extrabold uppercase tracking-[1.2px] text-[#1C1D1E]/50">
-        {label}
-      </label>
-      <span
-        className={cn(
-          "text-sm font-medium text-[#1C1D1E]/80",
-          valueClassName
-        )}
-      >
-        {value}
-      </span>
+    <div className={cn("flex gap-3", className)}>
+      <ProfileIconBadge fieldKey={fieldKey} />
+      <div className="min-w-0 flex-1 space-y-1">
+        <label className="block text-[0.65rem] font-extrabold uppercase tracking-[1.2px] text-[#1C1D1E]/50">
+          {label}
+        </label>
+        <span
+          className={cn(
+            "text-sm font-medium leading-relaxed text-[#1C1D1E]/80",
+            valueClassName
+          )}
+        >
+          {value}
+        </span>
+      </div>
     </div>
   );
 }
 
 function ProfileTagList({
+  fieldKey,
   label,
   tags,
 }: {
+  fieldKey: ProfileFieldKey;
   label: string;
   tags: string[];
 }) {
   if (tags.length === 0) return null;
 
   return (
-    <div className="space-y-2">
-      <label className="block text-[0.65rem] font-extrabold uppercase tracking-[1.2px] text-[#1C1D1E]/50">
-        {label}
-      </label>
-      <div className="flex flex-wrap gap-2">
-        {tags.map((tag) => (
-          <span
-            key={tag}
-            className="rounded-full border border-[#2F9CFA]/20 bg-[#2F9CFA]/[0.08] px-3 py-1 text-[11px] font-semibold text-[#1C1D1E]/80"
-          >
-            {tag}
-          </span>
-        ))}
+    <div className="flex gap-3">
+      <ProfileIconBadge fieldKey={fieldKey} className="mt-0.5" />
+      <div className="min-w-0 flex-1 space-y-2">
+        <label className="block text-[0.65rem] font-extrabold uppercase tracking-[1.2px] text-[#1C1D1E]/50">
+          {label}
+        </label>
+        <div className="flex flex-wrap gap-2">
+          {tags.map((tag) => (
+            <span
+              key={tag}
+              className="rounded-full border border-[#2F9CFA]/20 bg-[#EBF5FF] px-3 py-1 text-[11px] font-semibold text-[#1C1D1E]/80"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -84,14 +102,18 @@ function ProfileTagList({
 function ProfileCard({
   children,
   className,
+  accentKey,
 }: {
   children: React.ReactNode;
   className?: string;
+  accentKey?: ProfileFieldKey;
 }) {
   return (
     <section
       className={cn(
-        "whisper-card rounded-[20px] border border-[#1C1D1E]/[0.03] bg-white shadow-[0_24px_48px_-12px_rgba(28,29,30,0.08)]",
+        "whisper-card overflow-hidden rounded-[20px] border border-[#1C1D1E]/[0.03] bg-white shadow-[0_24px_48px_-12px_rgba(28,29,30,0.08)]",
+        accentKey &&
+          cn("bg-gradient-to-br", profileCardAccent(accentKey)),
         className
       )}
     >
@@ -125,8 +147,9 @@ function ProfileEmptyState({
   actionHref: string;
 }) {
   return (
-    <ProfileCard className="p-8 text-center">
-      <p className="text-sm font-medium text-[#1C1D1E]/55">{description}</p>
+    <ProfileCard className="p-8 text-center" accentKey="username">
+      <ProfileIconBadge fieldKey="username" size="lg" className="mx-auto" />
+      <p className="mt-4 text-sm font-medium text-[#1C1D1E]/55">{description}</p>
       <Link
         href={actionHref}
         className="colourful-landing-btn-primary mt-5 inline-block rounded-2xl border-none bg-[#1C1D1E] px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-white transition-colors hover:bg-[#2F9CFA]"
@@ -146,8 +169,9 @@ function ProfileHeader({ showEdit = false }: { showEdit?: boolean }) {
       {showEdit && (
         <Link
           href="/profile/edit"
-          className="pb-1 text-[10px] font-bold uppercase tracking-widest text-[#1C1D1E]/45 transition-colors hover:text-[#2F9CFA]"
+          className="inline-flex items-center gap-1.5 pb-1 text-[10px] font-bold uppercase tracking-widest text-[#1C1D1E]/45 transition-colors hover:text-[#2F9CFA]"
         >
+          <Pencil className="size-3" aria-hidden="true" />
           Edit profile
         </Link>
       )}
@@ -155,95 +179,113 @@ function ProfileHeader({ showEdit = false }: { showEdit?: boolean }) {
   );
 }
 
-const completeProfileFieldLabels: Partial<
-  Record<(typeof COMPLETE_PROFILE_FIELD_IDS)[number], string>
+const completeProfileFieldMeta: Partial<
+  Record<
+    (typeof COMPLETE_PROFILE_FIELD_IDS)[number],
+    { label: string; fieldKey: ProfileFieldKey }
+  >
 > = {
-  impact: "Impact you want to make",
-  hobbies: "Hobbies & activities",
-  conversationMeaning: "Meaningful conversations",
-  conversationDepth: "Conversation depth",
-  connectionGoals: "Connection goals",
-  greatConnection: "Ideal connection",
-  comfortableSharing: "Comfortable sharing",
-  displayPreference: "Display preference",
-  contentVisibility: "Content visibility",
-  surpriseFact: "Surprise fact",
-  quote: "Quote or idea",
-  superpower: "Superpower",
+  impact: { label: "Impact you want to make", fieldKey: "impact" },
+  hobbies: { label: "Hobbies & activities", fieldKey: "hobbies" },
+  conversationMeaning: {
+    label: "Meaningful conversations",
+    fieldKey: "conversationMeaning",
+  },
+  conversationDepth: {
+    label: "Conversation depth",
+    fieldKey: "conversationDepth",
+  },
+  connectionGoals: { label: "Connection goals", fieldKey: "connectionGoals" },
+  greatConnection: { label: "Ideal connection", fieldKey: "greatConnection" },
+  comfortableSharing: {
+    label: "Comfortable sharing",
+    fieldKey: "comfortableSharing",
+  },
+  displayPreference: {
+    label: "Display preference",
+    fieldKey: "displayPreference",
+  },
+  contentVisibility: {
+    label: "Content visibility",
+    fieldKey: "contentVisibility",
+  },
+  surpriseFact: { label: "Surprise fact", fieldKey: "surpriseFact" },
+  quote: { label: "Quote or idea", fieldKey: "quote" },
+  superpower: { label: "Superpower", fieldKey: "superpower" },
 };
 
 function CompleteProfileSection({ answers }: { answers: OnboardingAnswers }) {
-  const textFields = [
-    { label: completeProfileFieldLabels.impact, value: answers.impact },
-    {
-      label: completeProfileFieldLabels.hobbies,
-      value: answers.hobbies,
-    },
-    {
-      label: completeProfileFieldLabels.conversationMeaning,
-      value: answers.conversationMeaning,
-    },
-    {
-      label: completeProfileFieldLabels.conversationDepth,
-      value: answers.conversationDepth,
-    },
-    {
-      label: completeProfileFieldLabels.greatConnection,
-      value: answers.greatConnection,
-    },
-    {
-      label: completeProfileFieldLabels.displayPreference,
-      value: answers.displayPreference,
-    },
-    {
-      label: completeProfileFieldLabels.contentVisibility,
-      value: answers.contentVisibility,
-    },
-    {
-      label: completeProfileFieldLabels.surpriseFact,
-      value: answers.surpriseFact,
-    },
-    { label: completeProfileFieldLabels.quote, value: answers.quote },
-    {
-      label: completeProfileFieldLabels.superpower,
-      value: answers.superpower,
-    },
-  ].filter((field) => field.value && field.label);
+  const textFields = (
+    [
+      "impact",
+      "hobbies",
+      "conversationMeaning",
+      "conversationDepth",
+      "greatConnection",
+      "displayPreference",
+      "contentVisibility",
+      "surpriseFact",
+      "quote",
+      "superpower",
+    ] as const
+  )
+    .map((id) => {
+      const meta = completeProfileFieldMeta[id];
+      const value = answers[id];
+      if (!meta || !value) return null;
+      return { ...meta, value };
+    })
+    .filter(Boolean) as Array<{
+    label: string;
+    fieldKey: ProfileFieldKey;
+    value: string;
+  }>;
 
-  const tagFields = [
-    {
-      label: completeProfileFieldLabels.connectionGoals ?? "Connection goals",
-      tags: answers.connectionGoals ?? [],
-    },
-    {
-      label:
-        completeProfileFieldLabels.comfortableSharing ?? "Comfortable sharing",
-      tags: answers.comfortableSharing ?? [],
-    },
-  ].filter((field) => field.tags.length > 0);
+  const tagFields = (
+    [
+      { id: "connectionGoals" as const, tags: answers.connectionGoals ?? [] },
+      {
+        id: "comfortableSharing" as const,
+        tags: answers.comfortableSharing ?? [],
+      },
+    ] as const
+  )
+    .map(({ id, tags }) => {
+      const meta = completeProfileFieldMeta[id];
+      if (!meta || tags.length === 0) return null;
+      return { ...meta, tags };
+    })
+    .filter(Boolean) as Array<{
+    label: string;
+    fieldKey: ProfileFieldKey;
+    tags: string[];
+  }>;
 
   if (textFields.length === 0 && tagFields.length === 0) return null;
 
   return (
-    <ProfileCard className="space-y-6 p-6 sm:p-8">
-      <div>
-        <h3 className="text-base font-extrabold tracking-tight text-[#1C1D1E]">
-          More about you
-        </h3>
-        <p className="mt-1 text-xs font-medium text-[#1C1D1E]/45">
-          Additional details from your profile.
-        </p>
-      </div>
+    <ProfileCard className="space-y-6 p-6 sm:p-8" accentKey="moreAboutYou">
+      <ProfileSectionHeader
+        fieldKey="moreAboutYou"
+        title="More about you"
+        description="Additional details from your profile."
+      />
 
       {tagFields.map((field) => (
-        <ProfileTagList key={field.label} label={field.label} tags={field.tags} />
+        <ProfileTagList
+          key={field.fieldKey}
+          fieldKey={field.fieldKey}
+          label={field.label}
+          tags={field.tags}
+        />
       ))}
 
       {textFields.map((field) => (
         <ProfileField
-          key={field.label}
-          label={field.label!}
-          value={field.value!}
+          key={field.fieldKey}
+          fieldKey={field.fieldKey}
+          label={field.label}
+          value={field.value}
         />
       ))}
     </ProfileCard>
@@ -252,19 +294,24 @@ function CompleteProfileSection({ answers }: { answers: OnboardingAnswers }) {
 
 function CompleteProfilePrompt({ pendingCount }: { pendingCount: number }) {
   return (
-    <ProfileCard className="border-dashed border-[#2F9CFA]/25 bg-[#EBF5FF]/30 p-6 sm:p-8">
-      <h3 className="text-base font-extrabold tracking-tight text-[#1C1D1E]">
-        Complete your profile
-      </h3>
-      <p className="mt-2 text-xs font-medium leading-relaxed text-[#1C1D1E]/55">
-        {pendingCount > 0
-          ? `${pendingCount} optional ${pendingCount === 1 ? "question" : "questions"} left — share more about what you're looking for, your privacy preferences, and a few personal touches.`
-          : "Share more about what you're looking for, your privacy preferences, and a few personal touches."}
-      </p>
+    <ProfileCard
+      className="border border-dashed border-[#2F9CFA]/25 bg-[#EBF5FF]/40 p-6 sm:p-8"
+      accentKey="completeProfile"
+    >
+      <ProfileSectionHeader
+        fieldKey="completeProfile"
+        title="Complete your profile"
+        description={
+          pendingCount > 0
+            ? `${pendingCount} optional ${pendingCount === 1 ? "question" : "questions"} left — share more about connections, conversation style, and personal touches.`
+            : "Share more about connections, conversation style, and personal touches."
+        }
+      />
       <Link
         href="/profile/edit?theme=connections"
-        className="colourful-landing-btn-primary mt-5 inline-block rounded-2xl border-none bg-[#1C1D1E] px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-white transition-colors hover:bg-[#2F9CFA]"
+        className="colourful-landing-btn-primary mt-5 inline-flex items-center gap-2 rounded-2xl border-none bg-[#1C1D1E] px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-white transition-colors hover:bg-[#2F9CFA]"
       >
+        <Sparkles className="size-3.5" aria-hidden="true" />
         Complete profile
       </Link>
     </ProfileCard>
@@ -321,55 +368,68 @@ export function ProfileContent() {
     profileToOnboardingProfile(profile)
   ).length;
 
-  const initial = profile.username.charAt(0).toUpperCase();
-
   return (
     <div className="whisper-feed mx-auto max-w-2xl py-2 sm:py-4">
       <ProfileHeader showEdit />
 
       <main className="space-y-6 py-4">
-        <ProfileCard className="flex items-center gap-6 p-6 sm:p-8">
-          <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#2F9CFA] text-2xl font-extrabold text-white">
-            {initial}
-          </div>
-          <div className="min-w-0 space-y-1">
+        <ProfileCard
+          className="relative flex items-center gap-6 overflow-hidden p-6 sm:p-8"
+          accentKey="username"
+        >
+          <div
+            className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-[#2F9CFA]/15 blur-2xl"
+            aria-hidden="true"
+          />
+          <PostAuthorAvatar name={profile.username} size={80} />
+          <div className="relative min-w-0 flex-1 space-y-2">
             <h2 className="text-2xl font-extrabold tracking-tight text-[#1C1D1E]">
               @{profile.username}
             </h2>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-[#1C1D1E]/45">
-              Member since {formatMemberSince(profile.created_at)}
-            </p>
-            <p
-              className={cn(
-                "text-sm font-medium italic leading-relaxed",
-                profile.bio ? "text-[#1C1D1E]/65" : "text-[#1C1D1E]/40"
-              )}
-            >
-              {profile.bio ? `"${profile.bio}"` : "No bio yet."}
-            </p>
+            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#1C1D1E]/45">
+              <ProfileIconBadge fieldKey="memberSince" size="sm" />
+              <span>Member since {formatMemberSince(profile.created_at)}</span>
+            </div>
+            <div className="flex gap-3">
+              <ProfileIconBadge fieldKey="bio" size="sm" className="mt-0.5" />
+              <p
+                className={cn(
+                  "text-sm font-medium italic leading-relaxed",
+                  profile.bio ? "text-[#1C1D1E]/65" : "text-[#1C1D1E]/40"
+                )}
+              >
+                {profile.bio ? `"${profile.bio}"` : "No bio yet."}
+              </p>
+            </div>
           </div>
         </ProfileCard>
-        
-        <ProfileCard className="relative flex flex-col justify-between gap-6 overflow-hidden p-6 sm:flex-row sm:items-center sm:p-8">
+
+        <ProfileCard
+          className="relative flex flex-col justify-between gap-6 overflow-hidden p-6 sm:flex-row sm:items-center sm:p-8"
+          accentKey="plan"
+        >
           <div
-            className="pointer-events-none absolute right-0 top-0 h-32 w-32 rounded-full bg-[#2F9CFA] opacity-10 blur-3xl"
+            className="pointer-events-none absolute right-0 top-0 h-32 w-32 rounded-full bg-[#FFAB91]/20 blur-3xl"
             aria-hidden="true"
           />
-          <div className="relative z-10 space-y-2">
-            <div className="flex flex-wrap items-center gap-3">
-              <h3 className="text-xl font-extrabold tracking-tight text-[#1C1D1E]">
-                {appName}
-                <span className="text-[#2F9CFA]">+</span>
-              </h3>
-              <span className="inline-block rounded-full border border-[#1C1D1E]/10 bg-[#EDF0F1] px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#1C1D1E]/50">
-                Active: Free Plan
-              </span>
+          <div className="relative z-10 flex gap-3">
+            <ProfileIconBadge fieldKey="plan" />
+            <div className="space-y-2">
+              <div className="flex flex-wrap items-center gap-3">
+                <h3 className="text-xl font-extrabold tracking-tight text-[#1C1D1E]">
+                  {appName}
+                  <span className="text-[#2F9CFA]">+</span>
+                </h3>
+                <span className="inline-block rounded-full border border-[#FFAB91]/30 bg-[#FFF0EB] px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#FF8A65]">
+                  Active: Free Plan
+                </span>
+              </div>
+              <p className="max-w-md text-xs font-medium leading-relaxed text-[#1C1D1E]/55">
+                You&apos;re currently in our standard free sanctuary. Upgrade to{" "}
+                {appName}+ to explore deeper resonances, send unlimited echoes,
+                and access advanced terminal options.
+              </p>
             </div>
-            <p className="max-w-md text-xs font-medium leading-relaxed text-[#1C1D1E]/55">
-              You&apos;re currently in our standard free sanctuary. Upgrade to{" "}
-              {appName}+ to explore deeper resonances, send unlimited echoes,
-              and access advanced terminal options.
-            </p>
           </div>
           <button
             type="button"
@@ -379,41 +439,51 @@ export function ProfileContent() {
           </button>
         </ProfileCard>
 
-        <ProfileCard className="grid grid-cols-2 gap-8 p-6 sm:p-8">
-          <ProfileField label="Age Range" value={profile.age_range} />
+        <ProfileCard className="grid grid-cols-1 gap-6 p-6 sm:grid-cols-2 sm:gap-8 sm:p-8">
           <ProfileField
+            fieldKey="ageRange"
+            label="Age range"
+            value={profile.age_range}
+          />
+          <ProfileField
+            fieldKey="gender"
             label="Gender"
             value={getProfileGenderLabel(profile)}
           />
-          <ProfileField label="Country" value={profile.country} />
           <ProfileField
+            fieldKey="country"
+            label="Country"
+            value={profile.country}
+          />
+          <ProfileField
+            fieldKey="email"
             label="Email"
             value={user.email ?? "—"}
-            className="col-span-2 border-t border-[#1C1D1E]/[0.06] pt-4"
+            className="sm:col-span-2 border-t border-[#1C1D1E]/[0.06] pt-4"
             valueClassName="text-[#2F9CFA]"
           />
         </ProfileCard>
 
         {hasPreferenceTags ? (
-          <ProfileCard className="space-y-6 p-6 sm:p-8">
-            <div>
-              <h3 className="text-base font-extrabold tracking-tight text-[#1C1D1E]">
-                Personality & preferences
-              </h3>
-              <p className="mt-1 text-xs font-medium text-[#1C1D1E]/45">
-                From your onboarding answers.
-              </p>
-            </div>
+          <ProfileCard className="space-y-6 p-6 sm:p-8" accentKey="personality">
+            <ProfileSectionHeader
+              fieldKey="personality"
+              title="Personality & preferences"
+              description="From your onboarding answers."
+            />
 
             <ProfileTagList
+              fieldKey="values"
               label="Values you live by"
               tags={answers.values ?? []}
             />
             <ProfileTagList
+              fieldKey="topics"
               label="Curious to explore"
               tags={answers.topics ?? []}
             />
             <ProfileTagList
+              fieldKey="communicationStyles"
               label="Communication style"
               tags={answers.communicationStyles ?? []}
             />
@@ -425,8 +495,6 @@ export function ProfileContent() {
         {showCompleteProfilePrompt ? (
           <CompleteProfilePrompt pendingCount={pendingCompleteCount} />
         ) : null}
-
-        
 
         <button
           type="button"

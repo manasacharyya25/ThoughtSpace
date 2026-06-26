@@ -2,7 +2,6 @@
 
 import type { ReactNode } from "react";
 import { PostAuthorAvatar } from "@/components/feed/post-author-avatar";
-import { GenderIcon } from "@/lib/gender-icon";
 import { normalizeCategory } from "@/lib/category";
 import { cn } from "@/lib/utils";
 import type { PostAuthorPreview } from "@/types/post";
@@ -49,13 +48,6 @@ export function WhisperPostCard({
         >
           @{username}
         </span>
-        {author ? (
-          <GenderIcon
-            gender={author.gender}
-            genderCustom={author.gender_custom}
-            className="shrink-0 text-[#2F9CFA]"
-          />
-        ) : null}
       </div>
 
       <div className="flex items-center justify-between gap-3 text-xs">

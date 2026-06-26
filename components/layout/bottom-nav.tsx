@@ -14,9 +14,30 @@ import {
 const navItems = [
   { label: "Feed", href: "/feed", icon: FeedIcon },
   { label: "Inbox", href: "/inbox", icon: InboxIcon, showUnread: true },
-  { label: "Live", href: "/board", icon: LiveIcon },
+  { label: "Live", href: "/board", icon: LiveIcon, showLiveDot: true },
   { label: "Profile", href: "/profile", icon: ProfileIcon },
 ] as const;
+
+function LiveNavDot({ ringClassName = "ring-white" }: { ringClassName?: string }) {
+  return (
+    <span
+      className="absolute -right-2 -top-1 flex h-2.5 w-2.5 items-center justify-center"
+      aria-label="Live room available"
+    >
+      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500/55" />
+      <span
+        className="absolute inline-flex h-[165%] w-[165%] animate-ping rounded-full bg-red-500/35"
+        style={{ animationDelay: "0.6s" }}
+      />
+      <span
+        className={cn(
+          "relative h-2 w-2 rounded-full bg-red-500 shadow-[0_0_10px_3px_rgba(239,68,68,0.8),0_0_18px_6px_rgba(239,68,68,0.35)] ring-2",
+          ringClassName
+        )}
+      />
+    </span>
+  );
+}
 
 function InboxNavBadges({
   showConversationUnread,
@@ -83,6 +104,8 @@ function NavBar({ className }: { className?: string }) {
         const Icon = item.icon;
         const showInboxBadges =
           "showUnread" in item && item.showUnread && !isActive;
+        const showLiveDot =
+          "showLiveDot" in item && item.showLiveDot && !isActive;
 
         return (
           <Link
@@ -92,9 +115,11 @@ function NavBar({ className }: { className?: string }) {
               "relative flex min-w-[64px] flex-col items-center justify-center gap-1 rounded-xl px-2 py-2 transition-[background-color,border-color,color,box-shadow] duration-300 ease sm:min-w-[72px] sm:px-3",
               isActive
                 ? "bg-[#2F9CFA]/12 text-[#2F9CFA] shadow-[inset_0_0_0_1px_rgba(47,156,250,0.25)]"
-                : isColourfulShell
-                  ? "text-[#1C1D1E]/45 hover:bg-[#EDF0F1] hover:text-[#1C1D1E]/70"
-                  : "text-muted-foreground hover:bg-white/[0.04] hover:text-foreground"
+                : showLiveDot
+                  ? "text-[#1C1D1E]/70 hover:bg-red-500/[0.06] hover:text-red-600"
+                  : isColourfulShell
+                    ? "text-[#1C1D1E]/45 hover:bg-[#EDF0F1] hover:text-[#1C1D1E]/70"
+                    : "text-muted-foreground hover:bg-white/[0.04] hover:text-foreground"
             )}
           >
             <span className="relative flex shrink-0 items-center justify-center">
@@ -105,8 +130,18 @@ function NavBar({ className }: { className?: string }) {
                   showPending={hasUnacceptedPending}
                 />
               )}
+              {showLiveDot && (
+                <LiveNavDot
+                  ringClassName={isColourfulShell ? "ring-white" : "ring-surface"}
+                />
+              )}
             </span>
-            <span className="shrink-0 text-[10px] font-medium leading-none tracking-wide sm:text-[11px]">
+            <span
+              className={cn(
+                "shrink-0 text-[10px] font-medium leading-none tracking-wide sm:text-[11px]",
+                showLiveDot && "font-semibold"
+              )}
+            >
               {item.label}
             </span>
           </Link>

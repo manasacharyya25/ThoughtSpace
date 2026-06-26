@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { PostAuthorAvatar } from "@/components/feed/post-author-avatar";
 import { BOARD_MESSAGE_MAX_LENGTH } from "@/lib/board/constants";
 import { cn } from "@/lib/utils";
 import type { BoardMessage } from "@/types/board";
@@ -12,36 +13,19 @@ function formatMessageTime(date: string) {
   }).format(new Date(date));
 }
 
-function MessageAvatar({
-  username,
-  isFromMe,
-}: {
-  username: string;
-  isFromMe: boolean;
-}) {
-  return (
-    <div
-      className={cn(
-        "flex size-9 shrink-0 items-center justify-center rounded-full text-xs font-extrabold",
-        isFromMe
-          ? "bg-[#2F9CFA] text-white"
-          : "bg-[#EBF5FF] text-[#2F9CFA]"
-      )}
-    >
-      {username.charAt(0).toUpperCase()}
-    </div>
-  );
-}
-
 function BoardMessageRow({ message }: { message: BoardMessage }) {
   return (
     <div
       className={cn(
-        "whisper-fade-in flex gap-3",
+        "whisper-fade-in flex items-start gap-3",
         message.isFromMe ? "flex-row-reverse" : "flex-row"
       )}
     >
-      <MessageAvatar username={message.senderUsername} isFromMe={message.isFromMe} />
+      <PostAuthorAvatar
+        name={message.senderUsername}
+        size={36}
+        className={cn(message.isFromMe && "ring-2 ring-[#2F9CFA]")}
+      />
       <div
         className={cn(
           "flex max-w-[min(100%,520px)] flex-col gap-1",

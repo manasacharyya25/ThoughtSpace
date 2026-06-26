@@ -2,40 +2,13 @@
 
 import { Search } from "lucide-react";
 import { useMemo, useState } from "react";
-import { cn } from "@/lib/utils";
+import { PostAuthorAvatar } from "@/components/feed/post-author-avatar";
 import type { BoardParticipant } from "@/types/board";
 
 interface BoardParticipantsSidebarProps {
   myUsername: string | null;
   participants: BoardParticipant[];
   currentUserId: string | undefined;
-}
-
-function ParticipantAvatar({
-  username,
-  className,
-  variant = "default",
-}: {
-  username: string;
-  className?: string;
-  variant?: "default" | "self";
-}) {
-  const initial = username.charAt(0).toUpperCase();
-
-  return (
-    <div
-      className={cn(
-        "flex size-9 shrink-0 items-center justify-center rounded-full text-xs font-extrabold",
-        variant === "self"
-          ? "bg-[#2F9CFA] text-white"
-          : "bg-[#EBF5FF] text-[#2F9CFA]",
-        className
-      )}
-      aria-hidden="true"
-    >
-      {initial}
-    </div>
-  );
 }
 
 export function BoardParticipantsSidebar({
@@ -58,7 +31,11 @@ export function BoardParticipantsSidebar({
       {myUsername ? (
         <div className="border-b border-[#2F9CFA]/15 bg-[#EBF5FF] p-4">
           <div className="flex items-center gap-3">
-            <ParticipantAvatar username={myUsername} variant="self" />
+            <PostAuthorAvatar
+              name={myUsername}
+              size={36}
+              className="ring-2 ring-[#2F9CFA]"
+            />
             <div className="min-w-0">
               <p className="truncate text-sm font-extrabold text-[#1C1D1E]">
                 @{myUsername}
@@ -90,7 +67,7 @@ export function BoardParticipantsSidebar({
                 key={participant.userId}
                 className="flex items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-[#FAF8F5]"
               >
-                <ParticipantAvatar username={participant.username} />
+                <PostAuthorAvatar name={participant.username} size={36} />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-xs font-bold text-[#1C1D1E]">
                     @{participant.username}

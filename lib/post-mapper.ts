@@ -1,5 +1,20 @@
 import { normalizeCategory } from "@/lib/category";
-import type { Post, PostRow } from "@/types/post";
+import type { Post, PostAuthorPreview, PostRow } from "@/types/post";
+
+function normalizeAuthor(
+  author: PostRow["author"]
+): PostAuthorPreview | null {
+  if (!author) return null;
+
+  const row = Array.isArray(author) ? author[0] : author;
+  if (!row?.username) return null;
+
+  return {
+    username: row.username,
+    gender: row.gender,
+    gender_custom: row.gender_custom,
+  };
+}
 
 export function mapPostRow(row: PostRow): Post {
   return {
@@ -9,6 +24,7 @@ export function mapPostRow(row: PostRow): Post {
     category: row.category,
     timestamp: row.created_at,
     response_count: row.response_count ?? 0,
+    author: normalizeAuthor(row.author),
   };
 }
 

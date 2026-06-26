@@ -1,3 +1,9 @@
+export interface PostAuthorPreview {
+  username: string;
+  gender: string;
+  gender_custom: string | null;
+}
+
 export type PostCategory = string;
 
 export interface PostRow {
@@ -7,6 +13,7 @@ export interface PostRow {
   category: string;
   created_at: string;
   response_count: number;
+  author?: PostAuthorPreview | PostAuthorPreview[] | null;
 }
 
 export interface Post {
@@ -16,4 +23,5 @@ export interface Post {
   category: PostCategory;
   timestamp: string;
   response_count: number;
+  author?: PostAuthorPreview | null;
 }

@@ -3,12 +3,15 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PostReactions } from "@/components/feed/post-reactions";
+import { WhisperPostCard } from "@/components/feed/whisper-post-card";
 import { useInbox } from "@/context/inbox-context";
 import { usePosts } from "@/context/posts-context";
 import { useResponses } from "@/context/responses-context";
 import { usePostReactions } from "@/hooks/use-post-reactions";
+import { useProfile } from "@/hooks/use-profile";
 import { useUser } from "@/hooks/use-user";
 import { normalizeCategory } from "@/lib/category";
+import { getPostAvatarSeed, resolvePostAuthor } from "@/lib/post-author";
 import {
   POST_MAX_LENGTH,
   validatePostForm,
@@ -90,6 +93,7 @@ function WaitingMessage({
 
 export function WhisperCastView() {
   const { user } = useUser();
+  const { profile } = useProfile();
   const { posts, addPost, loading: postsLoading } = usePosts();
   const { pending, pendingLoading, isPendingUnread } = useInbox();
   const { openResponseModal, hasResponded } = useResponses();
@@ -359,22 +363,27 @@ export function WhisperCastView() {
       </div>
 
       {anchorPost && resonanceAnchor && (
-        <article className="whisper-fade-in whisper-card space-y-4 rounded-[20px] p-6">
-          <div className="flex items-center justify-between text-xs text-landing-muted">
-            <span>Your Cast Whisper</span>
-            <span>{formatRelativeTime(anchorPost.timestamp)}</span>
-          </div>
-
-          <p className="text-sm font-medium italic leading-relaxed text-[#1C1D1E]/75">
-            &ldquo;{anchorPost.content}&rdquo;
-          </p>
-
-          <PostReactions
-            postId={anchorPost.id}
-            summary={getSummary(anchorPost.id)}
-            readOnly
+        <div className="space-y-4">
+          <WhisperPostCard
+            author={resolvePostAuthor(anchorPost, profile)}
+            avatarSeed={getPostAvatarSeed(
+              anchorPost,
+              resolvePostAuthor(anchorPost, profile)
+            )}
+            category={anchorPost.category}
+            content={anchorPost.content}
+            timestamp={formatRelativeTime(anchorPost.timestamp)}
+            contentItalic
+            footerLeft={
+              <PostReactions
+                postId={anchorPost.id}
+                summary={getSummary(anchorPost.id)}
+                readOnly
+              />
+            }
           />
 
+          <div className="whisper-card space-y-4 rounded-[20px] p-5 sm:p-6">
           {isSearchingMatches ? (
             <WaitingMessage message="Scanning the ether for echoes" />
           ) : (
@@ -398,23 +407,21 @@ export function WhisperCastView() {
                   </div>
 
                   <div className="space-y-3">
-                  {resonanceSuggestions.map((suggestion) => (
-                    <div
+                  {resonanceSuggestions.map((suggestion) => {
+                    const suggestionAuthor = suggestion.author;
+
+                    return (
+                    <WhisperPostCard
                       key={suggestion.id}
-                      className="space-y-3 rounded-[14px] border border-[#1C1D1E]/[0.06] bg-[#EDF0F1] p-4"
-                    >
-                      <div className="flex items-center justify-between text-xs text-landing-muted">
-                        <span className="font-bold text-landing-gold">
-                          #{normalizeCategory(suggestion.category)}
-                        </span>
-                        <span>
-                          {formatRelativeTime(suggestion.timestamp)}
-                        </span>
-                      </div>
-                      <p className="text-xs font-medium italic leading-relaxed text-[#1C1D1E]/70">
-                        &ldquo;{suggestion.content}&rdquo;
-                      </p>
-                      <div className="flex justify-end pt-1">
+                      author={suggestionAuthor}
+                      avatarSeed={getPostAvatarSeed(suggestion, suggestionAuthor)}
+                      category={suggestion.category}
+                      content={suggestion.content}
+                      timestamp={formatRelativeTime(suggestion.timestamp)}
+                      contentItalic
+                      className="border border-[#1C1D1E]/[0.06] bg-[#EDF0F1] shadow-none"
+                      footerLeft={null}
+                      footerRight={
                         <button
                           type="button"
                           onClick={() => openResponseModal(suggestion)}
@@ -429,15 +436,17 @@ export function WhisperCastView() {
                             ? "Response transmitted"
                             : "Send an anonymous response →"}
                         </button>
-                      </div>
-                    </div>
-                  ))}
+                      }
+                    />
+                    );
+                  })}
                   </div>
                 </>
               )}
             </div>
           )}
-        </article>
+          </div>
+        </div>
       )}
 
       <div className="space-y-4">
@@ -469,56 +478,49 @@ export function WhisperCastView() {
               const reactionSummary = getSummary(post.id);
               const hasReactions = reactionSummary.emojis.length > 0;
 
+              const author = resolvePostAuthor(post, profile);
+
               return (
-                <article
+                <WhisperPostCard
                   key={post.id}
-                  className="whisper-fade-in whisper-card space-y-4 rounded-[20px] p-6"
-                >
-                  <div className="flex items-center justify-between text-xs text-landing-muted">
-                    <span className="font-bold text-landing-gold">
-                      #{normalizeCategory(post.category)}
-                    </span>
-                    <span>{formatRelativeTime(post.timestamp)}</span>
-                  </div>
-
-                  <p className="text-sm font-medium italic leading-relaxed text-[#1C1D1E]/75">
-                    &ldquo;{post.content}&rdquo;
-                  </p>
-
-                  {(hasReactions || responseCount > 0) && (
-                    <div className="flex flex-col gap-3 border-t border-[#1C1D1E]/[0.06] pt-4 sm:flex-row sm:items-center sm:justify-between">
-                      {hasReactions ? (
-                        <PostReactions
-                          postId={post.id}
-                          summary={reactionSummary}
-                          readOnly
-                        />
-                      ) : null}
-
-                      {responseCount > 0 ? (
-                        <div className="flex flex-wrap items-center justify-end gap-2">
-                          <p className="text-xs text-landing-muted">
-                            {responseCount}{" "}
-                            {responseCount === 1 ? "response" : "responses"}
-                            {hasNewEcho && (
-                              <span className="ml-2 text-landing-gold">
-                                · new
-                              </span>
-                            )}
-                          </p>
+                  author={author}
+                  avatarSeed={getPostAvatarSeed(post, author)}
+                  category={post.category}
+                  content={post.content}
+                  timestamp={formatRelativeTime(post.timestamp)}
+                  contentItalic
+                  showFooter={hasReactions || responseCount > 0}
+                  footerLeft={
+                    hasReactions ? (
+                      <PostReactions
+                        postId={post.id}
+                        summary={reactionSummary}
+                        readOnly
+                      />
+                    ) : null
+                  }
+                  footerRight={
+                    responseCount > 0 ? (
+                      <div className="flex flex-wrap items-center justify-end gap-2">
+                        <p className="text-xs text-landing-muted">
+                          {responseCount}{" "}
+                          {responseCount === 1 ? "response" : "responses"}
                           {hasNewEcho && (
-                            <Link
-                              href="/inbox"
-                              className="text-[10px] font-bold text-landing-gold transition-colors hover:text-[#1C1D1E]"
-                            >
-                              Open inbox →
-                            </Link>
+                            <span className="ml-2 text-landing-gold">· new</span>
                           )}
-                        </div>
-                      ) : null}
-                    </div>
-                  )}
-                </article>
+                        </p>
+                        {hasNewEcho && (
+                          <Link
+                            href="/inbox"
+                            className="text-[10px] font-bold text-landing-gold transition-colors hover:text-[#1C1D1E]"
+                          >
+                            Open inbox →
+                          </Link>
+                        )}
+                      </div>
+                    ) : null
+                  }
+                />
               );
             })}
           </div>

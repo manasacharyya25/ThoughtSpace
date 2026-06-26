@@ -12,6 +12,7 @@
     "@supabase/ssr": "^0.12.0",
     "@supabase/supabase-js": "^2.108.1",
     "@vercel/analytics": "^1.5.0",
+    "boring-avatars": "^2.0.4",
     "clsx": "^2.1.1",
     "date-fns": "^4.4.0",
     "frimousse": "^0.3.0",

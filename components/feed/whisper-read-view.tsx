@@ -2,12 +2,14 @@
 
 import { useMemo, useState } from "react";
 import { PostReactions } from "@/components/feed/post-reactions";
+import { WhisperPostCard } from "@/components/feed/whisper-post-card";
 import { useResponses } from "@/context/responses-context";
 import { usePostReactions } from "@/hooks/use-post-reactions";
 import { useUser } from "@/hooks/use-user";
 import { formatRelativeTime } from "@/lib/time";
 import { sortFeedForUser } from "@/lib/feed-sort";
 import { normalizeCategory } from "@/lib/category";
+import { getPostAvatarSeed } from "@/lib/post-author";
 import { cn } from "@/lib/utils";
 import type { Post } from "@/types/post";
 import {
@@ -103,34 +105,27 @@ export function WhisperReadView({ posts, loading, error }: WhisperReadViewProps)
             const responded = hasResponded(post.id);
 
             return (
-              <article
+              <WhisperPostCard
                 key={post.id}
-                className="whisper-card whisper-fade-in flex flex-col justify-between space-y-4 rounded-[20px] p-6"
-              >
-                <div className="flex items-center justify-between text-xs text-landing-muted">
-                  <span className="font-bold text-landing-gold">
-                    #{normalizeCategory(post.category)}
-                  </span>
-                  <span>{formatRelativeTime(post.timestamp)}</span>
-                </div>
-
-                <p className="text-sm font-medium leading-relaxed text-[#1C1D1E]/75">
-                  &ldquo;{post.content}&rdquo;
-                </p>
-
-                <div className="flex flex-col gap-3 border-t border-[#1C1D1E]/[0.06] pt-4 sm:flex-row sm:items-center sm:justify-between">
+                author={post.author}
+                avatarSeed={getPostAvatarSeed(post, post.author)}
+                category={post.category}
+                content={post.content}
+                timestamp={formatRelativeTime(post.timestamp)}
+                footerLeft={
                   <PostReactions
                     postId={post.id}
                     summary={getSummary(post.id)}
                     onToggle={toggleReaction}
                     disabled={!user}
                   />
-
-                  <div className="flex items-center justify-end gap-3">
+                }
+                footerRight={
+                  <>
                     {post.response_count > 0 && (
                       <span className="text-xs text-landing-muted">
                         {post.response_count}{" "}
-                        {post.response_count === 1 ? "echo" : "echoes"} matched
+                        {post.response_count === 1 ? "echo" : "echoes"}
                       </span>
                     )}
                     <button
@@ -146,9 +141,9 @@ export function WhisperReadView({ posts, loading, error }: WhisperReadViewProps)
                         ? "Response transmitted"
                         : "Send direct response →"}
                     </button>
-                  </div>
-                </div>
-              </article>
+                  </>
+                }
+              />
             );
           })}
         </div>

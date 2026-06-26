@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import { BOARD_MESSAGE_MAX_LENGTH } from "@/lib/board/constants";
-import { validateBoardMessage } from "@/lib/board/validation";
 import { cn } from "@/lib/utils";
 import type { BoardMessage } from "@/types/board";
 
@@ -13,9 +12,22 @@ function formatMessageTime(date: string) {
   }).format(new Date(date));
 }
 
-function MessageAvatar({ username }: { username: string }) {
+function MessageAvatar({
+  username,
+  isFromMe,
+}: {
+  username: string;
+  isFromMe: boolean;
+}) {
   return (
-    <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#EDF0F1] text-xs font-extrabold text-[#1C1D1E]/70">
+    <div
+      className={cn(
+        "flex size-9 shrink-0 items-center justify-center rounded-full text-xs font-extrabold",
+        isFromMe
+          ? "bg-[#2F9CFA] text-white"
+          : "bg-[#EBF5FF] text-[#2F9CFA]"
+      )}
+    >
       {username.charAt(0).toUpperCase()}
     </div>
   );
@@ -29,7 +41,7 @@ function BoardMessageRow({ message }: { message: BoardMessage }) {
         message.isFromMe ? "flex-row-reverse" : "flex-row"
       )}
     >
-      <MessageAvatar username={message.senderUsername} />
+      <MessageAvatar username={message.senderUsername} isFromMe={message.isFromMe} />
       <div
         className={cn(
           "flex max-w-[min(100%,520px)] flex-col gap-1",
@@ -38,10 +50,10 @@ function BoardMessageRow({ message }: { message: BoardMessage }) {
       >
         <div
           className={cn(
-            "rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-[0_8px_24px_-12px_rgba(28,29,30,0.12)]",
+            "rounded-2xl px-4 py-3 text-sm font-medium leading-relaxed",
             message.isFromMe
-              ? "rounded-tr-md bg-[#2F9CFA]/12 text-[#1C1D1E]"
-              : "rounded-tl-md border border-[#1C1D1E]/[0.06] bg-white text-[#1C1D1E]/80"
+              ? "rounded-tr-md border border-[#2F9CFA]/15 bg-[#EBF5FF] text-[#1C1D1E]"
+              : "rounded-tl-md border border-[#1C1D1E]/[0.06] bg-white text-[#1C1D1E]/80 shadow-[0_8px_24px_-12px_rgba(28,29,30,0.08)]"
           )}
         >
           {message.content}
@@ -49,7 +61,7 @@ function BoardMessageRow({ message }: { message: BoardMessage }) {
         <div
           className={cn(
             "flex items-center gap-2 text-[10px] font-bold uppercase tracking-wide",
-            message.isFromMe ? "flex-row-reverse text-landing-muted" : "text-landing-gold"
+            message.isFromMe ? "flex-row-reverse text-landing-muted" : "text-[#2F9CFA]"
           )}
         >
           <span>@{message.senderUsername}</span>
@@ -93,24 +105,29 @@ export function BoardChatPanel({
   }, [messages.length]);
 
   return (
-    <section className="flex min-h-0 min-w-0 flex-1 flex-col bg-[#FAF8F5]/50">
-      <div className="border-b border-[#1C1D1E]/[0.06] bg-white px-4 py-3 text-center">
-        <h1 className="text-sm font-extrabold text-[#1C1D1E] sm:text-base">
+    <section className="whisper-card flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-none border-[#1C1D1E]/[0.06] bg-white lg:rounded-[20px] lg:border lg:border-[#1C1D1E]/[0.03]">
+      <div className="border-b border-[#1C1D1E]/[0.06] bg-[#FAF8F5]/80 px-4 py-3 text-center">
+        <h2 className="text-sm font-extrabold text-[#1C1D1E] sm:text-base">
           {roomName}
-          <span className="ml-1 font-medium text-landing-muted">
-            ({participantCount})
-          </span>
-        </h1>
+        </h2>
+        <p className="mt-0.5 text-[10px] font-bold uppercase tracking-wide text-[#2F9CFA]/80">
+          {participantCount} {participantCount === 1 ? "person" : "people"} here
+        </p>
       </div>
 
       <div
         ref={historyRef}
-        className="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-4 sm:px-5"
+        className="min-h-0 flex-1 space-y-4 overflow-y-auto bg-[#FAF8F5]/40 px-4 py-4 sm:px-5"
       >
         {messages.length === 0 ? (
-          <p className="py-12 text-center text-xs font-medium italic text-landing-muted">
-            The room is quiet. Say hello to whoever&apos;s listening.
-          </p>
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <p className="rounded-full border border-[#2F9CFA]/20 bg-[#EBF5FF] px-4 py-1.5 text-[10px] font-bold uppercase tracking-wide text-[#2F9CFA]">
+              Room is open
+            </p>
+            <p className="mt-4 max-w-xs text-xs font-medium italic leading-relaxed text-landing-muted">
+              The room is quiet. Say hello to whoever&apos;s listening.
+            </p>
+          </div>
         ) : (
           messages.map((message) => (
             <BoardMessageRow key={message.id} message={message} />
@@ -120,7 +137,7 @@ export function BoardChatPanel({
 
       <div className="border-t border-[#1C1D1E]/[0.06] bg-white p-4">
         <div className="mb-2 flex items-center justify-between text-[10px] font-medium text-landing-muted">
-          <span>Type something here…</span>
+          <span>Share a thought…</span>
           <span>{remainingChars} remaining</span>
         </div>
 

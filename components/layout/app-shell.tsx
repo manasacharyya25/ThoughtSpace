@@ -48,7 +48,7 @@ export function AppShell({ children }: AppShellProps) {
   if (isBoard) {
     return (
       <div
-        className="fixed inset-x-0 top-0 z-40 flex flex-col overflow-hidden bg-white"
+        className="fixed inset-x-0 top-0 z-40 flex flex-col overflow-hidden bg-[#FAF8F5]"
         style={{ height: viewportHeight ?? "100dvh" }}
       >
         <main className="relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden">

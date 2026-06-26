@@ -26,8 +26,11 @@ export function BoardRoomSidebar({
   }, [query, rooms]);
 
   return (
-    <aside className="hidden h-full min-h-0 flex-col border-[#1C1D1E]/[0.06] bg-white lg:flex lg:border-r">
-      <div className="border-b border-[#1C1D1E]/[0.06] p-4">
+    <aside className="whisper-card hidden h-full min-h-0 flex-col overflow-hidden rounded-[20px] border border-[#1C1D1E]/[0.03] bg-white lg:flex">
+      <div className="border-b border-[#1C1D1E]/[0.06] bg-[#FAF8F5]/60 p-4">
+        <p className="mb-3 text-[10px] font-extrabold uppercase tracking-[1.2px] text-[#2F9CFA]">
+          Rooms
+        </p>
         <label className="relative block">
           <Search
             className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#1C1D1E]/35"
@@ -61,13 +64,13 @@ export function BoardRoomSidebar({
                   "flex w-full items-center gap-3 rounded-xl border px-3 py-2.5 text-left transition-colors",
                   isActive
                     ? cn(accent.activeBg, accent.activeBorder, "shadow-sm")
-                    : "border-transparent bg-transparent hover:bg-[#EDF0F1]/80"
+                    : "border-transparent bg-transparent hover:bg-[#EBF5FF]/50"
                 )}
               >
                 <span
                   className={cn(
                     "size-2.5 shrink-0 rounded-sm",
-                    isActive ? accent.dot : "bg-[#1C1D1E]/15"
+                    isActive ? accent.dot : "bg-[#1C1D1E]/12"
                   )}
                   aria-hidden="true"
                 />
@@ -91,13 +94,13 @@ export function BoardRoomSidebar({
           {COMING_SOON_ROOMS.map((name) => (
             <div
               key={name}
-              className="flex items-center gap-3 rounded-xl px-3 py-2.5 opacity-45"
+              className="flex items-center gap-3 rounded-xl border border-transparent bg-[#EDF0F1]/60 px-3 py-2.5"
             >
               <span className="size-2.5 shrink-0 rounded-sm bg-[#1C1D1E]/10" />
-              <span className="truncate text-xs font-medium text-[#1C1D1E]/55">
+              <span className="truncate text-xs font-medium text-[#1C1D1E]/50">
                 {name}
               </span>
-              <span className="ml-auto text-[9px] font-bold uppercase tracking-wide text-[#1C1D1E]/35">
+              <span className="ml-auto rounded-full bg-[#EBF5FF] px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-[#2F9CFA]">
                 Soon
               </span>
             </div>

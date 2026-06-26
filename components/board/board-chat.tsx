@@ -15,12 +15,12 @@ import "@/components/landing/colourful-landing.css";
 
 function BoardHeader({ onBack }: { onBack: () => void }) {
   return (
-    <header className="flex shrink-0 items-center gap-3 border-b border-[#1C1D1E]/[0.06] bg-white px-4 py-3 sm:px-5">
+    <header className="flex shrink-0 items-center gap-3 border-b border-[#1C1D1E]/[0.06] bg-white/90 px-4 py-3 backdrop-blur-sm sm:px-5">
       <button
         type="button"
         onClick={onBack}
         aria-label="Exit live board"
-        className="inline-flex size-9 shrink-0 items-center justify-center rounded-xl border border-[#1C1D1E]/10 bg-white text-[#1C1D1E] transition-colors hover:border-[#2F9CFA]/25 hover:bg-[#EDF0F1]"
+        className="inline-flex size-9 shrink-0 items-center justify-center rounded-xl border border-[#1C1D1E]/10 bg-white text-[#1C1D1E] transition-colors hover:border-[#2F9CFA]/25 hover:bg-[#EBF5FF]"
       >
         <svg
           viewBox="0 0 24 24"
@@ -40,7 +40,7 @@ function BoardHeader({ onBack }: { onBack: () => void }) {
         <h1 className="text-[clamp(1.35rem,3vw,2rem)] font-extrabold leading-[1.08] tracking-[-1px] text-[#1C1D1E]">
           Live Board
         </h1>
-        <p className="text-[10px] font-bold uppercase tracking-widest text-[#1C1D1E]/45 sm:text-xs">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-[#2F9CFA]/80 sm:text-xs">
           Open room chat
         </p>
       </div>
@@ -50,16 +50,32 @@ function BoardHeader({ onBack }: { onBack: () => void }) {
 
 function BoardLoadingState() {
   return (
-    <div className="flex flex-1 items-center justify-center py-16 text-xs font-medium text-landing-muted">
-      Opening the live room…
+    <div className="flex flex-1 flex-col items-center justify-center gap-3 py-16">
+      <div className="flex space-x-1">
+        {[0, 0.2, 0.4].map((delay) => (
+          <span
+            key={delay}
+            className="h-1.5 w-1.5 animate-ping rounded-full bg-[#2F9CFA]"
+            style={{ animationDelay: `${delay}s` }}
+          />
+        ))}
+      </div>
+      <p className="text-xs font-medium text-landing-muted">
+        Opening the live room…
+      </p>
     </div>
   );
 }
 
 function BoardErrorState({ message }: { message: string }) {
   return (
-    <div className="flex flex-1 items-center justify-center px-6 py-16 text-center text-xs font-medium text-landing-muted">
-      {message}
+    <div className="flex flex-1 items-center justify-center px-6 py-16">
+      <div className="max-w-sm rounded-[20px] border border-[#1C1D1E]/[0.03] bg-white px-6 py-8 text-center shadow-[0_24px_48px_-12px_rgba(28,29,30,0.08)]">
+        <p className="text-sm font-semibold text-[#1C1D1E]">{message}</p>
+        <p className="mt-2 text-xs font-medium text-landing-muted">
+          Try refreshing in a moment.
+        </p>
+      </div>
     </div>
   );
 }
@@ -109,7 +125,7 @@ export function BoardChat() {
   };
 
   return (
-    <div className="flex h-full min-h-0 flex-1 flex-col bg-white">
+    <div className="flex h-full min-h-0 flex-1 flex-col">
       <BoardHeader onBack={() => router.push("/feed")} />
 
       {loading ? (
@@ -117,8 +133,8 @@ export function BoardChat() {
       ) : error || !room ? (
         <BoardErrorState message={error ?? "Live room is unavailable right now."} />
       ) : (
-        <>
-          <div className="flex gap-2 overflow-x-auto border-b border-[#1C1D1E]/[0.06] bg-white px-4 py-2 lg:hidden">
+        <div className="flex min-h-0 flex-1 flex-col lg:gap-3 lg:p-3">
+          <div className="flex gap-2 overflow-x-auto border-b border-[#1C1D1E]/[0.06] bg-white/70 px-4 py-2 backdrop-blur-sm lg:hidden">
             {rooms.map((item, index) => {
               const isActive = item.id === room.id;
               const accent = getBoardRoomAccent(index);
@@ -132,7 +148,7 @@ export function BoardChat() {
                     "shrink-0 rounded-full border px-3 py-1.5 text-[10px] font-bold transition-colors",
                     isActive
                       ? cn(accent.activeBg, accent.activeBorder, "text-[#1C1D1E]")
-                      : "border-[#1C1D1E]/10 bg-[#EDF0F1] text-[#1C1D1E]/55"
+                      : "border-[#1C1D1E]/10 bg-[#EDF0F1] text-[#1C1D1E]/55 hover:border-[#2F9CFA]/20 hover:bg-[#EBF5FF]/60"
                   )}
                 >
                   {item.name}
@@ -141,7 +157,7 @@ export function BoardChat() {
             })}
           </div>
 
-          <div className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)_240px]">
+          <div className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)_240px] lg:gap-3">
             <BoardRoomSidebar
               rooms={rooms}
               activeRoomId={room.id}
@@ -169,7 +185,7 @@ export function BoardChat() {
               currentUserId={user?.id}
             />
           </div>
-        </>
+        </div>
       )}
     </div>
   );

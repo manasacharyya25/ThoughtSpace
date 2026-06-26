@@ -14,16 +14,21 @@ interface BoardParticipantsSidebarProps {
 function ParticipantAvatar({
   username,
   className,
+  variant = "default",
 }: {
   username: string;
   className?: string;
+  variant?: "default" | "self";
 }) {
   const initial = username.charAt(0).toUpperCase();
 
   return (
     <div
       className={cn(
-        "flex size-9 shrink-0 items-center justify-center rounded-full bg-[#2F9CFA]/12 text-xs font-extrabold text-[#2F9CFA]",
+        "flex size-9 shrink-0 items-center justify-center rounded-full text-xs font-extrabold",
+        variant === "self"
+          ? "bg-[#2F9CFA] text-white"
+          : "bg-[#EBF5FF] text-[#2F9CFA]",
         className
       )}
       aria-hidden="true"
@@ -49,17 +54,18 @@ export function BoardParticipantsSidebar({
   }, [participants, query]);
 
   return (
-    <aside className="hidden h-full min-h-0 flex-col border-[#1C1D1E]/[0.06] bg-white lg:flex lg:border-l">
+    <aside className="whisper-card hidden h-full min-h-0 flex-col overflow-hidden rounded-[20px] border border-[#1C1D1E]/[0.03] bg-white lg:flex">
       {myUsername ? (
-        <div className="border-b border-[#1C1D1E]/[0.06] bg-[#1C1D1E] p-4 text-white">
+        <div className="border-b border-[#2F9CFA]/15 bg-[#EBF5FF] p-4">
           <div className="flex items-center gap-3">
-            <ParticipantAvatar
-              username={myUsername}
-              className="bg-white/15 text-white"
-            />
+            <ParticipantAvatar username={myUsername} variant="self" />
             <div className="min-w-0">
-              <p className="truncate text-sm font-extrabold">@{myUsername}</p>
-              <p className="text-[10px] font-medium text-white/55">In the room</p>
+              <p className="truncate text-sm font-extrabold text-[#1C1D1E]">
+                @{myUsername}
+              </p>
+              <p className="text-[10px] font-bold uppercase tracking-wide text-[#2F9CFA]/80">
+                In the room
+              </p>
             </div>
           </div>
         </div>
@@ -67,7 +73,10 @@ export function BoardParticipantsSidebar({
 
       <div className="min-h-0 flex-1 overflow-y-auto p-3">
         <p className="px-2 pb-2 text-[10px] font-extrabold uppercase tracking-[1.2px] text-[#1C1D1E]/40">
-          Available now ({participants.length})
+          Available now
+          <span className="ml-1.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-[#2F9CFA] px-1 text-[9px] font-bold text-white">
+            {participants.length}
+          </span>
         </p>
 
         <div className="space-y-1">
@@ -79,21 +88,21 @@ export function BoardParticipantsSidebar({
             filteredParticipants.map((participant) => (
               <div
                 key={participant.userId}
-                className="flex items-center gap-3 rounded-xl px-2 py-2"
+                className="flex items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-[#FAF8F5]"
               >
                 <ParticipantAvatar username={participant.username} />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-xs font-bold text-[#1C1D1E]">
                     @{participant.username}
                     {participant.userId === currentUserId ? (
-                      <span className="ml-1 font-medium text-landing-muted">
+                      <span className="ml-1 font-medium text-[#2F9CFA]">
                         (you)
                       </span>
                     ) : null}
                   </p>
                 </div>
                 <span
-                  className="size-2 shrink-0 rounded-full bg-emerald-500"
+                  className="size-2 shrink-0 rounded-full bg-[#2F9CFA] ring-2 ring-[#EBF5FF]"
                   aria-label="Online"
                 />
               </div>
@@ -102,7 +111,7 @@ export function BoardParticipantsSidebar({
         </div>
       </div>
 
-      <div className="border-t border-[#1C1D1E]/[0.06] p-4">
+      <div className="border-t border-[#1C1D1E]/[0.06] bg-[#FAF8F5]/60 p-4">
         <label className="relative block">
           <Search
             className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#1C1D1E]/35"

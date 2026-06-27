@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { cn } from "@/lib/utils";
 
 interface ChatComposerProps {
   onSend: (message: string) => void;
@@ -19,9 +18,10 @@ export function ChatComposer({ onSend, disabled }: ChatComposerProps) {
   };
 
   return (
-    <div className="border-t border-border bg-background/80 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-sm sm:px-5">
-      <div className="flex items-end gap-2">
-        <textarea
+    <div className="inbox-chat-composer">
+      <div className="inbox-chat-composer-row">
+        <input
+          type="text"
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onKeyDown={(e) => {
@@ -30,25 +30,19 @@ export function ChatComposer({ onSend, disabled }: ChatComposerProps) {
               handleSend();
             }
           }}
-          placeholder="Write a reply..."
-          rows={1}
+          placeholder="Write your genuine response..."
           disabled={disabled}
-          className={cn(
-            "max-h-32 min-h-[42px] flex-1 resize-none rounded-xl border border-border bg-muted/30 px-4 py-2.5 text-[15px] leading-relaxed text-foreground transition-[border-color,background-color] duration-300 ease placeholder:text-muted-foreground/40 focus:outline-none focus:ring-1 focus:ring-white/10 disabled:opacity-50"
-          )}
+          className="inbox-chat-input"
         />
         <button
           type="button"
           onClick={handleSend}
           disabled={disabled || !value.trim()}
-          className="soft-interactive flex h-[42px] shrink-0 items-center justify-center rounded-xl border border-border px-4 text-sm font-medium text-foreground hover:border-white/10 hover:bg-muted/40 disabled:opacity-30"
+          className="inbox-chat-send"
         >
           Send
         </button>
       </div>
-      <p className="mt-1.5 text-[10px] text-muted-foreground/40">
-        Enter to send · Shift+Enter for new line
-      </p>
     </div>
   );
 }

@@ -5,7 +5,6 @@ const PROTECTED_PREFIXES = [
   "/feed",
   "/inbox",
   "/profile",
-  "/create-post",
   "/chat",
 ];
 
@@ -24,7 +23,11 @@ function isPublicPath(pathname: string) {
     pathname === "/" ||
     pathname === "/privacy-policy" ||
     pathname === "/terms-of-service" ||
+    pathname === "/colourful-landing" ||
+    pathname === "/about-us" ||
     pathname === "/test" ||
+    pathname === "/robots.txt" ||
+    pathname === "/sitemap.xml" ||
     pathname.startsWith("/api/")
   );
 }

@@ -1,32 +1,23 @@
 import type { Metadata } from "next";
-import {
-  CTA,
-  Explanation,
-  Hero,
-  HowItWorks,
-  LandingFooter,
-  LandingNav,
-  SampleConversations,
-} from "@/components/landing";
+import { Plus_Jakarta_Sans } from "next/font/google";
+import { ColourfulLanding } from "@/components/landing";
+
+const colourfulLandingSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["500", "600", "700", "800"],
+  variable: "--font-colourful-landing",
+});
 
 export const metadata: Metadata = {
-  title: "Conversations before appearances",
+  title: "Connected Minds, Untethered from Metrics",
   description:
-    "Connect through thoughts, not photos. A space where minds meet before appearances.",
+    "No profiles. No followers. Just real dialogue. A thought-first social sanctuary.",
 };
 
 export default function HomePage() {
   return (
-    <div className="landing-scroll relative bg-background">
-      <LandingNav />
-      <main>
-        <Hero />
-        <Explanation />
-        <HowItWorks />
-        <SampleConversations />
-        <CTA />
-      </main>
-      <LandingFooter />
+    <div className={colourfulLandingSans.variable}>
+      <ColourfulLanding />
     </div>
   );
 }

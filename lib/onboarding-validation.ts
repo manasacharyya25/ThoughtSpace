@@ -1,46 +1,106 @@
 import { GENDER_SELF_DESCRIBE } from "@/data/onboarding-options";
-import type { OnboardingProfile, OnboardingStepId } from "@/types/onboarding-profile";
+import { ONBOARDING_THEMES } from "@/data/onboarding-themes";
+import type {
+  OnboardingProfile,
+  OnboardingQuestion,
+  OnboardingThemeId,
+} from "@/types/onboarding-profile";
 
 const USERNAME_REGEX = /^[a-zA-Z0-9_]{3,20}$/;
 export const BIO_MAX_LENGTH = 150;
+export const INTRO_MAX_LENGTH = 150;
 
-export function validateOnboardingStep(
-  step: OnboardingStepId,
+function getStringValue(profile: OnboardingProfile, id: OnboardingQuestion["id"]) {
+  const value = profile[id];
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function getArrayValue(profile: OnboardingProfile, id: OnboardingQuestion["id"]) {
+  const value = profile[id];
+  return Array.isArray(value) ? value : [];
+}
+
+export function validateQuestion(
+  question: OnboardingQuestion,
   profile: OnboardingProfile
 ): string | undefined {
-  switch (step) {
-    case "username": {
-      const value = profile.username.trim();
-      if (!value) return "Username is required.";
-      if (!USERNAME_REGEX.test(value))
+  if (question.type === "text" || question.type === "textarea") {
+    const value = getStringValue(profile, question.id);
+
+    if (question.required && !value) {
+      return "This field is required.";
+    }
+
+    if (question.id === "username" && value) {
+      if (!USERNAME_REGEX.test(value)) {
         return "Use 3–20 characters: letters, numbers, underscores.";
-      return undefined;
-    }
-    case "age":
-      if (!profile.ageRange) return "Select an age range.";
-      return undefined;
-    case "gender": {
-      if (!profile.gender) return "Select an option or choose how to identify.";
-      if (profile.gender === GENDER_SELF_DESCRIBE) {
-        const custom = profile.genderCustom.trim();
-        if (!custom) return "Tell us how you identify.";
-        if (custom.length < 2) return "Use at least 2 characters.";
-        if (custom.length > 40) return "Keep it under 40 characters.";
       }
-      return undefined;
     }
-    case "country":
-      if (!profile.country) return "Select a country.";
-      return undefined;
-    case "bio": {
-      const value = profile.bio.trim();
-      if (!value) return "Write a short bio to continue.";
-      if (value.length < 10) return "Bio must be at least 10 characters.";
-      if (value.length > BIO_MAX_LENGTH)
-        return `Bio must be under ${BIO_MAX_LENGTH} characters.`;
-      return undefined;
+
+    if (question.id === "introLine" && value && value.length < 10) {
+      return "Use at least 10 characters.";
     }
-    default:
-      return undefined;
+
+    if (question.maxLength && value.length > question.maxLength) {
+      return `Keep it under ${question.maxLength} characters.`;
+    }
+
+    return undefined;
   }
+
+  if (question.type === "single") {
+    const value = getStringValue(profile, question.id);
+    if (question.required && !value) {
+      return "Choose one option to continue.";
+    }
+
+    if (
+      question.id === "gender" &&
+      value === GENDER_SELF_DESCRIBE &&
+      !profile.genderCustom.trim()
+    ) {
+      return "Tell us how you identify.";
+    }
+
+    return undefined;
+  }
+
+  if (question.type === "multi") {
+    const values = getArrayValue(profile, question.id);
+    if (question.required && values.length === 0) {
+      return "Choose at least one option.";
+    }
+    return undefined;
+  }
+
+  return undefined;
+}
+
+export function validateThemeStep(
+  themeId: OnboardingThemeId,
+  profile: OnboardingProfile
+): string | undefined {
+  const theme = ONBOARDING_THEMES.find((item) => item.id === themeId);
+  if (!theme) return undefined;
+
+  for (const question of theme.questions) {
+    const error = validateQuestion(question, profile);
+    if (error) return error;
+  }
+
+  return undefined;
+}
+
+export function prepareProfileForSave(
+  profile: OnboardingProfile
+): OnboardingProfile {
+  return {
+    ...profile,
+    username: profile.username.trim().toLowerCase(),
+    bio: profile.introLine.trim() || profile.bio.trim(),
+    genderCustom:
+      profile.gender === GENDER_SELF_DESCRIBE
+        ? profile.genderCustom.trim()
+        : "",
+  };
 }

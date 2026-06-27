@@ -20,7 +20,7 @@ export function ChatWindow({
   const { sendMessage } = useInbox();
 
   return (
-    <div className="flex h-full min-h-0 flex-1 flex-col">
+    <>
       <ChatHeader conversation={conversation} onBack={onBack} />
       <ChatMessages conversation={conversation} />
       <ChatComposer
@@ -28,6 +28,6 @@ export function ChatWindow({
           sendMessage(conversationId, content);
         }}
       />
-    </div>
+    </>
   );
 }

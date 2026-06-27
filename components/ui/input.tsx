@@ -5,16 +5,17 @@ import { type InputHTMLAttributes, forwardRef } from "react";
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
+  labelClassName?: string;
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ className, label, error, id, ...props }, ref) => {
+  ({ className, label, error, id, labelClassName, ...props }, ref) => {
     const inputId = id ?? label?.toLowerCase().replace(/\s+/g, "-");
 
     return (
       <div className="space-y-2">
         {label && (
-          <label htmlFor={inputId} className={labelStyles}>
+          <label htmlFor={inputId} className={cn(labelStyles, labelClassName)}>
             {label}
           </label>
         )}

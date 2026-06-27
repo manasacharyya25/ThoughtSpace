@@ -1,6 +1,62 @@
+import { getOnboardingAnswers } from "@/data/onboarding-themes";
 import { GENDER_SELF_DESCRIBE } from "@/data/onboarding-options";
 import type { OnboardingProfile } from "@/types/onboarding-profile";
-import type { Profile, ProfileRow } from "@/types/profile";
+import type { OnboardingAnswers, Profile, ProfileRow } from "@/types/profile";
+
+function asStringArray(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter(
+    (item): item is string => typeof item === "string" && item.trim().length > 0
+  );
+}
+
+function asString(value: unknown): string | undefined {
+  return typeof value === "string" && value.trim().length > 0
+    ? value.trim()
+    : undefined;
+}
+
+export function parseOnboardingAnswers(
+  raw: ProfileRow["onboarding_answers"]
+): OnboardingAnswers {
+  const answers = raw ?? {};
+
+  return {
+    introLine: asString(answers.introLine),
+    values: asStringArray(answers.values),
+    impact: asString(answers.impact),
+    topics: asStringArray(answers.topics),
+    hobbies: asString(answers.hobbies),
+    communicationStyles: asStringArray(answers.communicationStyles),
+    conversationMeaning: asString(answers.conversationMeaning),
+    conversationDepth: asString(answers.conversationDepth),
+    connectionGoals: asStringArray(answers.connectionGoals),
+    greatConnection: asString(answers.greatConnection),
+    comfortableSharing: asStringArray(answers.comfortableSharing),
+    displayPreference: asString(answers.displayPreference),
+    contentVisibility: asString(answers.contentVisibility),
+    surpriseFact: asString(answers.surpriseFact),
+    quote: asString(answers.quote),
+    superpower: asString(answers.superpower),
+  };
+}
+
+export function hasCompleteProfileAnswers(answers: OnboardingAnswers): boolean {
+  return !!(
+    answers.impact ||
+    answers.hobbies ||
+    answers.conversationMeaning ||
+    answers.conversationDepth ||
+    answers.connectionGoals?.length ||
+    answers.greatConnection ||
+    answers.comfortableSharing?.length ||
+    answers.displayPreference ||
+    answers.contentVisibility ||
+    answers.surpriseFact ||
+    answers.quote ||
+    answers.superpower
+  );
+}
 
 export function mapProfileRow(row: ProfileRow): Profile {
   return {
@@ -13,6 +69,7 @@ export function mapProfileRow(row: ProfileRow): Profile {
     bio: row.bio,
     created_at: row.created_at,
     updated_at: row.updated_at,
+    onboarding_answers: parseOnboardingAnswers(row.onboarding_answers),
   };
 }
 
@@ -31,6 +88,7 @@ export function onboardingToProfileInsert(
         : null,
     country: profile.country,
     bio: profile.bio.trim(),
+    onboarding_answers: getOnboardingAnswers(profile),
   };
 }
 

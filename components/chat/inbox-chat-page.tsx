@@ -83,14 +83,14 @@ export function InboxChatPage() {
 
   if (fetching || conversationsLoading || !conversation) {
     return (
-      <div className="flex h-full min-h-0 items-center justify-center">
-        <p className="text-sm text-muted-foreground">Loading conversation…</p>
+      <div className="inbox-chat mx-auto flex w-full max-w-2xl flex-1 items-center justify-center">
+        <p className="text-sm text-[#a1a1aa]">Loading conversation…</p>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto flex h-full min-h-0 w-full max-w-2xl flex-col overflow-hidden bg-background">
+    <div className="inbox-chat mx-auto w-full max-w-2xl flex-1">
       <ChatWindow
         conversation={conversation}
         conversationId={conversationId}

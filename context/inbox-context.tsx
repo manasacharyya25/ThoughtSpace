@@ -32,6 +32,7 @@ import {
 import { acceptResponse, listPendingForAuthor } from "@/lib/supabase/responses";
 import { useRealtimeInbox } from "@/hooks/use-realtime-inbox";
 import { useUser } from "@/hooks/use-user";
+import { usePosts } from "@/context/posts-context";
 import type {
   ActiveConversation,
   PendingResponse,
@@ -47,10 +48,16 @@ interface InboxContextValue {
   activeConversationId: string | null;
   openConversation: (id: string) => void;
   markConversationRead: (id: string, conversation?: ActiveConversation) => void;
-  acceptPending: (pendingId: string) => Promise<void>;
+  markPendingSeen: (pendingId: string) => void;
+  acceptPending: (
+    pendingId: string,
+    options?: { redirect?: boolean }
+  ) => Promise<ActiveConversation | null>;
   sendMessage: (conversationId: string, content: string) => Promise<void>;
   isConversationUnread: (id: string) => boolean;
   isPendingUnread: (id: string) => boolean;
+  hasUnreadConversations: boolean;
+  hasUnacceptedPending: boolean;
   hasUnread: boolean;
   refreshPending: () => Promise<void>;
   refreshConversations: () => Promise<void>;
@@ -62,6 +69,7 @@ export function InboxProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const { user } = useUser();
+  const { refreshPosts } = usePosts();
   const [pending, setPending] = useState<PendingResponse[]>([]);
   const [pendingLoading, setPendingLoading] = useState(true);
   const [pendingError, setPendingError] = useState<string | null>(null);
@@ -102,21 +110,12 @@ export function InboxProvider({ children }: { children: ReactNode }) {
     saveSeenPendingIds(user.id, seenPendingIds);
   }, [seenPendingIds, user?.id]);
 
-  useEffect(() => {
-    if (pathname !== "/inbox" || pending.length === 0) return;
-
+  const markPendingSeen = useCallback((pendingId: string) => {
     setSeenPendingIds((prev) => {
-      const next = new Set(prev);
-      let changed = false;
-      for (const item of pending) {
-        if (!next.has(item.id)) {
-          next.add(item.id);
-          changed = true;
-        }
-      }
-      return changed ? next : prev;
+      if (prev.has(pendingId)) return prev;
+      return new Set(prev).add(pendingId);
     });
-  }, [pathname, pending]);
+  }, []);
 
   const refreshPending = useCallback(async () => {
     const supabase = createClient();
@@ -139,7 +138,8 @@ export function InboxProvider({ children }: { children: ReactNode }) {
 
     setPending(data);
     setPendingError(null);
-  }, []);
+    void refreshPosts();
+  }, [refreshPosts]);
 
   const refreshConversations = useCallback(async () => {
     const supabase = createClient();
@@ -261,13 +261,16 @@ export function InboxProvider({ children }: { children: ReactNode }) {
   );
 
   const acceptPending = useCallback(
-    async (pendingId: string) => {
+    async (
+      pendingId: string,
+      options?: { redirect?: boolean }
+    ): Promise<ActiveConversation | null> => {
       const supabase = createClient();
       const {
         data: { user: authUser },
       } = await supabase.auth.getUser();
 
-      if (!authUser) return;
+      if (!authUser) return null;
 
       setSeenPendingIds((prev) => new Set(prev).add(pendingId));
 
@@ -275,7 +278,7 @@ export function InboxProvider({ children }: { children: ReactNode }) {
 
       if (acceptError) {
         setPendingError(acceptError.message);
-        return;
+        return null;
       }
 
       const { data: conversation, error: conversationError } =
@@ -285,7 +288,7 @@ export function InboxProvider({ children }: { children: ReactNode }) {
         setPendingError(
           conversationError?.message ?? "Could not start conversation."
         );
-        return;
+        return null;
       }
 
       setPending((prev) => prev.filter((p) => p.id !== pendingId));
@@ -296,9 +299,15 @@ export function InboxProvider({ children }: { children: ReactNode }) {
       markConversationRead(conversation.id, conversation);
       setPendingError(null);
       setConversationsError(null);
-      router.push(inboxConversationPath(conversation.id));
+      void refreshPosts();
+
+      if (options?.redirect !== false) {
+        router.replace(inboxConversationPath(conversation.id));
+      }
+
+      return conversation;
     },
-    [markConversationRead, router]
+    [markConversationRead, refreshPosts, router]
   );
 
   const sendMessage = useCallback(
@@ -362,11 +371,16 @@ export function InboxProvider({ children }: { children: ReactNode }) {
     [seenPendingIds]
   );
 
+  const hasUnreadConversations = useMemo(
+    () => conversations.some((c) => isConversationUnreadState(c, readAt)),
+    [conversations, readAt]
+  );
+
+  const hasUnacceptedPending = useMemo(() => pending.length > 0, [pending]);
+
   const hasUnread = useMemo(
-    () =>
-      pending.some((p) => !seenPendingIds.has(p.id)) ||
-      conversations.some((c) => isConversationUnreadState(c, readAt)),
-    [pending, seenPendingIds, conversations, readAt]
+    () => hasUnacceptedPending || hasUnreadConversations,
+    [hasUnacceptedPending, hasUnreadConversations]
   );
 
   const value = useMemo(
@@ -380,10 +394,13 @@ export function InboxProvider({ children }: { children: ReactNode }) {
       activeConversationId,
       openConversation,
       markConversationRead,
+      markPendingSeen,
       acceptPending,
       sendMessage,
       isConversationUnread,
       isPendingUnread,
+      hasUnreadConversations,
+      hasUnacceptedPending,
       hasUnread,
       refreshPending,
       refreshConversations,
@@ -398,10 +415,13 @@ export function InboxProvider({ children }: { children: ReactNode }) {
       activeConversationId,
       openConversation,
       markConversationRead,
+      markPendingSeen,
       acceptPending,
       sendMessage,
       isConversationUnread,
       isPendingUnread,
+      hasUnreadConversations,
+      hasUnacceptedPending,
       hasUnread,
       refreshPending,
       refreshConversations,

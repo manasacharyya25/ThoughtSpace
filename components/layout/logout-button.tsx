@@ -41,7 +41,7 @@ export function LogoutButton({ className }: LogoutButtonProps) {
       aria-label="Log out"
       title="Log out"
       className={cn(
-        "fixed z-50 hidden h-11 w-11 items-center justify-center rounded-full md:flex",
+        "fixed z-[60] hidden h-11 w-11 items-center justify-center rounded-full md:flex",
         "border border-transparent bg-accent text-accent-foreground shadow-2xl shadow-black/40",
         "soft-interactive transition-[background-color,border-color,color] duration-300 ease",
         "hover:bg-accent/90 hover:text-accent-foreground",

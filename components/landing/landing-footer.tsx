@@ -1,35 +1,24 @@
 import Link from "next/link";
 import { env } from "@/lib/env";
+import { cn } from "@/lib/utils";
 
-export function LandingFooter() {
+export function LandingFooter({ className }: { className?: string }) {
   return (
-    <footer className="snap-end border-t border-border/50 px-4 py-8">
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 text-xs text-muted-foreground sm:flex-row">
-        <span>
-          &copy; {new Date().getFullYear()} {env.NEXT_PUBLIC_APP_NAME}
-        </span>
-        <div className="flex items-center gap-4">
-          <Link
-            href="/terms-of-service"
-            className="transition-colors hover:text-foreground"
-          >
-            Terms of Service
-          </Link>
-          <span aria-hidden="true">·</span>
-          <Link
-            href="/privacy-policy"
-            className="transition-colors hover:text-foreground"
-          >
-            Privacy Policy
-          </Link>
-          <span className="hidden text-border sm:inline" aria-hidden="true">
-            ·
-          </span>
-          <span className="hidden tracking-wide sm:inline">
-            Conversations before appearances.
-          </span>
-        </div>
-      </div>
+    <footer
+      className={cn(
+        "relative z-[5] mt-4 flex shrink-0 items-center justify-between border-t border-[#1C1D1E]/[0.04] py-2",
+        className
+      )}
+    >
+      <p className="text-[0.58rem] font-medium leading-none text-[#1C1D1E]/45">
+        © 2026 Registered {env.NEXT_PUBLIC_APP_NAME}
+      </p>
+      <Link
+        href="/about-us"
+        className="text-[0.58rem] font-semibold leading-none text-[#1C1D1E]/55 transition-colors hover:text-[#2F9CFA]"
+      >
+        About us
+      </Link>
     </footer>
   );
 }

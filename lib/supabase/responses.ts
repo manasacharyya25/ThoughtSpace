@@ -93,7 +93,7 @@ export async function listPendingForAuthor(
       id,
       content,
       created_at,
-      posts ( content, category, author_id ),
+      posts ( id, content, category, author_id ),
       profiles ( username )
     `
     )

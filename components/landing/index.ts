@@ -1,7 +1,10 @@
-export { CTA } from "./cta";
-export { Explanation } from "./explanation";
+export { ColourfulLanding } from "./colourful-landing";
+export { DepartureSection } from "./departure-section";
 export { Hero } from "./hero";
-export { HowItWorks } from "./how-it-works";
+export { LandingFaq } from "./landing-faq";
 export { LandingFooter } from "./landing-footer";
 export { LandingNav } from "./landing-nav";
-export { SampleConversations } from "./sample-conversations";
+export { ManifestoSection } from "./manifesto-section";
+export { MatchSimulator } from "./match-simulator";
+export { WaitlistSection } from "./waitlist-section";
+export { WhisperStream } from "./whisper-stream";

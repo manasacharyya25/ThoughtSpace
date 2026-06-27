@@ -60,5 +60,12 @@ export type {
   PendingResponse,
 } from "./inbox";
 export type { ConversationRow, MessageRow } from "./conversation";
-export type { OnboardingProfile, OnboardingStepId } from "./onboarding-profile";
-export type { Profile, ProfileRow } from "./profile";
+export type {
+  OnboardingProfile,
+  OnboardingTheme,
+  OnboardingThemeId,
+  OnboardingIllustrationId,
+  CompleteProfileTheme,
+  CompleteProfileThemeId,
+} from "./onboarding-profile";
+export type { OnboardingAnswers, Profile, ProfileRow } from "./profile";

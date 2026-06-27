@@ -21,10 +21,34 @@ const config: Config = {
           DEFAULT: "var(--accent)",
           foreground: "var(--accent-foreground)",
         },
+        landing: {
+          bg: "var(--landing-bg)",
+          card: "var(--landing-card)",
+          border: "var(--landing-border)",
+          gold: "var(--landing-gold)",
+          "gold-hover": "var(--landing-gold-hover)",
+          fg: "var(--landing-fg)",
+          muted: "var(--landing-muted)",
+          input: "var(--landing-input)",
+        },
       },
       fontFamily: {
         sans: ["var(--font-geist-sans)", "system-ui", "sans-serif"],
         mono: ["var(--font-geist-mono)", "monospace"],
+        "landing-serif": [
+          "var(--font-landing-serif)",
+          "Georgia",
+          "serif",
+        ],
+        "landing-sans": [
+          "var(--font-landing-sans)",
+          "system-ui",
+          "sans-serif",
+        ],
+        "landing-mono": [
+          "var(--font-landing-mono)",
+          "monospace",
+        ],
       },
       borderRadius: {
         lg: "var(--radius)",

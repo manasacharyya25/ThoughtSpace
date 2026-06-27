@@ -1,5 +1,6 @@
 export interface PendingResponse {
   id: string;
+  postId: string;
   fromInitial: string;
   thoughtExcerpt: string;
   responsePreview: string;

@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useResponses } from "@/context/responses-context";
-import { Button } from "@/components/ui/button";
-import { Modal } from "@/components/ui/modal";
 import {
   RESPONSE_MAX_WORDS,
   RESPONSE_MIN_WORDS,
@@ -11,9 +9,7 @@ import {
 } from "@/lib/response-validation";
 import { countWords } from "@/lib/words";
 import { cn } from "@/lib/utils";
-import { ResponseSuccess } from "./response-success";
-
-type ModalStep = "compose" | "sending" | "success";
+import "@/components/landing/colourful-landing.css";
 
 export function ResponseModal() {
   const { activePost, isModalOpen, closeResponseModal, sendResponse } =
@@ -21,10 +17,10 @@ export function ResponseModal() {
   const [content, setContent] = useState("");
   const [error, setError] = useState<string>();
   const [touched, setTouched] = useState(false);
-  const [step, setStep] = useState<ModalStep>("compose");
+  const [sending, setSending] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
   const wordCount = countWords(content);
-  const isNearLimit = wordCount > RESPONSE_MAX_WORDS * 0.85;
   const isOverLimit = wordCount > RESPONSE_MAX_WORDS;
 
   useEffect(() => {
@@ -32,15 +28,15 @@ export function ResponseModal() {
       setContent("");
       setError(undefined);
       setTouched(false);
-      setStep("compose");
+      setSending(false);
     }
   }, [isModalOpen]);
 
   useEffect(() => {
-    if (step !== "success") return;
-    const timer = setTimeout(() => closeResponseModal(), 2800);
+    if (!showToast) return;
+    const timer = setTimeout(() => setShowToast(false), 4500);
     return () => clearTimeout(timer);
-  }, [step, closeResponseModal]);
+  }, [showToast]);
 
   const handleSend = async () => {
     setTouched(true);
@@ -48,119 +44,110 @@ export function ResponseModal() {
     setError(validationError);
     if (validationError) return;
 
-    setStep("sending");
+    setSending(true);
     try {
       await sendResponse(content);
-      setStep("success");
+      closeResponseModal();
+      setShowToast(true);
     } catch {
-      setStep("compose");
       setError("Something went wrong. Please try again.");
+    } finally {
+      setSending(false);
     }
   };
 
-  const handleClose = () => {
-    if (step === "sending") return;
-    closeResponseModal();
-  };
-
-  if (!activePost) return null;
-
-  const truncatedPost =
-    activePost.content.length > 120
-      ? `${activePost.content.slice(0, 120)}…`
-      : activePost.content;
+  if (!activePost && !showToast) return null;
 
   return (
-    <Modal
-      open={isModalOpen}
-      onClose={handleClose}
-      title={step === "success" ? undefined : "Private response"}
-      description={
-        step === "success"
-          ? undefined
-          : "Only the author will see this. Be thoughtful."
-      }
-      className="max-w-lg"
-    >
-      {step === "success" ? (
-        <ResponseSuccess />
-      ) : (
-        <div className="space-y-5">
-          <blockquote className="rounded-lg border border-border/50 bg-muted/30 px-4 py-3">
-            <p className="text-[13px] leading-relaxed text-muted-foreground">
-              &ldquo;{truncatedPost}&rdquo;
-            </p>
-          </blockquote>
-
-          <div className="space-y-2">
-            <textarea
-              value={content}
-              onChange={(e) => {
-                setContent(e.target.value);
-                if (touched) setError(validateResponse(e.target.value));
-              }}
-              onBlur={() => {
-                setTouched(true);
-                setError(validateResponse(content));
-              }}
-              placeholder="Share what this thought stirred in you..."
-              rows={6}
-              disabled={step === "sending"}
-              className={cn(
-                "w-full resize-none rounded-md border border-border bg-muted/30 px-3 py-2 text-[15px] leading-[1.7] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-border disabled:opacity-60",
-                touched && error && "border-red-500/50"
-              )}
-            />
-            <div className="flex items-center justify-between text-[11px]">
-              <span className="text-muted-foreground">
-                {RESPONSE_MIN_WORDS}–{RESPONSE_MAX_WORDS} words
+    <>
+      {activePost && isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1C1D1E]/40 p-5 backdrop-blur-sm">
+          <div className="echo-modal-panel w-full max-w-lg space-y-5 rounded-[28px] bg-white p-5 sm:p-6">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#2F9CFA]">
+                Send a direct response
               </span>
-              <span
-                className={cn(
-                  "tabular-nums transition-colors",
-                  isOverLimit
-                    ? "text-red-400"
-                    : isNearLimit
-                      ? "text-amber-400/80"
-                      : "text-muted-foreground"
-                )}
+              <button
+                type="button"
+                onClick={closeResponseModal}
+                disabled={sending}
+                className="flex h-8 w-8 items-center justify-center rounded-full text-lg text-[#1C1D1E]/40 transition-colors hover:bg-[#EDF0F1] hover:text-[#1C1D1E]"
+                aria-label="Close"
               >
-                {wordCount} / {RESPONSE_MAX_WORDS}
-              </span>
+                ✕
+              </button>
             </div>
-            {touched && error && (
-              <p className="text-xs text-red-400">{error}</p>
-            )}
-          </div>
 
-          <div className="flex gap-3">
-            <Button
-              type="button"
-              variant="outline"
-              className="flex-1"
-              onClick={handleClose}
-              disabled={step === "sending"}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="button"
-              className="flex-1"
-              onClick={handleSend}
-              disabled={step === "sending" || isOverLimit}
-            >
-              {step === "sending" ? (
-                <span className="flex items-center gap-2">
-                  <span className="response-spinner h-3.5 w-3.5 rounded-full border-2 border-accent-foreground/30 border-t-accent-foreground" />
-                  Sending…
+            <div className="rounded-[14px] border border-[#1C1D1E]/[0.06] bg-[#EDF0F1] p-4">
+              <span className="mb-1 block text-[9px] font-bold uppercase tracking-wider text-[#1C1D1E]/45">
+                Their whisper
+              </span>
+              <p className="text-xs font-medium italic leading-relaxed text-[#1C1D1E]/75">
+                &ldquo;{activePost.content}&rdquo;
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-[0.65rem] font-extrabold uppercase tracking-[1.2px] text-[#1C1D1E]/50">
+                Your response
+              </label>
+              <textarea
+                value={content}
+                onChange={(e) => {
+                  setContent(e.target.value);
+                  if (touched) setError(validateResponse(e.target.value));
+                }}
+                onBlur={() => {
+                  setTouched(true);
+                  setError(validateResponse(content));
+                }}
+                rows={3}
+                disabled={sending}
+                placeholder="Avoid small talk. Write how you truly connect to this..."
+                className={cn(
+                  "w-full rounded-[14px] border-2 border-transparent bg-[#EDF0F1] p-4 text-sm font-medium leading-relaxed text-[#1C1D1E] placeholder:text-[#1C1D1E]/35 transition-[border-color,box-shadow,background-color] focus:border-[#2F9CFA] focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#2F9CFA]/10 disabled:opacity-60",
+                  touched && error && "border-red-500/50 focus:border-red-500/50 focus:ring-red-500/10"
+                )}
+              />
+              <div className="flex items-center justify-between text-[11px] font-medium text-[#1C1D1E]/45">
+                <span>
+                  {RESPONSE_MIN_WORDS}–{RESPONSE_MAX_WORDS} words
                 </span>
-              ) : (
-                "Send privately"
+                <span className={isOverLimit ? "text-red-500" : undefined}>
+                  {wordCount} / {RESPONSE_MAX_WORDS}
+                </span>
+              </div>
+              {touched && error && (
+                <p className="text-xs font-medium text-red-500">{error}</p>
               )}
-            </Button>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => void handleSend()}
+              disabled={sending || isOverLimit}
+              className="colourful-landing-btn-primary w-full rounded-2xl border-none bg-[#1C1D1E] py-3 text-xs font-bold uppercase tracking-wider text-white transition-colors hover:bg-[#2F9CFA] disabled:opacity-50"
+            >
+              {sending ? "Sending…" : "Send response"}
+            </button>
           </div>
         </div>
       )}
-    </Modal>
+
+      {showToast && (
+        <div className="fixed bottom-6 right-6 z-50 flex max-w-sm items-start gap-3 rounded-[20px] border border-[#1C1D1E]/[0.06] bg-white px-5 py-4 shadow-[0_24px_48px_-12px_rgba(28,29,30,0.12)]">
+          <span className="font-bold text-[#2F9CFA]">✓</span>
+          <div>
+            <h5 className="text-xs font-bold uppercase tracking-wider text-[#2F9CFA]">
+              Sent
+            </h5>
+            <p className="mt-1 text-xs font-medium leading-relaxed text-[#1C1D1E]/55">
+              Your response has been sent. If they accept, a secure channel
+              opens.
+            </p>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

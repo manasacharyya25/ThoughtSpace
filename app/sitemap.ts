@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { getSeoLandingSlugs } from "@/lib/seo-landing";
 import { env } from "@/lib/env";
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -17,5 +18,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.8,
     },
+    ...getSeoLandingSlugs().map((slug) => ({
+      url: `${base}/${slug}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
   ];
 }

@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { isSeoLandingPath } from "@/lib/seo-landing";
 import { updateSession } from "@/lib/supabase/middleware";
 
 const PROTECTED_PREFIXES = [
@@ -28,7 +29,8 @@ function isPublicPath(pathname: string) {
     pathname === "/test" ||
     pathname === "/robots.txt" ||
     pathname === "/sitemap.xml" ||
-    pathname.startsWith("/api/")
+    pathname.startsWith("/api/") ||
+    isSeoLandingPath(pathname)
   );
 }
 

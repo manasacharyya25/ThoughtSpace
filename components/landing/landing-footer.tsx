@@ -13,12 +13,20 @@ export function LandingFooter({ className }: { className?: string }) {
       <p className="text-[0.58rem] font-medium leading-none text-[#1C1D1E]/45">
         © 2026 Registered {env.NEXT_PUBLIC_APP_NAME}
       </p>
-      <Link
-        href="/about-us"
-        className="text-[0.58rem] font-semibold leading-none text-[#1C1D1E]/55 transition-colors hover:text-[#2F9CFA]"
-      >
-        About us
-      </Link>
+      <div className="flex items-center gap-4">
+        <Link
+          href="/blog"
+          className="text-[0.58rem] font-semibold leading-none text-[#1C1D1E]/55 transition-colors hover:text-[#2F9CFA]"
+        >
+          Blog
+        </Link>
+        <Link
+          href="/about-us"
+          className="text-[0.58rem] font-semibold leading-none text-[#1C1D1E]/55 transition-colors hover:text-[#2F9CFA]"
+        >
+          About us
+        </Link>
+      </div>
     </footer>
   );
 }

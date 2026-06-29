@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import type { ResolvedSeoLandingPage } from "@/types/seo-landing";
+import { BLOG_PILLAR_SLUGS } from "@/data/blog-posts";
+import { SeoRelatedArticles } from "./seo-related-articles";
 import "./seo-landing.css";
 
 const ACCENT_TONES = [
@@ -365,6 +367,14 @@ export function SeoLandingSections({ page }: { page: ResolvedSeoLandingPage }) {
       <HowItWorksSection page={page} />
       <KeyBenefitsSection page={page} />
       <FaqSection page={page} />
+      {BLOG_PILLAR_SLUGS.includes(
+        page.slug as (typeof BLOG_PILLAR_SLUGS)[number]
+      ) && (
+        <SeoRelatedArticles
+          pillarSlug={page.slug}
+          pillarTitle={page.keywordTitle}
+        />
+      )}
       <FinalCtaSection page={page} />
     </div>
   );

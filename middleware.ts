@@ -26,6 +26,8 @@ function isPublicPath(pathname: string) {
     pathname === "/terms-of-service" ||
     pathname === "/colourful-landing" ||
     pathname === "/about-us" ||
+    pathname === "/blog" ||
+    pathname.startsWith("/blog/") ||
     pathname === "/test" ||
     pathname === "/robots.txt" ||
     pathname === "/sitemap.xml" ||

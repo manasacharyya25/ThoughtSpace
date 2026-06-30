@@ -1,16 +1,15 @@
 import Link from "next/link";
-import { getBlogPostsByPillar } from "@/data/blog-posts";
+import type { BlogPost } from "@/types/blog";
 
 type SeoRelatedArticlesProps = {
-  pillarSlug: string;
   pillarTitle: string;
+  posts: BlogPost[];
 };
 
 export function SeoRelatedArticles({
-  pillarSlug,
   pillarTitle,
+  posts,
 }: SeoRelatedArticlesProps) {
-  const posts = getBlogPostsByPillar(pillarSlug);
   if (posts.length === 0) return null;
 
   return (

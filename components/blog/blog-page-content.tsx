@@ -1,19 +1,17 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { getBlogPosts } from "@/data/blog-posts";
-import type { BlogCategoryId } from "@/types/blog";
-import { BlogArticleList } from "./blog-article-list";
+import type { BlogCategoryId, BlogPost } from "@/types/blog";import { BlogArticleList } from "./blog-article-list";
 import { BlogHero } from "./blog-hero";
 import { BlogNav } from "./blog-nav";
 import { LandingFooter } from "@/components/landing/landing-footer";
 
-export function BlogPageContent() {
+export function BlogPageContent({ initialPosts }: { initialPosts: BlogPost[] }) {
   const [activeCategory, setActiveCategory] = useState<BlogCategoryId>("all");
-  const posts = useMemo(
-    () => getBlogPosts(activeCategory),
-    [activeCategory]
-  );
+  const posts = useMemo(() => {
+    if (activeCategory === "all") return initialPosts;
+    return initialPosts.filter((post) => post.categoryId === activeCategory);
+  }, [activeCategory, initialPosts]);
 
   return (
     <>

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { notFound } from "next/navigation";
 import { BlogPostView, BlogShell } from "@/components/blog";
-import { getBlogPost, getBlogSlugs } from "@/data/blog-posts";
+import { getBlogPost, getBlogSlugs } from "@/lib/blog";
 import { env } from "@/lib/env";
 import "@/components/landing/colourful-landing.css";
 
@@ -16,16 +16,22 @@ type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export function generateStaticParams() {
-  return getBlogSlugs().map((slug) => ({ slug }));
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const slugs = await getBlogSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = getBlogPost(slug);
+  const post = await getBlogPost(slug);
   if (!post) return {};
 
   const url = `${env.NEXT_PUBLIC_APP_URL}/blog/${slug}`;
+  const imageUrl = post.image.src.startsWith("http")
+    ? post.image.src
+    : `${env.NEXT_PUBLIC_APP_URL}${post.image.src}`;
 
   return {
     title: post.title,
@@ -37,13 +43,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       url,
       type: "article",
       publishedTime: post.publishedAt,
+      images: [{ url: imageUrl, alt: post.image.alt }],
     },
   };
 }
 
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
-  const post = getBlogPost(slug);
+  const post = await getBlogPost(slug);
   if (!post) notFound();
 
   return (

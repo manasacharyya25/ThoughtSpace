@@ -1,9 +1,11 @@
 import Link from "next/link";
 import type { BlogPost } from "@/types/blog";
+import { env } from "@/lib/env";
 import { getSeoLandingPage } from "@/lib/seo-landing";
 import { BlogNav } from "./blog-nav";
 import { BlogPostCta } from "./blog-post-cta";
 import { BlogPostImage } from "./blog-post-image";
+import { BlogShareButtons } from "./blog-share-buttons";
 import { LandingFooter } from "@/components/landing/landing-footer";
 
 type BlogPostViewProps = {
@@ -91,6 +93,11 @@ export function BlogPostView({ post }: BlogPostViewProps) {
             </p>
           ))}
         </div>
+
+        <BlogShareButtons
+          url={`${env.NEXT_PUBLIC_APP_URL}/blog/${post.slug}`}
+          title={post.title}
+        />
 
         <BlogPostCta />
       </article>

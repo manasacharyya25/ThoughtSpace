@@ -1,10 +1,11 @@
 import type { MetadataRoute } from "next";
-import { getBlogSlugs } from "@/data/blog-posts";
+import { getBlogSlugs } from "@/lib/blog";
 import { getSeoLandingSlugs } from "@/lib/seo-landing";
 import { env } from "@/lib/env";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = env.NEXT_PUBLIC_APP_URL;
+  const blogSlugs = await getBlogSlugs();
 
   return [
     {
@@ -25,7 +26,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.8,
     },
-    ...getBlogSlugs().map((slug) => ({
+    ...blogSlugs.map((slug) => ({
       url: `${base}/blog/${slug}`,
       lastModified: new Date(),
       changeFrequency: "monthly" as const,

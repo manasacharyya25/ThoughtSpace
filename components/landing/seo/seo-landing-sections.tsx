@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import type { ResolvedSeoLandingPage } from "@/types/seo-landing";
-import { BLOG_PILLAR_SLUGS } from "@/data/blog-posts";
+import { BLOG_PILLAR_SLUGS, getBlogPostsByPillar } from "@/lib/blog";
 import { SeoRelatedArticles } from "./seo-related-articles";
 import "./seo-landing.css";
 
@@ -359,7 +359,18 @@ function FinalCtaSection({ page }: { page: ResolvedSeoLandingPage }) {
   );
 }
 
-export function SeoLandingSections({ page }: { page: ResolvedSeoLandingPage }) {
+export async function SeoLandingSections({
+  page,
+}: {
+  page: ResolvedSeoLandingPage;
+}) {
+  const showRelatedArticles = BLOG_PILLAR_SLUGS.includes(
+    page.slug as (typeof BLOG_PILLAR_SLUGS)[number]
+  );
+  const relatedPosts = showRelatedArticles
+    ? await getBlogPostsByPillar(page.slug)
+    : [];
+
   return (
     <div className="seo-landing-sections relative z-10 bg-[#FAF8F5] font-[family-name:var(--font-colourful-landing)] text-[#1C1D1E]">
       <WhatIsSection page={page} />
@@ -367,12 +378,10 @@ export function SeoLandingSections({ page }: { page: ResolvedSeoLandingPage }) {
       <HowItWorksSection page={page} />
       <KeyBenefitsSection page={page} />
       <FaqSection page={page} />
-      {BLOG_PILLAR_SLUGS.includes(
-        page.slug as (typeof BLOG_PILLAR_SLUGS)[number]
-      ) && (
+      {showRelatedArticles && (
         <SeoRelatedArticles
-          pillarSlug={page.slug}
           pillarTitle={page.keywordTitle}
+          posts={relatedPosts}
         />
       )}
       <FinalCtaSection page={page} />

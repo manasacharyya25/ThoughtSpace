@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { BlogPageContent, BlogShell } from "@/components/blog";
+import { getBlogPosts } from "@/lib/blog";
 import "@/components/landing/colourful-landing.css";
 
 const blogSans = Plus_Jakarta_Sans({
@@ -15,11 +16,15 @@ export const metadata: Metadata = {
     "ThoughtSpace insights on anonymous conversation, privacy, and building deeper human connection.",
 };
 
-export default function BlogPage() {
+export const revalidate = 60;
+
+export default async function BlogPage() {
+  const posts = await getBlogPosts();
+
   return (
     <div className={blogSans.variable}>
       <BlogShell>
-        <BlogPageContent />
+        <BlogPageContent initialPosts={posts} />
       </BlogShell>
     </div>
   );

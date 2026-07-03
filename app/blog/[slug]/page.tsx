@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { Plus_Jakarta_Sans, Source_Serif_4 } from "next/font/google";
 import { notFound } from "next/navigation";
 import { BlogPostView, BlogShell } from "@/components/blog";
 import { getBlogPost, getBlogSlugs } from "@/lib/blog";
@@ -10,6 +10,12 @@ const blogSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["500", "600", "700", "800"],
   variable: "--font-colourful-landing",
+});
+
+const blogBodySerif = Source_Serif_4({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-claude-response",
 });
 
 type PageProps = {
@@ -54,7 +60,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   if (!post) notFound();
 
   return (
-    <div className={blogSans.variable}>
+    <div className={`${blogSans.variable} ${blogBodySerif.variable}`}>
       <BlogShell>
         <BlogPostView post={post} />
       </BlogShell>

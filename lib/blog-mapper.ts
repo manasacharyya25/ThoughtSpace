@@ -14,6 +14,32 @@ function parseContent(content: string): string[] {
 }
 
 export function mapBlogPostRow(row: BlogPostRow): BlogPost {
+  const contentFormat = row.content_format ?? "plain";
+  const paragraphs = parseContent(row.content);
+
+  if (contentFormat === "tiptap" && row.content_json) {
+    return {
+      slug: row.slug,
+      title: row.title,
+      excerpt: row.excerpt,
+      category: row.category_label,
+      categoryId: row.category_id,
+      pillarSlug: row.pillar_slug ?? undefined,
+      publishedAt: row.published_at ?? row.created_at,
+      readTime: formatReadTime(row.read_time_minutes),
+      featured: row.featured,
+      image: {
+        src: row.image_url,
+        alt: row.image_alt,
+        accent: row.image_accent,
+        label: row.image_label ?? "",
+      },
+      contentFormat: "tiptap",
+      contentJson: row.content_json,
+      content: paragraphs,
+    };
+  }
+
   return {
     slug: row.slug,
     title: row.title,
@@ -30,7 +56,9 @@ export function mapBlogPostRow(row: BlogPostRow): BlogPost {
       accent: row.image_accent,
       label: row.image_label ?? "",
     },
-    content: parseContent(row.content),
+    contentFormat: "plain",
+    contentJson: null,
+    content: paragraphs,
   };
 }
 

@@ -9,6 +9,8 @@ const BLOG_POST_SELECT = `
   title,
   excerpt,
   content,
+  content_format,
+  content_json,
   image_url,
   image_alt,
   image_accent,

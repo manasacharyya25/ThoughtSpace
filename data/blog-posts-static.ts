@@ -1,7 +1,8 @@
-import type { BlogPost } from "@/types/blog";
+import type { BlogPost, BlogPostSource } from "@/types/blog";
+import { toBlogPost } from "@/types/blog";
 import { BLOG_CLUSTER_POSTS } from "./blog-cluster-posts";
 
-const CORE_BLOG_POSTS: BlogPost[] = [
+const CORE_BLOG_POSTS: BlogPostSource[] = [
   {
     slug: "why-anonymous-conversation-changes-everything",
     title: "Why Anonymous Conversation Changes Everything",
@@ -142,4 +143,6 @@ const CORE_BLOG_POSTS: BlogPost[] = [
   },
 ];
 
-export const BLOG_POSTS: BlogPost[] = [...CORE_BLOG_POSTS, ...BLOG_CLUSTER_POSTS];
+export const BLOG_POSTS: BlogPost[] = [...CORE_BLOG_POSTS, ...BLOG_CLUSTER_POSTS].map(
+  toBlogPost
+);

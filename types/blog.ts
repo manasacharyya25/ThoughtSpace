@@ -23,8 +23,21 @@ export type BlogPost = {
   readTime: string;
   featured: boolean;
   image: BlogPostImage;
+  contentFormat: "plain" | "tiptap";
+  contentJson?: Record<string, unknown> | null;
   content: string[];
 };
+
+/** Static seed data omits format fields; mapped to BlogPost at export. */
+export type BlogPostSource = Omit<BlogPost, "contentFormat" | "contentJson">;
+
+export function toBlogPost(post: BlogPostSource): BlogPost {
+  return {
+    ...post,
+    contentFormat: "plain",
+    contentJson: null,
+  };
+}
 
 export const BLOG_CATEGORIES: {
   id: BlogCategoryId;

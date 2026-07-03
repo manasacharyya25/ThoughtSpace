@@ -4,6 +4,7 @@ export { BlogNav } from "./blog-nav";
 export { BlogPageContent } from "./blog-page-content";
 export { BlogPostCta } from "./blog-post-cta";
 export { BlogPostImage } from "./blog-post-image";
+export { BlogRichContent } from "./blog-rich-content";
 export { BlogShareButtons } from "./blog-share-buttons";
 export { BlogPostView } from "./blog-post-view";
 export { BlogShell } from "./blog-shell";

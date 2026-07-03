@@ -1,5 +1,7 @@
 export type BlogPostStatus = "draft" | "published";
 
+export type BlogContentFormat = "plain" | "tiptap";
+
 export type BlogPostCategoryId =
   | "connection"
   | "philosophy"
@@ -12,6 +14,8 @@ export interface BlogPostRow {
   title: string;
   excerpt: string;
   content: string;
+  content_format: BlogContentFormat;
+  content_json: Record<string, unknown> | null;
   image_url: string;
   image_alt: string;
   image_accent: string;

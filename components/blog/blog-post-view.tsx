@@ -5,6 +5,7 @@ import { getSeoLandingPage } from "@/lib/seo-landing";
 import { BlogNav } from "./blog-nav";
 import { BlogPostCta } from "./blog-post-cta";
 import { BlogPostImage } from "./blog-post-image";
+import { BlogRichContent } from "./blog-rich-content";
 import { BlogShareButtons } from "./blog-share-buttons";
 import { LandingFooter } from "@/components/landing/landing-footer";
 
@@ -90,16 +91,20 @@ export function BlogPostView({ post }: BlogPostViewProps) {
           <BlogPostImage post={post} variant="hero" />
         </div>
 
-        <div className="prose-blog mt-10 space-y-6">
-          {post.content.map((paragraph) => (
-            <p
-              key={paragraph.slice(0, 48)}
-              className="text-[15px] font-medium leading-[1.85] text-[#1C1D1E]/72 sm:text-base"
-            >
-              {paragraph}
-            </p>
-          ))}
-        </div>
+        {post.contentFormat === "tiptap" && post.contentJson ? (
+          <BlogRichContent doc={post.contentJson} />
+        ) : (
+          <div className="prose-blog font-claude-response-body mt-10 space-y-6">
+            {post.content.map((paragraph) => (
+              <p
+                key={paragraph.slice(0, 48)}
+                className="text-[#1C1D1E]/85"
+              >
+                {paragraph}
+              </p>
+            ))}
+          </div>
+        )}
 
         <BlogPostCta />
 

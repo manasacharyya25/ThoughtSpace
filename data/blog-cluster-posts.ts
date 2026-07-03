@@ -1,4 +1,4 @@
-import type { BlogPost } from "@/types/blog";
+import type { BlogPostSource } from "@/types/blog";
 
 const IMAGES = {
   conversation: {
@@ -39,7 +39,7 @@ const IMAGES = {
   },
 } as const;
 
-export const BLOG_CLUSTER_POSTS: BlogPost[] = [
+export const BLOG_CLUSTER_POSTS: BlogPostSource[] = [
   // ── /anonymous-chat cluster ──────────────────────────────────────────
   {
     slug: "why-anonymous-conversations-feel-more-honest",

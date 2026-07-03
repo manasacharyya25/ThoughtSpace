@@ -70,14 +70,21 @@ export function BlogPostView({ post }: BlogPostViewProps) {
           {post.title}
         </h1>
 
-        <p className="mt-4 text-sm font-medium text-[#1C1D1E]/45">
-          {new Intl.DateTimeFormat("en", {
-            month: "long",
-            day: "numeric",
-            year: "numeric",
-          }).format(new Date(post.publishedAt))}{" "}
-          · {post.readTime}
-        </p>
+        <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm font-medium text-[#1C1D1E]/45">
+            {new Intl.DateTimeFormat("en", {
+              month: "long",
+              day: "numeric",
+              year: "numeric",
+            }).format(new Date(post.publishedAt))}{" "}
+            · {post.readTime}
+          </p>
+          <BlogShareButtons
+            url={`${env.NEXT_PUBLIC_APP_URL}/blog/${post.slug}`}
+            title={post.title}
+            variant="compact"
+          />
+        </div>
 
         <div className="mt-8">
           <BlogPostImage post={post} variant="hero" />
@@ -94,12 +101,12 @@ export function BlogPostView({ post }: BlogPostViewProps) {
           ))}
         </div>
 
+        <BlogPostCta />
+
         <BlogShareButtons
           url={`${env.NEXT_PUBLIC_APP_URL}/blog/${post.slug}`}
           title={post.title}
         />
-
-        <BlogPostCta />
       </article>
 
       <div className="mx-auto max-w-3xl px-4 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:px-6">

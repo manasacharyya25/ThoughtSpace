@@ -15,6 +15,8 @@ const BLOG_POST_SELECT = `
   image_alt,
   image_accent,
   image_label,
+  image_credit,
+  image_credit_url,
   category_id,
   category_label,
   pillar_slug,

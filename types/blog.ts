@@ -10,6 +10,8 @@ export type BlogPostImage = {
   alt: string;
   accent: string;
   label: string;
+  credit?: string;
+  creditUrl?: string;
 };
 
 export type BlogPost = {

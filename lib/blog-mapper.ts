@@ -13,9 +13,25 @@ function parseContent(content: string): string[] {
     .filter(Boolean);
 }
 
+function mapBlogPostImage(row: BlogPostRow): BlogPost["image"] {
+  return {
+    src: row.image_url,
+    alt: row.image_alt,
+    accent: row.image_accent,
+    label: row.image_label ?? "",
+    ...(row.image_credit
+      ? {
+          credit: row.image_credit,
+          ...(row.image_credit_url ? { creditUrl: row.image_credit_url } : {}),
+        }
+      : {}),
+  };
+}
+
 export function mapBlogPostRow(row: BlogPostRow): BlogPost {
   const contentFormat = row.content_format ?? "plain";
   const paragraphs = parseContent(row.content);
+  const image = mapBlogPostImage(row);
 
   if (contentFormat === "tiptap" && row.content_json) {
     return {
@@ -28,12 +44,7 @@ export function mapBlogPostRow(row: BlogPostRow): BlogPost {
       publishedAt: row.published_at ?? row.created_at,
       readTime: formatReadTime(row.read_time_minutes),
       featured: row.featured,
-      image: {
-        src: row.image_url,
-        alt: row.image_alt,
-        accent: row.image_accent,
-        label: row.image_label ?? "",
-      },
+      image,
       contentFormat: "tiptap",
       contentJson: row.content_json,
       content: paragraphs,
@@ -50,12 +61,7 @@ export function mapBlogPostRow(row: BlogPostRow): BlogPost {
     publishedAt: row.published_at ?? row.created_at,
     readTime: formatReadTime(row.read_time_minutes),
     featured: row.featured,
-    image: {
-      src: row.image_url,
-      alt: row.image_alt,
-      accent: row.image_accent,
-      label: row.image_label ?? "",
-    },
+    image,
     contentFormat: "plain",
     contentJson: null,
     content: paragraphs,

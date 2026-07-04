@@ -20,6 +20,8 @@ export interface BlogPostRow {
   image_alt: string;
   image_accent: string;
   image_label: string | null;
+  image_credit: string | null;
+  image_credit_url: string | null;
   category_id: BlogPostCategoryId;
   category_label: string;
   pillar_slug: string | null;

@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Mail } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { InboxItemMenu } from "@/components/inbox/inbox-item-menu";
 import { PendingResponseCard } from "@/components/inbox/pending-response-card";
 import { useInbox } from "@/context/inbox-context";
 import { useTrial } from "@/context/trial-context";
@@ -48,7 +48,12 @@ export function InboxList() {
     openConversation,
     isConversationUnread,
     isPendingUnread,
+    markConversationRead,
     markConversationUnread,
+    deleteConversation,
+    deletePending,
+    markPendingSeen,
+    markPendingUnread,
   } = useInbox();
   const {
     isGuest,
@@ -90,6 +95,28 @@ export function InboxList() {
       return;
     }
     openConversation(conversationId);
+  };
+
+  const handleDeleteConversation = (conversationId: string) => {
+    if (
+      !window.confirm(
+        "Delete this connection? The conversation will be removed from your inbox."
+      )
+    ) {
+      return;
+    }
+    void deleteConversation(conversationId);
+  };
+
+  const handleDeletePending = (pendingId: string) => {
+    if (
+      !window.confirm(
+        "Remove this response? It will be declined and hidden from your inbox."
+      )
+    ) {
+      return;
+    }
+    void deletePending(pendingId);
   };
 
   const loading = pendingLoading || conversationsLoading;
@@ -183,7 +210,13 @@ export function InboxList() {
         ) : (
           <div className="space-y-3">
             {pending.map((response) => (
-              <PendingResponseCard key={response.id} response={response} />
+              <PendingResponseCard
+                key={response.id}
+                response={response}
+                onMarkRead={() => markPendingSeen(response.id)}
+                onMarkUnread={() => markPendingUnread(response.id)}
+                onDelete={() => handleDeletePending(response.id)}
+              />
             ))}
           </div>
         )
@@ -230,17 +263,29 @@ export function InboxList() {
                     </span>
                   </div>
                 </button>
-                {!unread ? (
-                  <button
-                    type="button"
-                    onClick={() => markConversationUnread(conversation.id)}
-                    className="shrink-0 rounded-xl p-2 text-[#1C1D1E]/35 transition-colors hover:bg-[#1C1D1E]/5 hover:text-[#1C1D1E]/70"
-                    title="Mark unread"
-                    aria-label="Mark unread"
-                  >
-                    <Mail className="h-4 w-4" />
-                  </button>
-                ) : null}
+                <InboxItemMenu
+                  actions={[
+                    unread
+                      ? {
+                          label: "Mark as read",
+                          onClick: () =>
+                            markConversationRead(
+                              conversation.id,
+                              conversation
+                            ),
+                        }
+                      : {
+                          label: "Mark as unread",
+                          onClick: () =>
+                            markConversationUnread(conversation.id),
+                        },
+                    {
+                      label: "Delete",
+                      onClick: () => handleDeleteConversation(conversation.id),
+                      destructive: true,
+                    },
+                  ]}
+                />
               </div>
             );
           })}

@@ -14,6 +14,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import {
   createConversationFromResponse,
+  deleteConversation as deleteConversationDb,
   listConversations,
   sendMessage as sendMessageToDb,
 } from "@/lib/supabase/conversations";
@@ -29,7 +30,7 @@ import {
   getInboxConversationId,
   inboxConversationPath,
 } from "@/lib/inbox-routes";
-import { acceptResponse, listPendingForAuthor } from "@/lib/supabase/responses";
+import { acceptResponse, declineResponse, listPendingForAuthor } from "@/lib/supabase/responses";
 import { useRealtimeInbox } from "@/hooks/use-realtime-inbox";
 import { useUser } from "@/hooks/use-user";
 import { usePosts } from "@/context/posts-context";
@@ -51,6 +52,8 @@ interface InboxContextValue {
   markConversationUnread: (id: string) => void;
   markPendingSeen: (pendingId: string) => void;
   markPendingUnread: (pendingId: string) => void;
+  deleteConversation: (conversationId: string) => Promise<void>;
+  deletePending: (pendingId: string) => Promise<void>;
   acceptPending: (
     pendingId: string,
     options?: { redirect?: boolean }
@@ -385,6 +388,52 @@ export function InboxProvider({ children }: { children: ReactNode }) {
     [activeConversationId]
   );
 
+  const deleteConversation = useCallback(
+    async (conversationId: string) => {
+      const supabase = createClient();
+      const { error } = await deleteConversationDb(supabase, conversationId);
+
+      if (error) {
+        setConversationsError(error.message);
+        return;
+      }
+
+      setConversations((prev) => prev.filter((c) => c.id !== conversationId));
+      setReadAt((prev) => {
+        if (!(conversationId in prev)) return prev;
+        const next = { ...prev };
+        delete next[conversationId];
+        return next;
+      });
+      setConversationsError(null);
+
+      if (activeConversationId === conversationId) {
+        router.replace("/inbox");
+      }
+    },
+    [activeConversationId, router]
+  );
+
+  const deletePending = useCallback(async (pendingId: string) => {
+    const supabase = createClient();
+    const { error } = await declineResponse(supabase, pendingId);
+
+    if (error) {
+      setPendingError(error.message);
+      return;
+    }
+
+    setPending((prev) => prev.filter((p) => p.id !== pendingId));
+    setSeenPendingIds((prev) => {
+      if (!prev.has(pendingId)) return prev;
+      const next = new Set(prev);
+      next.delete(pendingId);
+      return next;
+    });
+    setPendingError(null);
+    void refreshPosts();
+  }, [refreshPosts]);
+
   const isConversationUnread = useCallback(
     (id: string) => {
       const conv = conversations.find((c) => c.id === id);
@@ -425,6 +474,8 @@ export function InboxProvider({ children }: { children: ReactNode }) {
       markConversationUnread,
       markPendingSeen,
       markPendingUnread,
+      deleteConversation,
+      deletePending,
       acceptPending,
       sendMessage,
       isConversationUnread,
@@ -448,6 +499,8 @@ export function InboxProvider({ children }: { children: ReactNode }) {
       markConversationUnread,
       markPendingSeen,
       markPendingUnread,
+      deleteConversation,
+      deletePending,
       acceptPending,
       sendMessage,
       isConversationUnread,

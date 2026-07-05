@@ -127,3 +127,20 @@ export async function acceptResponse(
 
   return { error: null };
 }
+
+export async function declineResponse(
+  supabase: SupabaseClient,
+  responseId: string
+): Promise<{ error: Error | null }> {
+  const { error } = await supabase
+    .from("responses")
+    .update({ status: "declined" })
+    .eq("id", responseId)
+    .eq("status", "pending");
+
+  if (error) {
+    return { error: new Error(error.message) };
+  }
+
+  return { error: null };
+}

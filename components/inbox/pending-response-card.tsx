@@ -1,8 +1,8 @@
 "use client";
 
-import { Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { InboxItemMenu } from "@/components/inbox/inbox-item-menu";
 import { useInbox } from "@/context/inbox-context";
 import { useTrial } from "@/context/trial-context";
 import { inboxAcceptPath } from "@/lib/inbox-routes";
@@ -13,11 +13,19 @@ import "@/components/landing/colourful-landing.css";
 
 interface PendingResponseCardProps {
   response: PendingResponse;
+  onMarkRead: () => void;
+  onMarkUnread: () => void;
+  onDelete: () => void;
 }
 
-export function PendingResponseCard({ response }: PendingResponseCardProps) {
+export function PendingResponseCard({
+  response,
+  onMarkRead,
+  onMarkUnread,
+  onDelete,
+}: PendingResponseCardProps) {
   const router = useRouter();
-  const { isPendingUnread, markPendingSeen, markPendingUnread } = useInbox();
+  const { isPendingUnread } = useInbox();
   const { isGuest, promptInboxChatSignup } = useTrial();
   const [expanded, setExpanded] = useState(false);
   const unread = isPendingUnread(response.id);
@@ -27,12 +35,12 @@ export function PendingResponseCard({ response }: PendingResponseCardProps) {
     response.fullResponse.length > response.responsePreview.length;
 
   const handleExpand = () => {
-    markPendingSeen(response.id);
+    onMarkRead();
     setExpanded(true);
   };
 
   const handleAccept = () => {
-    markPendingSeen(response.id);
+    onMarkRead();
     if (isGuest) {
       promptInboxChatSignup();
       return;
@@ -61,25 +69,22 @@ export function PendingResponseCard({ response }: PendingResponseCardProps) {
         </div>
 
         <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-start justify-between gap-2">
             <span className="text-[10px] font-medium text-landing-muted">
               Anonymous Partner ({response.fromInitial})
             </span>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
               <span className="text-[10px] font-medium text-[#1C1D1E]/45">
                 {formatRelativeTime(response.receivedAt)}
               </span>
-              {!unread ? (
-                <button
-                  type="button"
-                  onClick={() => markPendingUnread(response.id)}
-                  className="rounded-lg p-1 text-[#1C1D1E]/35 transition-colors hover:bg-[#1C1D1E]/5 hover:text-[#1C1D1E]/70"
-                  title="Mark unread"
-                  aria-label="Mark unread"
-                >
-                  <Mail className="h-3.5 w-3.5" />
-                </button>
-              ) : null}
+              <InboxItemMenu
+                actions={[
+                  unread
+                    ? { label: "Mark as read", onClick: onMarkRead }
+                    : { label: "Mark as unread", onClick: onMarkUnread },
+                  { label: "Delete", onClick: onDelete, destructive: true },
+                ]}
+              />
             </div>
           </div>
 

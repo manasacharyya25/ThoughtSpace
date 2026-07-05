@@ -213,3 +213,19 @@ export async function sendMessage(
     error: null,
   };
 }
+
+export async function deleteConversation(
+  supabase: SupabaseClient,
+  conversationId: string
+): Promise<{ error: Error | null }> {
+  const { error } = await supabase
+    .from("conversations")
+    .delete()
+    .eq("id", conversationId);
+
+  if (error) {
+    return { error: new Error(error.message) };
+  }
+
+  return { error: null };
+}

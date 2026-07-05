@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { isSeoLandingPath } from "@/lib/seo-landing";
 import { updateSession } from "@/lib/supabase/middleware";
 
 const PROTECTED_PREFIXES = [
@@ -23,12 +24,17 @@ function isPublicPath(pathname: string) {
   return (
     pathname === "/" ||
     pathname === "/start" ||
+    pathname === "/privacy-policy" ||
+    pathname === "/terms-of-service" ||
     pathname === "/colourful-landing" ||
     pathname === "/about-us" ||
+    pathname === "/blog" ||
+    pathname.startsWith("/blog/") ||
     pathname === "/test" ||
     pathname === "/robots.txt" ||
     pathname === "/sitemap.xml" ||
-    pathname.startsWith("/api/")
+    pathname.startsWith("/api/") ||
+    isSeoLandingPath(pathname)
   );
 }
 

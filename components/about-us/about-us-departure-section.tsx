@@ -2,7 +2,7 @@ import { env } from "@/lib/env";
 
 export function AboutUsDepartureSection() {
   return (
-    <section className="border-b border-landing-border bg-black px-6 py-24">
+    <section id="sanctuary" className="border-b border-landing-border bg-black px-6 py-24">
       <div className="mx-auto max-w-6xl">
         <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-2">
           <div>

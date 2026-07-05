@@ -4,12 +4,14 @@ import Link from "next/link";
 import { BrandLogo } from "@/components/brand/brand-logo";
 import { scrollToSection } from "@/lib/scroll-to-section";
 
-const navItems = [
-  { label: "manifesto", id: "manifesto" },
-  { label: "the stream", id: "playground" },
-  { label: "match simulator", id: "simulator" },
-  { label: "philosophy", id: "faq" },
+const scrollNavItems = [
+  { label: "Our Belief", id: "manifesto" },
+  { label: "The Sanctuary", id: "sanctuary" },
+  { label: "Experience", id: "playground" },
 ] as const;
+
+const navLinkClassName =
+  "transition-colors hover:text-gray-200";
 
 export function AboutUsNav() {
   return (
@@ -18,16 +20,19 @@ export function AboutUsNav() {
         <BrandLogo href="/" />
 
         <div className="hidden items-center space-x-8 font-landing-mono text-sm text-landing-muted md:flex">
-          {navItems.map((item) => (
+          {scrollNavItems.map((item) => (
             <button
               key={item.id}
               type="button"
               onClick={() => scrollToSection(item.id)}
-              className="transition-colors hover:text-gray-200"
+              className={navLinkClassName}
             >
               {item.label}
             </button>
           ))}
+          <Link href="/blog" className={navLinkClassName}>
+            Reflection
+          </Link>
         </div>
 
         <Link

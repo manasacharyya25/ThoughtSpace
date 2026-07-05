@@ -11,7 +11,6 @@ import { FadeIn } from "@/components/ui/fade-in";
 import { Input } from "@/components/ui/input";
 import { AuthModeToggle, type AuthMode } from "./auth-mode-toggle";
 import { GoogleIcon } from "./google-icon";
-import "@/components/landing/colourful-landing.css";
 
 const authCopy = {
   login: {

@@ -10,7 +10,7 @@ export function BlogShell({ children, className }: BlogShellProps) {
   return (
     <div
       className={cn(
-        "relative min-h-dvh overflow-x-hidden bg-[#FAF8F5] font-[family-name:var(--font-colourful-landing)] text-[#1C1D1E] antialiased",
+        "relative min-h-dvh overflow-hidden bg-[#FAF8F5] font-[family-name:var(--font-colourful-landing)] text-[#1C1D1E] antialiased",
         className
       )}
     >

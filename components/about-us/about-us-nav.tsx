@@ -10,8 +10,7 @@ const scrollNavItems = [
   { label: "Experience", id: "playground" },
 ] as const;
 
-const navLinkClassName =
-  "transition-colors hover:text-gray-200";
+const navLinkClassName = "transition-colors hover:text-gray-200";
 
 export function AboutUsNav() {
   return (
@@ -31,16 +30,9 @@ export function AboutUsNav() {
             </button>
           ))}
           <Link href="/blog" className={navLinkClassName}>
-            Reflection
+            Reflections
           </Link>
         </div>
-
-        <Link
-          href="/start"
-          className="inline-block rounded-full bg-white px-5 py-2 font-landing-mono text-xs uppercase tracking-wider text-black transition-all duration-300 hover:bg-landing-gold"
-        >
-          Get Started
-        </Link>
       </div>
     </nav>
   );

@@ -14,16 +14,16 @@ export function AboutUsDepartureSection() {
               <span className="italic text-landing-gold">a sanctuary</span>.
             </h2>
             <p className="mb-6 text-base font-light leading-relaxed text-landing-muted">
-              Modern social apps aren&apos;t designed to bring us closer;
-              they&apos;re designed to keep us scrolling. By reducing human beings
-              to metrics—follower counts, likes, curated grids—they amplify
-              loneliness while masquerading as connection.
+            Some thoughts are too personal for timelines, yet too important to carry alone.
+            </p>
+            <p className="mb-6 text-base font-light leading-relaxed text-landing-muted">
+            We believe that beneath our different lives lie the same questions, emotions and quiet struggles. 
+            The shared human experience isn't something to perform—it's something to explore together.
             </p>
             <p className="text-base font-light leading-relaxed text-landing-muted">
-              {env.NEXT_PUBLIC_APP_NAME} exists to dismantle the performance.
-              There are no avatars to judge, no comment sections to perform for,
-              and no algorithms to outrage you. Just two individuals, matching on
-              shared questions of life, finding solace in honest conversation.
+            That's why we built {env.NEXT_PUBLIC_APP_NAME}: a community where meaningful one-to-one conversations 
+            can unfold without the distractions of profiles, followers or algorithms. Just two thoughtful people 
+            meeting through curiosity, honesty and the desire to better understand themselves and each other.
             </p>
           </div>
 
@@ -31,13 +31,15 @@ export function AboutUsDepartureSection() {
             <div className="relative overflow-hidden rounded-xl border border-landing-border bg-landing-card/30 p-6">
               <div className="absolute left-0 top-0 h-full w-1 bg-green-400" />
               <h3 className="mb-4 font-landing-mono text-xs uppercase tracking-widest text-landing-gold">
-                The Inward Connection ({env.NEXT_PUBLIC_APP_NAME})
+                The {env.NEXT_PUBLIC_APP_NAME} Experience
               </h3>
               <ul className="space-y-4">
                 {[
-                  "Total freedom to be unpolished, raw, and genuinely real.",
-                  "Finding comfort in realizing others share your silent uncertainties.",
-                  "Deep, immersive one-to-one focus with the magic of active listening.",
+                  "A space to explore the thoughts, emotions and questions that often go unspoken.",
+                  "Thoughtful people exploring the shared human experience together.",
+                  "Conversations rooted in curiosity, empathy and genuine understanding.",
+                  "A calmer corner of the internet where connection matters more than performance.",
+                  "Comfort in discovering that your quietest thoughts are often shared by others.",
                 ].map((text) => (
                   <li key={text} className="flex items-start text-sm text-gray-300">
                     <span className="mr-2 font-bold text-green-400">✓</span>

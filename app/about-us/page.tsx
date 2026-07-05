@@ -43,11 +43,10 @@ export default function AboutUsPage() {
         <AboutUsNav />
         <main>
           <AboutUsHero />
-          <AboutUsMatchSimulator />
           <AboutUsWhisperStream />
           <AboutUsDepartureSection />
           <AboutUsManifestoSection />
-          <AboutUsFaq />
+          {/*<AboutUsMatchSimulator /> */}
         </main>
         <AboutUsFooter />
       </div>

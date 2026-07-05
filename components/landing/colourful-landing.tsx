@@ -162,9 +162,9 @@ function HeroCopy({
             : "max-w-[800px] text-[clamp(1.5rem,5.5vw,2.75rem)]"
         )}
       >
-        No profiles. No followers.{" "}
-        <span className="relative inline-block text-[#2F9CFA]">
-          Just real dialogue.
+        A thousand stories. {" "}<br />
+        One <span className="relative inline-block text-[#2F9CFA] italic">
+         human experience.
         </span>
       </h1>
 
@@ -176,9 +176,10 @@ function HeroCopy({
             : "mt-2 max-w-[620px] text-[clamp(0.8rem,2.2vw,1rem)]"
         )}
       >
-        {appName} strips away the performance of modern social media. We connect
-        you 1-to-1 with other anonymous minds, based entirely on the questions
-        you ask, the feelings you carry, and the ways you wonder.
+        {appName} is a community for curious minds exploring the thoughts, 
+        emotions and questions that often go unspoken. Connect through 
+        anonymous one-to-one conversations—free from profiles, followers 
+        and the pressure to perform.
       </p>
     </>
   );
@@ -202,7 +203,7 @@ function CtaButton({
         fullWidth ? "w-full" : "min-[1100px]:w-auto"
       )}
     >
-      <span>Get Started</span>
+      <span>Join the Community</span>
       <svg
         className="colourful-landing-btn-arrow"
         width={compact ? 14 : 18}

@@ -3,6 +3,7 @@
 import { heroPrinciples } from "@/data/landing-simulator";
 import { env } from "@/lib/env";
 import { scrollToSection } from "@/lib/scroll-to-section";
+import Link from "next/link";
 
 export function AboutUsHero() {
   return (
@@ -16,23 +17,50 @@ export function AboutUsHero() {
       />
 
       <div className="relative z-10 mx-auto max-w-4xl text-center">
-        <span className="mb-6 inline-block rounded-full border border-landing-border bg-landing-gold/5 px-3 py-1 font-landing-mono text-xs uppercase tracking-widest text-landing-gold">
-          A New Way to Connect
-        </span>
+      <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#1C1D1E]/[0.04] bg-white px-5 py-2.5 text-[0.7rem] font-extrabold uppercase tracking-[1.5px] text-[#1C1D1E] shadow-[0_4px_12px_rgba(0,0,0,0.02)]">
+        <span className="text-[#2F9CFA]">✦</span>
+        A New Way to Connect
+        <span className="text-[#2F9CFA]">✦</span>
+      </div>
 
         <h1 className="font-landing-serif mb-8 text-4xl leading-none tracking-tight text-gray-100 sm:text-6xl md:text-7xl">
-          No profiles. No followers.{" "}
+          A thousand stories.{" "}
           <br className="hidden sm:inline" />
-          Just <span className="italic text-landing-gold">real dialogue</span>.
+          One <span className="italic text-landing-gold">human experience.</span>
         </h1>
 
         <p className="mx-auto mb-12 max-w-2xl text-base font-light leading-relaxed text-landing-muted sm:text-lg md:text-xl">
-          {env.NEXT_PUBLIC_APP_NAME} strips away the performance of modern
-          social media. We connect you 1-to-1 with other anonymous minds, based
-          entirely on the questions you ask, the feelings you carry, and the
-          ways you wonder.
+        {env.NEXT_PUBLIC_APP_NAME}   is a community for curious minds exploring the thoughts, 
+        emotions and questions that often go unspoken. Connect through 
+        anonymous one-to-one conversations—free from profiles, followers 
+        and the pressure to perform.
         </p>
 
+        <div className="flex justify-center">
+        <Link
+          href="/start"
+          className="colourful-landing-btn-primary inline-flex items-center justify-center gap-3 rounded-[20px] border-none bg-[#1C1D1E] px-[42px] py-5 text-[1.05rem] font-bold text-white no-underline shadow-[0_24px_48px_-12px_rgba(28,29,30,0.08)] hover:bg-[#2F9CFA] hover:shadow-[0_12px_32px_-4px_rgba(47,156,250,0.4)]"
+        >
+          <span>Join the Community</span>
+          <svg
+            className="colourful-landing-btn-arrow"
+            width={18}
+            height={18}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <line x1="5" y1="12" x2="19" y2="12" />
+            <polyline points="12 5 19 12 12 19" />
+          </svg>
+        </Link>
+</div>
+
+{/*
         <div className="flex flex-col items-center justify-center gap-4 sm:flex-row sm:space-x-4 sm:space-y-0">
           <button
             type="button"
@@ -75,6 +103,7 @@ export function AboutUsHero() {
             </div>
           ))}
         </div>
+        */}
       </div>
     </header>
   );

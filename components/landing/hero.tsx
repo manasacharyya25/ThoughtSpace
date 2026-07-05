@@ -21,9 +21,9 @@ export function Hero() {
         </span>
 
         <h1 className="font-landing-serif mb-8 text-4xl leading-none tracking-tight text-gray-100 sm:text-6xl md:text-7xl">
-          No profiles. No followers.{" "}
+          A thousand stories. {" "}
           <br className="hidden sm:inline" />
-          Just <span className="italic text-landing-gold">real dialogue</span>.
+          One <span className="italic text-landing-gold">human experience</span>.
         </h1>
 
         <p className="mx-auto mb-12 max-w-2xl text-base font-light leading-relaxed text-landing-muted sm:text-lg md:text-xl">
@@ -32,6 +32,7 @@ export function Hero() {
           entirely on the questions you ask, the feelings you carry, and the
           ways you wonder.
         </p>
+
 
         <div className="flex flex-col items-center justify-center gap-4 sm:flex-row sm:space-x-4 sm:space-y-0">
           <button

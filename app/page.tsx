@@ -11,7 +11,7 @@ const colourfulLandingSans = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: "Connected Minds, Untethered from Metrics",
   description:
-    "No profiles. No followers. Just real dialogue. A thought-first social sanctuary.",
+    "A thought-first social sanctuary.",
 };
 
 export default function HomePage() {

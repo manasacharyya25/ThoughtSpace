@@ -280,7 +280,7 @@ export function ColourfulLanding() {
   const appName = env.NEXT_PUBLIC_APP_NAME;
 
   return (
-    <div className="relative flex min-h-dvh flex-col overflow-x-hidden bg-[#FAF8F5] font-[family-name:var(--font-colourful-landing)] text-[#1C1D1E] antialiased">
+    <div className="relative flex min-h-dvh flex-col overflow-hidden bg-[#FAF8F5] font-[family-name:var(--font-colourful-landing)] text-[#1C1D1E] antialiased">
       <div
         className="pointer-events-none absolute -left-[20vw] -top-[20vw] z-[1] h-[50vw] w-[50vw] rounded-full bg-[#2F9CFA] opacity-65 blur-[100px]"
         aria-hidden="true"

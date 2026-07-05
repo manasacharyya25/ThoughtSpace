@@ -74,7 +74,7 @@ export function PostReactions({
   }
 
   return (
-    <div ref={containerRef} className="relative flex flex-wrap items-center gap-1.5">
+    <div ref={containerRef} className="relative flex flex-nowrap items-center gap-1.5">
       {summary.emojis.map((emoji) => {
         const isActive = summary.userEmoji === emoji;
 

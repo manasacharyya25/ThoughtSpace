@@ -69,9 +69,9 @@ export function WhisperPostCard({
       </p>
 
       {showFooter && (footerLeft || footerRight) ? (
-        <div className="flex flex-col gap-3 border-t border-[#1C1D1E]/[0.06] pt-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="min-w-0">{footerLeft}</div>
-          <div className="flex shrink-0 items-center justify-end gap-3">
+        <div className="flex items-center justify-between gap-2 border-t border-[#1C1D1E]/[0.06] pt-4">
+          <div className="min-w-0 shrink">{footerLeft}</div>
+          <div className="flex shrink-0 flex-nowrap items-center justify-end gap-2">
             {footerRight}
           </div>
         </div>

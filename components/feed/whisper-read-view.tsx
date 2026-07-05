@@ -135,13 +135,11 @@ export function WhisperReadView({ posts, loading, error }: WhisperReadViewProps)
                       onClick={() => openResponseModal(post)}
                       disabled={responded}
                       className={cn(
-                        "rounded-2xl border border-[#1C1D1E]/10 px-3 py-1.5 text-xs font-bold text-landing-gold transition-colors hover:border-landing-gold hover:bg-[#EDF0F1]",
+                        "shrink-0 whitespace-nowrap rounded-2xl border border-[#1C1D1E]/10 px-3 py-1.5 text-xs font-bold text-landing-gold transition-colors hover:border-landing-gold hover:bg-[#EDF0F1]",
                         responded && "cursor-default opacity-50"
                       )}
                     >
-                      {responded
-                        ? "Response transmitted"
-                        : "Send direct response →"}
+                      {responded ? "Response transmitted" : "Respond"}
                     </button>
                   </>
                 }

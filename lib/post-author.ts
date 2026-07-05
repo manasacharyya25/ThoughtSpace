@@ -4,8 +4,10 @@ import type { Post, PostAuthorPreview } from "@/types/post";
 export function postAuthorFromProfile(profile: Profile): PostAuthorPreview {
   return {
     username: profile.username,
+    age_range: profile.age_range,
     gender: profile.gender,
     gender_custom: profile.gender_custom,
+    country: profile.country,
   };
 }
 

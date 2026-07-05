@@ -6,8 +6,10 @@ const POST_WITH_AUTHOR_SELECT = `
   *,
   author:profiles (
     username,
+    age_range,
     gender,
-    gender_custom
+    gender_custom,
+    country
   )
 `;
 

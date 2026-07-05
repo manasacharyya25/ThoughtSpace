@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { PostAuthorAvatar } from "@/components/feed/post-author-avatar";
+import { PostAuthorBadge } from "@/components/feed/post-author-badge";
 import { normalizeCategory } from "@/lib/category";
 import { cn } from "@/lib/utils";
 import type { PostAuthorPreview } from "@/types/post";
@@ -40,14 +41,17 @@ export function WhisperPostCard({
         className
       )}
     >
-      <div className="flex items-center gap-3">
-        <PostAuthorAvatar name={avatarSeed} />
-        <span
-          className="min-w-0 flex-1 truncate text-sm font-extrabold text-[#1C1D1E]"
-          title={`@${username}`}
-        >
-          @{username}
-        </span>
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-3">
+          <PostAuthorAvatar name={avatarSeed} />
+          <span
+            className="min-w-0 flex-1 truncate text-sm font-extrabold text-[#1C1D1E]"
+            title={`@${username}`}
+          >
+            @{username}
+          </span>
+        </div>
+        {author ? <PostAuthorBadge author={author} /> : null}
       </div>
 
       <div className="flex items-center justify-between gap-3 text-xs">

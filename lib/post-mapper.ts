@@ -11,8 +11,10 @@ function normalizeAuthor(
 
   return {
     username: row.username,
+    age_range: row.age_range ?? "",
     gender: row.gender,
     gender_custom: row.gender_custom,
+    country: row.country ?? "",
   };
 }
 

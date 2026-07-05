@@ -1,7 +1,9 @@
 export interface PostAuthorPreview {
   username: string;
+  age_range: string;
   gender: string;
   gender_custom: string | null;
+  country: string;
 }
 
 export type PostCategory = string;

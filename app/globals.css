@@ -403,6 +403,11 @@
     box-shadow: 0 24px 48px -12px rgba(28, 29, 30, 0.12);
   }
 
+  .whisper-post-content {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
   @keyframes simulator-backdrop-pop {
     from {
       opacity: 0;

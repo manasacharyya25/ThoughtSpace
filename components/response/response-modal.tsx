@@ -82,7 +82,7 @@ export function ResponseModal() {
               <span className="mb-1 block text-[9px] font-bold uppercase tracking-wider text-[#1C1D1E]/45">
                 Their whisper
               </span>
-              <p className="text-xs font-medium italic leading-relaxed text-[#1C1D1E]/75">
+              <p className="whisper-post-content text-xs font-medium italic leading-relaxed text-[#1C1D1E]/75">
                 &ldquo;{activePost.content}&rdquo;
               </p>
             </div>

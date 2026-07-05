@@ -1,5 +1,5 @@
 export const POST_MIN_LENGTH = 10;
-export const POST_MAX_LENGTH = 500;
+export const POST_MAX_LENGTH = 3000;
 export const CATEGORY_MIN_LENGTH = 2;
 export const CATEGORY_MAX_LENGTH = 30;
 

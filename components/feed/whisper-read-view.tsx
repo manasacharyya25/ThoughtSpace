@@ -9,6 +9,7 @@ import { useUser } from "@/hooks/use-user";
 import { formatRelativeTime } from "@/lib/time";
 import { sortFeedForUser } from "@/lib/feed-sort";
 import { normalizeCategory } from "@/lib/category";
+import { postMatchesSearch } from "@/lib/post-search";
 import { getPostAvatarSeed } from "@/lib/post-author";
 import { cn } from "@/lib/utils";
 import type { Post } from "@/types/post";
@@ -35,8 +36,6 @@ export function WhisperReadView({ posts, loading, error }: WhisperReadViewProps)
   );
 
   const filteredPosts = useMemo(() => {
-    const search = searchQuery.trim().toLowerCase();
-
     return sortedPosts.filter((post) => {
       if (user?.id && post.author_id === user.id) return false;
 
@@ -44,8 +43,11 @@ export function WhisperReadView({ posts, loading, error }: WhisperReadViewProps)
         activeFilter === "all" ||
         normalizeCategory(post.category) === activeFilter;
 
-      const matchesSearch =
-        !search || post.content.toLowerCase().includes(search);
+      const matchesSearch = postMatchesSearch(
+        post.content,
+        post.category,
+        searchQuery
+      );
 
       return matchesTag && matchesSearch;
     });
@@ -81,7 +83,7 @@ export function WhisperReadView({ posts, loading, error }: WhisperReadViewProps)
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search raw thoughts..."
+            placeholder="Search #tags or words…"
             className="landing-input w-full rounded-[14px] px-4 py-2 text-xs font-medium placeholder:text-[#1C1D1E]/35 sm:w-48"
           />
         </div>

@@ -51,7 +51,7 @@ export function PendingResponseCard({
   return (
     <article
       className={cn(
-        "whisper-card space-y-3 rounded-[20px] p-4",
+        "whisper-card whisper-card-interactive space-y-3 rounded-[20px] p-4",
         unread && "border-[#2F9CFA]/30"
       )}
     >

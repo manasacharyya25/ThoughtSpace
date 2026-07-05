@@ -241,7 +241,7 @@ export function InboxList() {
               <div
                 key={conversation.id}
                 className={cn(
-                  "whisper-card flex items-center gap-2 rounded-[20px] p-4",
+                  "whisper-card whisper-card-interactive flex items-center gap-2 rounded-[20px] p-4",
                   unread && "border-[#2F9CFA]/30"
                 )}
               >

@@ -66,7 +66,7 @@ export function WhisperPostCard({
     <>
       <article
         className={cn(
-          "whisper-card whisper-fade-in min-w-0 space-y-3 overflow-hidden rounded-[20px] p-5 sm:p-6",
+          "whisper-card whisper-card-interactive whisper-fade-in min-w-0 space-y-3 overflow-hidden rounded-[20px] p-5 sm:p-6",
           className
         )}
       >

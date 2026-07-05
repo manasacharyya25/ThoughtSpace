@@ -18,10 +18,10 @@ export function DepartureSection() {
             </p>
             <p className="mb-6 text-base font-light leading-relaxed text-landing-muted">
             We believe that beneath our different lives lie the same questions, emotions and quiet struggles. 
-            The shared human experience isn't something to perform—it's something to explore together.
+            The shared human experience isn&apos;t something to perform—it&apos;s something to explore together.
             </p>
             <p className="text-base font-light leading-relaxed text-landing-muted">
-            That's why we built {env.NEXT_PUBLIC_APP_NAME}: a community where meaningful one-to-one conversations 
+            That&apos;s why we built {env.NEXT_PUBLIC_APP_NAME}: a community where meaningful one-to-one conversations 
             can unfold without the distractions of profiles, followers or algorithms. Just two thoughtful people 
             meeting through curiosity, honesty and the desire to better understand themselves and each other.
             </p>

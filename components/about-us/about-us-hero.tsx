@@ -1,8 +1,6 @@
 "use client";
 
-import { heroPrinciples } from "@/data/landing-simulator";
 import { env } from "@/lib/env";
-import { scrollToSection } from "@/lib/scroll-to-section";
 import Link from "next/link";
 
 export function AboutUsHero() {

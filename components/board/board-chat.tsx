@@ -19,7 +19,7 @@ function BoardHeader({ onBack }: { onBack: () => void }) {
       <button
         type="button"
         onClick={onBack}
-        aria-label="Exit live board"
+        aria-label="Exit lounge"
         className="inline-flex size-9 shrink-0 items-center justify-center rounded-xl border border-[#1C1D1E]/10 bg-white text-[#1C1D1E] transition-colors hover:border-[#2F9CFA]/25 hover:bg-[#EBF5FF]"
       >
         <svg
@@ -38,10 +38,10 @@ function BoardHeader({ onBack }: { onBack: () => void }) {
 
       <div className="min-w-0">
         <h1 className="text-[clamp(1.35rem,3vw,2rem)] font-extrabold leading-[1.08] tracking-[-1px] text-[#1C1D1E]">
-          Live Board
+          Lounge
         </h1>
         <p className="text-[10px] font-bold uppercase tracking-widest text-[#2F9CFA]/80 sm:text-xs">
-          Open room chat
+          Gather. Listen. Share
         </p>
       </div>
     </header>

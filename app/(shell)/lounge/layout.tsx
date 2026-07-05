@@ -1,20 +1,20 @@
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "@/components/landing/colourful-landing.css";
 
-const colourfulBoardSans = Plus_Jakarta_Sans({
+const colourfulLoungeSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["500", "600", "700", "800"],
   variable: "--font-colourful-landing",
 });
 
-export default function BoardLayout({
+export default function LoungeLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
     <div
-      className={`${colourfulBoardSans.variable} whisper-feed relative flex h-full min-h-0 flex-1 flex-col bg-[#FAF8F5]`}
+      className={`${colourfulLoungeSans.variable} whisper-feed relative flex h-full min-h-0 flex-1 flex-col bg-[#FAF8F5]`}
     >
       <div
         className="pointer-events-none fixed inset-0 z-0 overflow-hidden"

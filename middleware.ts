@@ -7,7 +7,7 @@ const PROTECTED_PREFIXES = [
   "/inbox",
   "/profile",
   "/chat",
-  "/board",
+  "/lounge",
 ];
 
 function isProtectedPath(pathname: string) {
@@ -46,6 +46,12 @@ export async function middleware(request: NextRequest) {
   if (pathname === "/landing") {
     const url = request.nextUrl.clone();
     url.pathname = "/";
+    return NextResponse.redirect(url);
+  }
+
+  if (pathname === "/board" || pathname.startsWith("/board/")) {
+    const url = request.nextUrl.clone();
+    url.pathname = pathname.replace(/^\/board/, "/lounge");
     return NextResponse.redirect(url);
   }
 

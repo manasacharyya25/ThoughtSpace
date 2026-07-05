@@ -14,7 +14,7 @@ import {
 const navItems = [
   { label: "Feed", href: "/feed", icon: FeedIcon },
   { label: "Inbox", href: "/inbox", icon: InboxIcon, showUnread: true },
-  { label: "Live", href: "/board", icon: LiveIcon, showLiveDot: true },
+  { label: "Lounge", href: "/lounge", icon: LiveIcon, showLiveDot: true },
   { label: "Profile", href: "/profile", icon: ProfileIcon },
 ] as const;
 

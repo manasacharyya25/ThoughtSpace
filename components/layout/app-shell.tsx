@@ -17,7 +17,7 @@ interface AppShellProps {
 export function AppShell({ children }: AppShellProps) {
   const pathname = usePathname();
   const isInboxChat = isInboxChatRoute(pathname);
-  const isBoard = pathname === "/board";
+  const isLounge = pathname === "/lounge";
   const isColourfulFeed = pathname === "/feed";
   const isColourfulInboxList = pathname === "/inbox";
   const isColourfulProfile = pathname === "/profile";
@@ -25,7 +25,7 @@ export function AppShell({ children }: AppShellProps) {
     isColourfulFeed || isColourfulInboxList || isColourfulProfile;
   const viewportHeight = useVisualViewportHeight();
 
-  useBodyScrollLock(isInboxChat || isBoard);
+  useBodyScrollLock(isInboxChat || isLounge);
 
   if (isInboxChat) {
     return (
@@ -45,7 +45,7 @@ export function AppShell({ children }: AppShellProps) {
     );
   }
 
-  if (isBoard) {
+  if (isLounge) {
     return (
       <div
         className="fixed inset-x-0 top-0 z-40 flex flex-col overflow-hidden bg-[#FAF8F5]"

@@ -415,7 +415,7 @@ export function MatchSimulator() {
                           type="button"
                           onClick={() => {
                             resetSimulator();
-                            router.push("/start");
+                            router.push("/login");
                           }}
                           className="w-full rounded-lg border border-landing-border bg-landing-card px-4 py-2 font-landing-mono text-xs uppercase text-landing-muted transition-colors hover:bg-white/[0.03] sm:w-auto"
                         >

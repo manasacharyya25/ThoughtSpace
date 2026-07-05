@@ -38,7 +38,7 @@ export function AboutUsHero() {
 
         <div className="flex justify-center">
         <Link
-          href="/start"
+          href="/login"
           className="colourful-landing-btn-primary inline-flex items-center justify-center gap-3 rounded-[20px] border-none bg-[#1C1D1E] px-[42px] py-5 text-[1.05rem] font-bold text-white no-underline shadow-[0_24px_48px_-12px_rgba(28,29,30,0.08)] hover:bg-[#2F9CFA] hover:shadow-[0_12px_32px_-4px_rgba(47,156,250,0.4)]"
         >
           <span>Join the Community</span>

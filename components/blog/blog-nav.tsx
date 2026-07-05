@@ -11,7 +11,7 @@ export function BlogNav() {
         <BrandLogo />
 
         <Link
-          href="/start"
+          href="/login"
           className="colourful-landing-btn-primary shrink-0 rounded-full bg-[#1C1D1E] px-4 py-2 text-[0.65rem] font-bold uppercase tracking-wider text-white no-underline transition-all hover:bg-[#2F9CFA] sm:px-5 sm:text-xs"
         >
           Join us

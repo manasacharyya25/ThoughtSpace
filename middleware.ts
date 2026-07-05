@@ -23,7 +23,6 @@ function isAuthRoute(pathname: string) {
 function isPublicPath(pathname: string) {
   return (
     pathname === "/" ||
-    pathname === "/start" ||
     pathname === "/privacy-policy" ||
     pathname === "/terms-of-service" ||
     pathname === "/colourful-landing" ||
@@ -46,6 +45,12 @@ export async function middleware(request: NextRequest) {
   if (pathname === "/landing") {
     const url = request.nextUrl.clone();
     url.pathname = "/";
+    return NextResponse.redirect(url);
+  }
+
+  if (pathname === "/start" || pathname.startsWith("/start/")) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
     return NextResponse.redirect(url);
   }
 

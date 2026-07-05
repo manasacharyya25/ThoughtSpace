@@ -4,9 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { getAuthErrorMessage } from "@/lib/auth/errors";
-import { ensureAnonymousSession } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/client";
-import { getProfileByUserId } from "@/lib/supabase/profiles";
 import { FadeIn } from "@/components/ui/fade-in";
 import { Input } from "@/components/ui/input";
 import { AuthModeToggle, type AuthMode } from "./auth-mode-toggle";
@@ -109,33 +107,6 @@ export function AuthScreen() {
 
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
-  };
-
-  const handleBeginAnonymously = async () => {
-    setIsLoading(true);
-    clearErrors();
-
-    try {
-      const supabase = createClient();
-      const { user, error } = await ensureAnonymousSession(supabase);
-
-      if (error || !user) {
-        setAuthError(error?.message ?? "Could not start your session. Try again.");
-        return;
-      }
-
-      const existingProfile = await getProfileByUserId(supabase, user.id);
-      const next = searchParams.get("next");
-
-      router.refresh();
-      if (existingProfile) {
-        router.push(next && next !== "/onboarding" ? next : "/feed");
-      } else {
-        router.push("/onboarding");
-      }
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   const handleGoogle = async () => {
@@ -246,29 +217,17 @@ export function AuthScreen() {
           </div>
 
           <div className="mt-4 space-y-3">
-            <div className="space-y-2">
-              <Button
-                type="button"
-                size="lg"
-                className={authPrimaryButtonClassName}
-                onClick={() => void handleBeginAnonymously()}
-                disabled={isLoading}
-              >
-                {isLoading ? "Starting…" : "Begin Anonymously"}
-              </Button>
-
-              <Button
-                type="button"
-                variant="outline"
-                size="lg"
-                className="h-auto w-full gap-3 rounded-lg border border-[#747775] bg-white px-6 py-3 text-sm font-medium text-[#1F1F1F] shadow-none hover:border-[#747775] hover:bg-[#F8F9FA] hover:text-[#1F1F1F]"
-                onClick={() => void handleGoogle()}
-                disabled={isLoading}
-              >
-                <GoogleIcon className="h-[18px] w-[18px] shrink-0" />
-                {isLoading ? "Redirecting…" : "Continue with Google"}
-              </Button>
-            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              className="h-auto w-full gap-3 rounded-lg border border-[#747775] bg-white px-6 py-3 text-sm font-medium text-[#1F1F1F] shadow-none hover:border-[#747775] hover:bg-[#F8F9FA] hover:text-[#1F1F1F]"
+              onClick={() => void handleGoogle()}
+              disabled={isLoading}
+            >
+              <GoogleIcon className="h-[18px] w-[18px] shrink-0" />
+              {isLoading ? "Redirecting…" : "Continue with Google"}
+            </Button>
 
             <div className="flex items-center gap-3 text-[11px] font-medium text-[#1C1D1E]/40">
               <div className="h-px flex-1 bg-[#1C1D1E]/10" />

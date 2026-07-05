@@ -1759,6 +1759,6 @@ export const DEFAULT_HOME_COPY = {
   subheading:
     "ThoughtSpace is a community for curious minds exploring the thoughts, emotions and questions that often go unspoken. Connect through anonymous one-to-one conversations—free from profiles, followers and the pressure to perform.",
   cta: "Join the Community",
-  ctaHref: "/start",
+  ctaHref: "/login",
   trustLine: "Anonymous · 1-to-1 · No profile pressure",
 } as const;

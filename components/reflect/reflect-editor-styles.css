@@ -1,0 +1,131 @@
+.reflect-editor .ProseMirror {
+  min-height: 50vh;
+  outline: none;
+  color: #1c1d1e;
+  font-size: 1.05rem;
+  line-height: 1.75;
+}
+
+.reflect-editor .ProseMirror p.is-editor-empty:first-child::before {
+  color: rgba(28, 29, 30, 0.35);
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+.reflect-editor .ProseMirror p {
+  margin: 0 0 0.85rem;
+}
+
+.reflect-read-view .ProseMirror {
+  color: #1c1d1e;
+  font-size: 1.05rem;
+  line-height: 1.75;
+}
+
+.reflect-read-view .ProseMirror p {
+  margin: 0 0 0.85rem;
+}
+
+.journal-marker {
+  border-radius: 0.2rem;
+  padding: 0.05rem 0.15rem;
+}
+
+.journal-marker--insight {
+  background: rgba(47, 156, 250, 0.18);
+  box-shadow: inset 0 0 0 1px rgba(47, 156, 250, 0.25);
+}
+
+.journal-marker--todo {
+  background: rgba(245, 158, 11, 0.18);
+  box-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.28);
+}
+
+.journal-marker--grateful {
+  background: rgba(34, 197, 94, 0.16);
+  box-shadow: inset 0 0 0 1px rgba(34, 197, 94, 0.24);
+}
+
+.journal-marker--reminder {
+  background: rgba(168, 85, 247, 0.16);
+  box-shadow: inset 0 0 0 1px rgba(168, 85, 247, 0.24);
+}
+
+.reflect-bubble-menu {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(28, 29, 30, 0.08);
+  background: rgba(255, 255, 255, 0.96);
+  padding: 0.35rem;
+  box-shadow: 0 16px 40px -12px rgba(28, 29, 30, 0.18);
+}
+
+.reflect-bubble-menu button {
+  border-radius: 0.65rem;
+  padding: 0.35rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.reflect-bubble-menu button[data-type="insight"] {
+  color: #1d6fb8;
+}
+
+.reflect-bubble-menu button[data-type="todo"] {
+  color: #b45309;
+}
+
+.reflect-bubble-menu button[data-type="grateful"] {
+  color: #15803d;
+}
+
+.reflect-bubble-menu button[data-type="reminder"] {
+  color: #7e22ce;
+}
+
+.reflect-bubble-menu button:hover {
+  background: rgba(237, 240, 241, 0.9);
+}
+
+.reflect-bubble-menu button.is-active {
+  background: rgba(47, 156, 250, 0.12);
+}
+
+.reflect-bubble-menu .reflect-bubble-menu__remove {
+  color: rgba(28, 29, 30, 0.55);
+}
+
+.marker-pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 0.15rem 0.55rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.marker-pill--insight {
+  background: rgba(47, 156, 250, 0.14);
+  color: #1d6fb8;
+}
+
+.marker-pill--todo {
+  background: rgba(245, 158, 11, 0.16);
+  color: #b45309;
+}
+
+.marker-pill--grateful {
+  background: rgba(34, 197, 94, 0.14);
+  color: #15803d;
+}
+
+.marker-pill--reminder {
+  background: rgba(168, 85, 247, 0.14);
+  color: #7e22ce;
+}

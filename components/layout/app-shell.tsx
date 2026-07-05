@@ -19,10 +19,12 @@ export function AppShell({ children }: AppShellProps) {
   const isInboxChat = isInboxChatRoute(pathname);
   const isBoard = pathname === "/board";
   const isColourfulFeed = pathname === "/feed";
+  const isColourfulReflect =
+    pathname === "/reflect" || pathname.startsWith("/reflect/");
   const isColourfulInboxList = pathname === "/inbox";
   const isColourfulProfile = pathname === "/profile";
   const isColourfulShell =
-    isColourfulFeed || isColourfulInboxList || isColourfulProfile;
+    isColourfulFeed || isColourfulReflect || isColourfulInboxList || isColourfulProfile;
   const viewportHeight = useVisualViewportHeight();
 
   useBodyScrollLock(isInboxChat || isBoard);

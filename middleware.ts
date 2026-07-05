@@ -4,6 +4,7 @@ import { updateSession } from "@/lib/supabase/middleware";
 
 const PROTECTED_PREFIXES = [
   "/feed",
+  "/reflect",
   "/inbox",
   "/profile",
   "/chat",

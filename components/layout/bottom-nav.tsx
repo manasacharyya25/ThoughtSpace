@@ -9,10 +9,12 @@ import {
   InboxIcon,
   LiveIcon,
   ProfileIcon,
+  ReflectIcon,
 } from "./nav-icons";
 
 const navItems = [
   { label: "Feed", href: "/feed", icon: FeedIcon },
+  { label: "Reflect", href: "/reflect", icon: ReflectIcon },
   { label: "Inbox", href: "/inbox", icon: InboxIcon, showUnread: true },
   { label: "Live", href: "/board", icon: LiveIcon, showLiveDot: true },
   { label: "Profile", href: "/profile", icon: ProfileIcon },
@@ -83,6 +85,8 @@ function NavBar({ className }: { className?: string }) {
   const isColourfulShell =
     pathname === "/feed" ||
     pathname.startsWith("/feed/") ||
+    pathname === "/reflect" ||
+    pathname.startsWith("/reflect/") ||
     pathname === "/inbox" ||
     pathname === "/profile";
 
@@ -100,7 +104,8 @@ function NavBar({ className }: { className?: string }) {
       {navItems.map((item) => {
         const isActive =
           pathname === item.href ||
-          (item.href === "/inbox" && pathname.startsWith("/inbox/"));
+          (item.href === "/inbox" && pathname.startsWith("/inbox/")) ||
+          (item.href === "/reflect" && pathname.startsWith("/reflect/"));
         const Icon = item.icon;
         const showInboxBadges =
           "showUnread" in item && item.showUnread && !isActive;
@@ -112,7 +117,7 @@ function NavBar({ className }: { className?: string }) {
             key={item.href}
             href={item.href}
             className={cn(
-              "relative flex min-w-[64px] flex-col items-center justify-center gap-1 rounded-xl px-2 py-2 transition-[background-color,border-color,color,box-shadow] duration-300 ease sm:min-w-[72px] sm:px-3",
+              "relative flex min-w-[52px] flex-col items-center justify-center gap-1 rounded-xl px-1.5 py-2 transition-[background-color,border-color,color,box-shadow] duration-300 ease sm:min-w-[60px] sm:px-2",
               isActive
                 ? "bg-[#2F9CFA]/12 text-[#2F9CFA] shadow-[inset_0_0_0_1px_rgba(47,156,250,0.25)]"
                 : showLiveDot
@@ -138,7 +143,7 @@ function NavBar({ className }: { className?: string }) {
             </span>
             <span
               className={cn(
-                "shrink-0 text-[10px] font-medium leading-none tracking-wide sm:text-[11px]",
+                "shrink-0 text-[9px] font-medium leading-none tracking-wide sm:text-[10px]",
                 showLiveDot && "font-semibold"
               )}
             >

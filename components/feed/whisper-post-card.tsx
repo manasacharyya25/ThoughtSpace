@@ -34,26 +34,33 @@ export function WhisperPostCard({
   className,
 }: WhisperPostCardProps) {
   const username = author?.username ?? "unknown";
+  const contentContainerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLParagraphElement>(null);
+  const contentMirrorRef = useRef<HTMLParagraphElement>(null);
   const [isClamped, setIsClamped] = useState(false);
   const [readModalOpen, setReadModalOpen] = useState(false);
 
+  const contentClassName = cn(
+    "whisper-post-content text-sm font-medium leading-relaxed text-[#1C1D1E]/75",
+    contentItalic && "italic"
+  );
+
   useEffect(() => {
-    const element = contentRef.current;
-    if (!element) return;
+    const container = contentContainerRef.current;
+    const clamped = contentRef.current;
+    const full = contentMirrorRef.current;
+    if (!container || !clamped || !full) return;
 
     const checkClamp = () => {
-      const clamped = element.scrollHeight > element.clientHeight + 1;
-      const longContent = content.length > 200;
-      setIsClamped(clamped || longContent);
+      setIsClamped(full.offsetHeight > clamped.offsetHeight + 1);
     };
 
     checkClamp();
 
     const observer = new ResizeObserver(checkClamp);
-    observer.observe(element);
+    observer.observe(container);
     return () => observer.disconnect();
-  }, [content]);
+  }, [content, contentItalic]);
 
   return (
     <>
@@ -85,14 +92,18 @@ export function WhisperPostCard({
           ) : null}
         </div>
 
-        <div className="min-w-0">
+        <div ref={contentContainerRef} className="relative min-w-0">
           <p
-            ref={contentRef}
+            ref={contentMirrorRef}
+            aria-hidden="true"
             className={cn(
-              "whisper-post-content line-clamp-4 text-sm font-medium leading-relaxed text-[#1C1D1E]/75",
-              contentItalic && "italic"
+              contentClassName,
+              "pointer-events-none invisible absolute inset-x-0 top-0 select-none"
             )}
           >
+            &ldquo;{content}&rdquo;
+          </p>
+          <p ref={contentRef} className={cn(contentClassName, "line-clamp-4")}>
             &ldquo;{content}&rdquo;
           </p>
           {isClamped ? (

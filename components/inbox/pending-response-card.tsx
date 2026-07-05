@@ -1,5 +1,6 @@
 "use client";
 
+import { Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useInbox } from "@/context/inbox-context";
@@ -16,7 +17,7 @@ interface PendingResponseCardProps {
 
 export function PendingResponseCard({ response }: PendingResponseCardProps) {
   const router = useRouter();
-  const { isPendingUnread, markPendingSeen } = useInbox();
+  const { isPendingUnread, markPendingSeen, markPendingUnread } = useInbox();
   const { isGuest, promptInboxChatSignup } = useTrial();
   const [expanded, setExpanded] = useState(false);
   const unread = isPendingUnread(response.id);
@@ -64,9 +65,22 @@ export function PendingResponseCard({ response }: PendingResponseCardProps) {
             <span className="text-[10px] font-medium text-landing-muted">
               Anonymous Partner ({response.fromInitial})
             </span>
-            <span className="text-[10px] font-medium text-[#1C1D1E]/45">
-              {formatRelativeTime(response.receivedAt)}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-medium text-[#1C1D1E]/45">
+                {formatRelativeTime(response.receivedAt)}
+              </span>
+              {!unread ? (
+                <button
+                  type="button"
+                  onClick={() => markPendingUnread(response.id)}
+                  className="rounded-lg p-1 text-[#1C1D1E]/35 transition-colors hover:bg-[#1C1D1E]/5 hover:text-[#1C1D1E]/70"
+                  title="Mark unread"
+                  aria-label="Mark unread"
+                >
+                  <Mail className="h-3.5 w-3.5" />
+                </button>
+              ) : null}
+            </div>
           </div>
 
           <p className="mt-2 text-[10px] font-medium text-landing-muted">

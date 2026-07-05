@@ -39,47 +39,9 @@ function LiveNavDot({ ringClassName = "ring-white" }: { ringClassName?: string }
   );
 }
 
-function InboxNavBadges({
-  showConversationUnread,
-  showPending,
-}: {
-  showConversationUnread: boolean;
-  showPending: boolean;
-}) {
-  if (!showConversationUnread && !showPending) return null;
-
-  if (showConversationUnread && !showPending) {
-    return (
-      <span
-        className="absolute -right-1 -top-1 h-1.5 w-1.5 rounded-full bg-rose-500 ring-2 ring-surface"
-        aria-label="Unread conversations"
-      />
-    );
-  }
-
-  if (showPending && !showConversationUnread) {
-    return (
-      <span
-        className="absolute -right-1 -top-1 h-1.5 w-1.5 rounded-full bg-[#2F9CFA] ring-2 ring-white"
-        aria-label="Unaccepted responses"
-      />
-    );
-  }
-
-  return (
-    <span
-      className="absolute -right-2 -top-1 flex items-center"
-      aria-label="Unread conversations and unaccepted responses"
-    >
-      <span className="h-1.5 w-1.5 rounded-full bg-[#2F9CFA] ring-2 ring-white" />
-      <span className="-ml-1 h-1.5 w-1.5 rounded-full bg-rose-500 ring-2 ring-surface" />
-    </span>
-  );
-}
-
 function NavBar({ className }: { className?: string }) {
   const pathname = usePathname();
-  const { hasUnreadConversations, hasUnacceptedPending } = useInbox();
+  const { hasUnread } = useInbox();
   const isColourfulShell =
     pathname === "/feed" ||
     pathname.startsWith("/feed/") ||
@@ -124,10 +86,13 @@ function NavBar({ className }: { className?: string }) {
           >
             <span className="relative flex shrink-0 items-center justify-center">
               <Icon className="h-5 w-5" />
-              {showInboxBadges && (
-                <InboxNavBadges
-                  showConversationUnread={hasUnreadConversations}
-                  showPending={hasUnacceptedPending}
+              {showInboxBadges && hasUnread && (
+                <span
+                  className={cn(
+                    "absolute -right-1 -top-1 h-1.5 w-1.5 rounded-full bg-[#2F9CFA] ring-2",
+                    isColourfulShell ? "ring-white" : "ring-surface"
+                  )}
+                  aria-label="Inbox has unread items"
                 />
               )}
               {showLiveDot && (

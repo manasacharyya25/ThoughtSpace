@@ -48,7 +48,9 @@ interface InboxContextValue {
   activeConversationId: string | null;
   openConversation: (id: string) => void;
   markConversationRead: (id: string, conversation?: ActiveConversation) => void;
+  markConversationUnread: (id: string) => void;
   markPendingSeen: (pendingId: string) => void;
+  markPendingUnread: (pendingId: string) => void;
   acceptPending: (
     pendingId: string,
     options?: { redirect?: boolean }
@@ -114,6 +116,15 @@ export function InboxProvider({ children }: { children: ReactNode }) {
     setSeenPendingIds((prev) => {
       if (prev.has(pendingId)) return prev;
       return new Set(prev).add(pendingId);
+    });
+  }, []);
+
+  const markPendingUnread = useCallback((pendingId: string) => {
+    setSeenPendingIds((prev) => {
+      if (!prev.has(pendingId)) return prev;
+      const next = new Set(prev);
+      next.delete(pendingId);
+      return next;
     });
   }, []);
 
@@ -251,6 +262,23 @@ export function InboxProvider({ children }: { children: ReactNode }) {
     [conversations]
   );
 
+  const markConversationUnread = useCallback((conversationId: string) => {
+    setReadAt((prev) => {
+      if (!(conversationId in prev)) return prev;
+      const next = { ...prev };
+      delete next[conversationId];
+      return next;
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!activeConversationId) return;
+    const conv = conversations.find((c) => c.id === activeConversationId);
+    if (conv) {
+      markConversationRead(activeConversationId, conv);
+    }
+  }, [activeConversationId, conversations, markConversationRead]);
+
   const openConversation = useCallback(
     (id: string) => {
       const conv = conversations.find((c) => c.id === id);
@@ -378,10 +406,10 @@ export function InboxProvider({ children }: { children: ReactNode }) {
 
   const hasUnacceptedPending = useMemo(() => pending.length > 0, [pending]);
 
-  const hasUnread = useMemo(
-    () => hasUnacceptedPending || hasUnreadConversations,
-    [hasUnacceptedPending, hasUnreadConversations]
-  );
+  const hasUnread = useMemo(() => {
+    const hasUnseenPending = pending.some((p) => !seenPendingIds.has(p.id));
+    return hasUnseenPending || hasUnreadConversations;
+  }, [pending, seenPendingIds, hasUnreadConversations]);
 
   const value = useMemo(
     () => ({
@@ -394,7 +422,9 @@ export function InboxProvider({ children }: { children: ReactNode }) {
       activeConversationId,
       openConversation,
       markConversationRead,
+      markConversationUnread,
       markPendingSeen,
+      markPendingUnread,
       acceptPending,
       sendMessage,
       isConversationUnread,
@@ -415,7 +445,9 @@ export function InboxProvider({ children }: { children: ReactNode }) {
       activeConversationId,
       openConversation,
       markConversationRead,
+      markConversationUnread,
       markPendingSeen,
+      markPendingUnread,
       acceptPending,
       sendMessage,
       isConversationUnread,

@@ -58,8 +58,21 @@ export function saveSeenPendingIds(userId: string, ids: Set<string>) {
 export function getConversationReadTimestamp(
   conv: ActiveConversation
 ): string {
+  const lastIncoming = [...conv.messages]
+    .reverse()
+    .find((message) => !message.isFromMe);
+  if (lastIncoming) return lastIncoming.createdAt;
   const lastMessage = conv.messages.at(-1);
   return lastMessage?.createdAt ?? conv.lastMessageAt;
+}
+
+export function getLastIncomingMessageAt(
+  conv: ActiveConversation
+): string | null {
+  const lastIncoming = [...conv.messages]
+    .reverse()
+    .find((message) => !message.isFromMe);
+  return lastIncoming?.createdAt ?? null;
 }
 
 export function isTimestampUnread(
@@ -76,10 +89,7 @@ export function isConversationUnreadState(
   conv: ActiveConversation,
   readAt: Record<string, string>
 ): boolean {
-  const lastMessage = conv.messages.at(-1);
-  if (lastMessage?.isFromMe) return false;
-
-  const activityAt =
-    lastMessage?.createdAt ?? conv.lastMessageAt;
-  return isTimestampUnread(activityAt, readAt[conv.id]);
+  const lastIncomingAt = getLastIncomingMessageAt(conv);
+  if (!lastIncomingAt) return false;
+  return isTimestampUnread(lastIncomingAt, readAt[conv.id]);
 }

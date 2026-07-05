@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Mail } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { PendingResponseCard } from "@/components/inbox/pending-response-card";
 import { useInbox } from "@/context/inbox-context";
@@ -47,6 +48,7 @@ export function InboxList() {
     openConversation,
     isConversationUnread,
     isPendingUnread,
+    markConversationUnread,
   } = useInbox();
   const {
     isGuest,
@@ -203,28 +205,43 @@ export function InboxList() {
             const unread = isConversationUnread(conversation.id);
 
             return (
-              <button
+              <div
                 key={conversation.id}
-                type="button"
-                onClick={() => handleConversationClick(conversation.id)}
                 className={cn(
-                  "whisper-card flex w-full cursor-pointer items-center gap-3 rounded-[20px] p-4 text-left",
+                  "whisper-card flex items-center gap-2 rounded-[20px] p-4",
                   unread && "border-[#2F9CFA]/30"
                 )}
               >
-                <InboxAvatar
-                  initial={conversation.partnerInitial}
-                  unread={unread}
-                />
-                <div className="min-w-0 flex-1">
-                  <p className="line-clamp-2 text-sm font-medium italic leading-relaxed text-[#1C1D1E]/75">
-                    &ldquo;{preview}&rdquo;
-                  </p>
-                  <span className="mt-1 block text-[10px] font-medium text-[#1C1D1E]/45">
-                    {formatRelativeTime(conversation.lastMessageAt)}
-                  </span>
-                </div>
-              </button>
+                <button
+                  type="button"
+                  onClick={() => handleConversationClick(conversation.id)}
+                  className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 text-left"
+                >
+                  <InboxAvatar
+                    initial={conversation.partnerInitial}
+                    unread={unread}
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p className="line-clamp-2 text-sm font-medium italic leading-relaxed text-[#1C1D1E]/75">
+                      &ldquo;{preview}&rdquo;
+                    </p>
+                    <span className="mt-1 block text-[10px] font-medium text-[#1C1D1E]/45">
+                      {formatRelativeTime(conversation.lastMessageAt)}
+                    </span>
+                  </div>
+                </button>
+                {!unread ? (
+                  <button
+                    type="button"
+                    onClick={() => markConversationUnread(conversation.id)}
+                    className="shrink-0 rounded-xl p-2 text-[#1C1D1E]/35 transition-colors hover:bg-[#1C1D1E]/5 hover:text-[#1C1D1E]/70"
+                    title="Mark unread"
+                    aria-label="Mark unread"
+                  >
+                    <Mail className="h-4 w-4" />
+                  </button>
+                ) : null}
+              </div>
             );
           })}
         </div>

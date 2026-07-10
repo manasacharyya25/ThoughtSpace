@@ -32,6 +32,7 @@ function isPublicPath(pathname: string) {
     pathname === "/newsletter" ||
     pathname.startsWith("/newsletter/") ||
     pathname === "/newsletters" ||
+    pathname === "/subscribe" ||
     pathname === "/test" ||
     pathname === "/robots.txt" ||
     pathname === "/sitemap.xml" ||

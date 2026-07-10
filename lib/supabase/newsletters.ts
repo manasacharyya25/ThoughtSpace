@@ -1,14 +1,17 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { NewsletterRow } from "@/types/newsletter";
 
-export async function getPublishedNewsletter(
+const NEWSLETTER_SELECT =
+  "id, issue_num, status, publish_at, state, created_at, updated_at";
+
+export async function getPublishedNewsletterByIssueNum(
   supabase: SupabaseClient,
-  issueId: string
+  issueNum: string
 ): Promise<{ data: NewsletterRow | null; error: Error | null }> {
   const { data, error } = await supabase
     .from("newsletters")
-    .select("id, status, publish_at, state, created_at, updated_at")
-    .eq("id", issueId)
+    .select(NEWSLETTER_SELECT)
+    .eq("issue_num", issueNum)
     .eq("status", "published")
     .maybeSingle();
 
@@ -28,7 +31,7 @@ export async function listPublishedNewsletters(
 ): Promise<{ data: NewsletterRow[]; error: Error | null }> {
   const { data, error } = await supabase
     .from("newsletters")
-    .select("id, status, publish_at, state, created_at, updated_at")
+    .select(NEWSLETTER_SELECT)
     .eq("status", "published")
     .order("updated_at", { ascending: false });
 

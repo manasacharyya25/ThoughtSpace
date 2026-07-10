@@ -6,6 +6,7 @@ import { LandingFooter } from "@/components/landing/landing-footer";
 import { env } from "@/lib/env";
 import { createPublicClient } from "@/lib/supabase/public";
 import { listPublishedNewsletters } from "@/lib/supabase/newsletters";
+import { newsletterIssuePath } from "@/lib/newsletter/issue-slug";
 import "@/components/landing/colourful-landing.css";
 
 const newsletterSans = Plus_Jakarta_Sans({
@@ -83,18 +84,19 @@ export default async function NewslettersPage() {
             <ul className="mt-10 space-y-3">
               {newsletters.map((issue) => {
                 const { state } = issue;
+                const issueNum = issue.issue_num || state.issueNum;
                 const headline =
                   `${state.heroHeadlineBlack} ${state.heroHeadlineBlue}`.trim();
 
                 return (
                   <li key={issue.id}>
                     <Link
-                      href={`/newsletter/${issue.id}`}
+                      href={newsletterIssuePath(issueNum)}
                       className="block rounded-2xl border border-[#1C1D1E]/[0.06] bg-white/85 px-5 py-5 no-underline shadow-[0_8px_24px_-12px_rgba(28,29,30,0.08)] transition-colors hover:border-[#2F9CFA]/25 hover:bg-white"
                     >
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="rounded-full bg-[#1C1D1E]/[0.06] px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-[1.2px] text-[#1C1D1E]/55">
-                          Issue #{state.issueNum}
+                          Issue #{issueNum}
                         </span>
                         <span className="text-[10px] font-bold uppercase tracking-[1.2px] text-[#1C1D1E]/40">
                           {state.issueDate}

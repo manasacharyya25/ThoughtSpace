@@ -29,6 +29,9 @@ function isPublicPath(pathname: string) {
     pathname === "/about-us" ||
     pathname === "/blog" ||
     pathname.startsWith("/blog/") ||
+    pathname === "/newsletter" ||
+    pathname.startsWith("/newsletter/") ||
+    pathname === "/newsletters" ||
     pathname === "/test" ||
     pathname === "/robots.txt" ||
     pathname === "/sitemap.xml" ||

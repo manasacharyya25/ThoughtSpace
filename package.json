@@ -12,6 +12,7 @@
   "dependencies": {
     "@supabase/ssr": "^0.12.0",
     "@supabase/supabase-js": "^2.108.1",
+    "@tiptap/core": "3.27.1",
     "@tiptap/extension-highlight": "^3.27.1",
     "@tiptap/extension-link": "^3.27.1",
     "@tiptap/extension-underline": "^3.27.1",
@@ -22,6 +23,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.4.0",
     "frimousse": "^0.3.0",
+    "happy-dom": "^20.10.6",
     "lucide-react": "^1.17.0",
     "next": "^15.5.0",
     "react": "^19.0.0",

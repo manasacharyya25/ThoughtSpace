@@ -1023,6 +1023,25 @@
   padding: 0.25em 0 0.25em 1em;
 }
 
+.prose-blog blockquote.pull-quote,
+.prose-blog blockquote[data-pull-quote="true"] {
+  border-left: none;
+  color: #1c1d1e;
+  font-size: 1.375rem;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.45;
+  margin: 2em 0;
+  padding: 0 1.5rem;
+  text-align: center;
+}
+
+.prose-blog blockquote.pull-quote p,
+.prose-blog blockquote[data-pull-quote="true"] p {
+  margin: 0;
+}
+
 .prose-blog mark {
   background-color: #fef08a;
   border-radius: 2px;

@@ -5,9 +5,9 @@ import {
   newsletterIssuePath,
   parseNewsletterIssueSlug,
 } from "@/lib/newsletter/issue-slug";
-import { env } from "@/lib/env";
 import { createPublicClient } from "@/lib/supabase/public";
 import { getPublishedNewsletterByIssueNum } from "@/lib/supabase/newsletters";
+import { socialMetadata } from "@/lib/seo/social-metadata";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -30,18 +30,15 @@ export async function generateMetadata({
   const { state } = data;
   const title = `${state.heroHeadlineBlack} ${state.heroHeadlineBlue}`.trim();
   const description = state.introText.slice(0, 160);
-  const url = `${env.NEXT_PUBLIC_APP_URL}${newsletterIssuePath(data.issue_num)}`;
 
   return {
-    title: `Issue #${data.issue_num} · ${state.issueDate}`,
-    description,
-    alternates: { canonical: url },
-    openGraph: {
+    ...socialMetadata({
       title,
       description,
-      url,
+      path: newsletterIssuePath(data.issue_num),
       type: "article",
-    },
+    }),
+    title: `Issue #${data.issue_num} · ${state.issueDate}`,
   };
 }
 

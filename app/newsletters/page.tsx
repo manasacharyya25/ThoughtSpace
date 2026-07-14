@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { BrandLogo } from "@/components/brand/brand-logo";
@@ -7,6 +6,7 @@ import { env } from "@/lib/env";
 import { createPublicClient } from "@/lib/supabase/public";
 import { listPublishedNewsletters } from "@/lib/supabase/newsletters";
 import { newsletterIssuePath } from "@/lib/newsletter/issue-slug";
+import { socialMetadata } from "@/lib/seo/social-metadata";
 import "@/components/landing/colourful-landing.css";
 
 const newsletterSans = Plus_Jakarta_Sans({
@@ -15,10 +15,11 @@ const newsletterSans = Plus_Jakarta_Sans({
   variable: "--font-colourful-landing",
 });
 
-export const metadata: Metadata = {
+export const metadata = socialMetadata({
   title: "Newsletters",
   description: `Browse published ${env.NEXT_PUBLIC_APP_NAME} newsletter issues.`,
-};
+  path: "/newsletters",
+});
 
 export const revalidate = 60;
 

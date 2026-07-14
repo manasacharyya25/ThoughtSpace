@@ -5,13 +5,13 @@ import { ColourfulLandingHero } from "@/components/landing/colourful-landing-her
 import { LandingFooter } from "@/components/landing/landing-footer";
 import { SeoLandingSections } from "@/components/landing/seo/seo-landing-sections";
 import "@/components/landing/colourful-landing.css";
-import { env } from "@/lib/env";
 import {
   buildFaqJsonLd,
   getSeoLandingPage,
   getSeoLandingSlugs,
   resolveSeoLandingPage,
 } from "@/lib/seo-landing";
+import { socialMetadata } from "@/lib/seo/social-metadata";
 
 const colourfulLandingSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -32,24 +32,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const page = getSeoLandingPage(slug);
   if (!page) return {};
 
-  const url = `${env.NEXT_PUBLIC_APP_URL}/${slug}`;
-
-  return {
+  return socialMetadata({
     title: page.hero.h1,
     description: page.hero.subheading,
-    alternates: { canonical: url },
-    openGraph: {
-      title: page.hero.h1,
-      description: page.hero.subheading,
-      url,
-      type: "website",
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: page.hero.h1,
-      description: page.hero.subheading,
-    },
-  };
+    path: `/${slug}`,
+  });
 }
 
 export default async function SeoLandingPage({ params }: PageProps) {

@@ -3,7 +3,7 @@ import { Plus_Jakarta_Sans, Source_Serif_4 } from "next/font/google";
 import { notFound } from "next/navigation";
 import { BlogPostView, BlogShell } from "@/components/blog";
 import { getBlogPost, getBlogSlugs } from "@/lib/blog";
-import { env } from "@/lib/env";
+import { socialMetadata } from "@/lib/seo/social-metadata";
 import "@/components/landing/colourful-landing.css";
 
 const blogSans = Plus_Jakarta_Sans({
@@ -34,24 +34,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const post = await getBlogPost(slug);
   if (!post) return {};
 
-  const url = `${env.NEXT_PUBLIC_APP_URL}/blog/${slug}`;
-  const imageUrl = post.image.src.startsWith("http")
-    ? post.image.src
-    : `${env.NEXT_PUBLIC_APP_URL}${post.image.src}`;
-
-  return {
+  return socialMetadata({
     title: post.title,
     description: post.excerpt,
-    alternates: { canonical: url },
-    openGraph: {
-      title: post.title,
-      description: post.excerpt,
-      url,
-      type: "article",
-      publishedTime: post.publishedAt,
-      images: [{ url: imageUrl, alt: post.image.alt }],
-    },
-  };
+    path: `/blog/${slug}`,
+    type: "article",
+    publishedTime: post.publishedAt,
+  });
 }
 
 export default async function BlogPostPage({ params }: PageProps) {

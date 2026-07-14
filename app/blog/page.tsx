@@ -1,7 +1,7 @@
-import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { BlogPageContent, BlogShell } from "@/components/blog";
 import { getBlogPosts } from "@/lib/blog";
+import { socialMetadata } from "@/lib/seo/social-metadata";
 import "@/components/landing/colourful-landing.css";
 
 const blogSans = Plus_Jakarta_Sans({
@@ -10,11 +10,12 @@ const blogSans = Plus_Jakarta_Sans({
   variable: "--font-colourful-landing",
 });
 
-export const metadata: Metadata = {
+export const metadata = socialMetadata({
   title: "Blog",
   description:
     "ThoughtSpace insights on anonymous conversation, privacy, and building deeper human connection.",
-};
+  path: "/blog",
+});
 
 export const revalidate = 60;
 

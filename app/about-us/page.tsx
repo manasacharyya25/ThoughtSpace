@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import {
   AboutUsDepartureSection,
@@ -8,6 +7,7 @@ import {
   AboutUsNav,
   AboutUsWhisperStream,
 } from "@/components/about-us";
+import { socialMetadata } from "@/lib/seo/social-metadata";
 import "@/components/about-us/about-us.css";
 import "@/components/landing/colourful-landing.css";
 
@@ -17,11 +17,12 @@ const aboutUsSans = Plus_Jakarta_Sans({
   variable: "--font-colourful-landing",
 });
 
-export const metadata: Metadata = {
+export const metadata = socialMetadata({
   title: "About Us",
   description:
     "Learn about ThoughtSpace — manifesto, match simulator, and whisper stream.",
-};
+  path: "/about-us",
+});
 
 export default function AboutUsPage() {
   return (
